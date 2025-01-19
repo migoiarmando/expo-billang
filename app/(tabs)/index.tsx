@@ -1,17 +1,17 @@
 import React from "react";
-import { Platform } from "react-native";
-import { Text, View } from "../../components/Themed";
+import { Platform, SafeAreaView } from "react-native";
+import { Text } from "../../components/Themed";
 import { StatusBar } from "expo-status-bar";
+import { Link } from "expo-router";
 
 export default function Home() {
     return (
-        <View>
-            <View className="h-screen flex justify-center items-center gap-[10px]">
-                <Text>Hello world! 👋</Text>
-            </View>
+        <SafeAreaView>
+            <Text>Directory: /</Text>
 
-            {/* Use a light status bar on iOS to account for the black space above the modal */}
+            <Link href="/onboarding/ob-page">Onboarding Page</Link>
+
             <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-        </View>
+        </SafeAreaView>
     );
 }
