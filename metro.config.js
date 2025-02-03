@@ -4,5 +4,7 @@ const { getDefaultConfig } = require("expo/metro-config");
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
-const { withNativeWind } = require("nativewind/metro");
+config.resolver.sourceExts.push("sql"); // SQLite
+const { withNativeWind } = require("nativewind/metro"); // Nativewind
+
 module.exports = withNativeWind(config, { input: "./global.css" });

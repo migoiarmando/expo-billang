@@ -2,8 +2,10 @@ import React from "react";
 import { Tabs } from "expo-router";
 
 import Colors from "../../constants/Colors";
-import { useColorScheme } from "../../components/useColorScheme";
-import { useClientOnlyValue } from "../../components/useClientOnlyValue";
+import { useColorScheme } from "../../components/expo/useColorScheme";
+import { useClientOnlyValue } from "../../components/expo/useClientOnlyValue";
+import { FontAwesome } from "@expo/vector-icons";
+import { Home, Search } from "lucide-react-native";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
@@ -20,21 +22,17 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: "Tab One",
+                    title: "Home",
+                    headerShown: false,
+                    tabBarIcon: () => <Home color="black" size={20} />,
                 }}
             />
             <Tabs.Screen
-                name="onboarding/ob-page"
+                name="transaction"
                 options={{
+                    title: "Transaction",
                     headerShown: false,
-                    tabBarStyle: { display: "none" },
-                }}
-            />
-            <Tabs.Screen
-                name="onboarding/ob-page2"
-                options={{
-                    headerShown: false,
-                    tabBarStyle: { display: "none" },
+                    tabBarIcon: () => <Search color="black" size={20} />,
                 }}
             />
         </Tabs>

@@ -7,7 +7,12 @@ module.exports = {
     ],
     presets: [require("nativewind/preset")],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                lexend: ["Lexend_400Regular"],
+                lexendBold: ["Lexend_700Bold"],
+            },
+        },
     },
     plugins: [],
 };
