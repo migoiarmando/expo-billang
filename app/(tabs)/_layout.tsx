@@ -4,8 +4,7 @@ import { Tabs } from "expo-router";
 import Colors from "../../constants/Colors";
 import { useColorScheme } from "../../components/expo/useColorScheme";
 import { useClientOnlyValue } from "../../components/expo/useClientOnlyValue";
-import { FontAwesome } from "@expo/vector-icons";
-import { Home, Search } from "lucide-react-native";
+import { Home, Search, User, WalletCards } from "lucide-react-native";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
@@ -33,6 +32,23 @@ export default function TabLayout() {
                     title: "Transaction",
                     headerShown: false,
                     tabBarIcon: () => <Search color="black" size={20} />,
+                }}
+            />
+
+            <Tabs.Screen
+                name="budget"
+                options={{
+                    title: "Budget",
+                    headerShown: false,
+                    tabBarIcon: () => <WalletCards color="black" size={20} />,
+                }}
+            />
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    title: "Profile",
+                    headerShown: false,
+                    tabBarIcon: () => <User color="black" size={20} />,
                 }}
             />
         </Tabs>

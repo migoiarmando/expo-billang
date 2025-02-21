@@ -63,8 +63,8 @@ export default function HomeScreen() {
 
     return (
         <>
-            <SafeAreaView className="h-full border border-red-500">
-                <View className="border border-green-500">
+            <SafeAreaView className="h-full">
+                <View>
                     {items.map((item) => (
                         <View key={item.id}>
                             <Text className="dark:text-white">
