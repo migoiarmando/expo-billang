@@ -23,7 +23,15 @@ export default function TabLayout() {
                 options={{
                     title: "Home",
                     headerShown: false,
-                    tabBarIcon: () => <Home color="black" size={20} />,
+                    tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+                    tabBarIcon: () => (
+                        <Home
+                            color={
+                                Colors[colorScheme ?? "light"].tabIconDefault
+                            }
+                            size={20}
+                        />
+                    ),
                 }}
             />
             <Tabs.Screen
@@ -31,7 +39,14 @@ export default function TabLayout() {
                 options={{
                     title: "Transaction",
                     headerShown: false,
-                    tabBarIcon: () => <Search color="black" size={20} />,
+                    tabBarIcon: () => (
+                        <Search
+                            color={
+                                Colors[colorScheme ?? "light"].tabIconDefault
+                            }
+                            size={20}
+                        />
+                    ),
                 }}
             />
 
@@ -40,7 +55,14 @@ export default function TabLayout() {
                 options={{
                     title: "Budget",
                     headerShown: false,
-                    tabBarIcon: () => <WalletCards color="black" size={20} />,
+                    tabBarIcon: () => (
+                        <WalletCards
+                            color={
+                                Colors[colorScheme ?? "light"].tabIconDefault
+                            }
+                            size={20}
+                        />
+                    ),
                 }}
             />
             <Tabs.Screen
@@ -48,7 +70,14 @@ export default function TabLayout() {
                 options={{
                     title: "Profile",
                     headerShown: false,
-                    tabBarIcon: () => <User color="black" size={20} />,
+                    tabBarIcon: () => (
+                        <User
+                            color={
+                                Colors[colorScheme ?? "light"].tabIconDefault
+                            }
+                            size={20}
+                        />
+                    ),
                 }}
             />
         </Tabs>

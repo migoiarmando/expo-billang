@@ -62,18 +62,16 @@ export default function HomeScreen() {
     }
 
     return (
-        <>
-            <SafeAreaView className="h-full">
-                <View>
-                    {items.map((item) => (
-                        <View key={item.id}>
-                            <Text className="dark:text-white">
-                                {item.name} | {item.onboarding ? "T" : "F"}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-            </SafeAreaView>
-        </>
+        <SafeAreaView className="h-full">
+            <View>
+                {items.map((item) => (
+                    <View key={item.id}>
+                        <Text className="dark:text-white">
+                            {item.name} | {item.onboarding ? "T" : "F"}
+                        </Text>
+                    </View>
+                ))}
+            </View>
+        </SafeAreaView>
     );
 }

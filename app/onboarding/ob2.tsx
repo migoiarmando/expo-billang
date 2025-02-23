@@ -31,17 +31,17 @@ import { Image } from "expo-image";
 import { useAssets } from "expo-asset";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-export default function OnboardingPage() {
+export default function OnboardingPage2() {
     function nextRoute() {
         console.log("press");
-        router.replace("/onboarding/ob2");
+        router.replace("/onboarding/ob3");
     }
     return (
         <SafeAreaView className="h-[500px] bg-[#0075B2]">
             <Pressable onPress={nextRoute} className="h-screen">
                 <View className="h-[459px] w-full flex items-center justify-end overflow-hidden">
                     <Image
-                        source={require("@/assets/onboarding/ob0.png")}
+                        source={require("@/assets/onboarding/ob1.png")}
                         style={{
                             position: "absolute",
                             width: 450,
@@ -53,16 +53,16 @@ export default function OnboardingPage() {
                 </View>
                 <View className="h-[200px] flex items-center justify-start pt-10 gap-5">
                     <View className="flex flex-row gap-2">
-                        <View className="w-[25px] h-[5px] rounded-full bg-[#0075B2]"></View>
                         <View className="w-[25px] h-[5px] rounded-full bg-[#999999]"></View>
+                        <View className="w-[25px] h-[5px] rounded-full bg-[#0075B2]"></View>
                         <View className="w-[25px] h-[5px] rounded-full bg-[#999999]"></View>
                     </View>
                     <Text className="font-lexendBold text-[24px] text-[#0075B2] mt-[50px]">
-                        Track all in one place
+                        Stay on top of your finances
                     </Text>
-                    <Text className="font-lexend text-[16px] text-center w-[280px]">
-                        Easily track all your bills, expenses, and needs
-                        seamlessly
+                    <Text className="font-lexend text-[16px] text-center w-[350px]">
+                        Get notified instantly so you never miss a payment or
+                        exceed your budget again.
                     </Text>
                 </View>
 
@@ -81,64 +81,5 @@ export default function OnboardingPage() {
             {/* Light status bar because of blue background */}
             <StatusBar style="light" />
         </SafeAreaView>
-    );
-}
-
-const onboardingList = [
-    {
-        id: 0,
-        title: "Track all in one place",
-        desc: "Easily track all your bills, expenses, and needs seamlessly",
-        button: false,
-    },
-    {
-        id: 1,
-        title: "Stay on top of your finances",
-        desc: "Get notified instantly so you never miss a payment or exceed your budget again.",
-        button: false,
-    },
-    {
-        id: 2,
-        title: "Start your financial journey with Billang",
-        desc: "Have everything in one place to manage your finances easily",
-        button: true,
-    },
-];
-
-export function Onboarding() {
-    return (
-        <View className="pt-[150px] items-center justify-center gap-[10px]">
-            <FlatList
-                data={onboardingList}
-                renderItem={({ item }) => <OnboardingItem item={item} />}
-                horizontal
-                showsHorizontalScrollIndicator
-                pagingEnabled
-                bounces={false}
-            />
-        </View>
-    );
-}
-
-function OnboardingItem({ item }: any) {
-    const { width } = useWindowDimensions();
-
-    function test() {
-        router.replace("/");
-    }
-
-    return (
-        <View
-            className="items-center gap-5 border border-red-500"
-            style={[{ width }]}
-        >
-            <Text className="font-lexendBold text-center text-[24px]">
-                {item.title}
-            </Text>
-            <Text className="font-lexend text-center text-[16px]">
-                {item.desc}
-            </Text>
-            {item.button ? <Button title="Get started" onPress={test} /> : ""}
-        </View>
     );
 }
