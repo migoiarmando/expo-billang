@@ -15,6 +15,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/expo/useColorScheme";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import {
     useFonts,
@@ -83,59 +84,61 @@ function RootLayoutNav() {
     const colorScheme = useColorScheme();
 
     return (
-        <Stack
-            screenOptions={{
-                contentStyle: {
-                    backgroundColor: Colors[colorScheme ?? "light"].background,
-                },
-                navigationBarColor:
-                    colorScheme === "dark"
-                        ? "rgb(0, 0, 0)"
-                        : "rgb(255, 255, 255)",
-            }}
-        >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <Stack
+                screenOptions={{
+                    contentStyle: {
+                        backgroundColor: Colors[colorScheme ?? "light"].background,
+                    },
+                    navigationBarColor:
+                        colorScheme === "dark"
+                            ? "rgb(0, 0, 0)"
+                            : "rgb(255, 255, 255)",
+                }}
+            >
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-            {/* Onboarding */}
-            <Stack.Screen
-                name="onboarding/ob"
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="onboarding/ob2"
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="onboarding/ob3"
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="onboarding/ob4"
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="onboarding/ob5"
-                options={{
-                    title: "Onboarding 5",
-                    headerShown: false,
-                }}
-            />
-            <Stack.Screen
-                name="onboarding/budget/tailored"
-                options={{
-                    title: "Tailored Budget Method",
-                    headerShown: false,
-                }}
-            />
-            <Stack.Screen
-                name="onboarding/budget/structured"
-                options={{
-                    title: "Structured Budget Method",
-                    headerShown: false,
-                }}
-            />
+                {/* Onboarding */}
+                <Stack.Screen
+                    name="onboarding/ob"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="onboarding/ob2"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="onboarding/ob3"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="onboarding/ob4"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="onboarding/ob5"
+                    options={{
+                        title: "Onboarding 5",
+                        headerShown: false,
+                    }}
+                />
+                <Stack.Screen
+                    name="onboarding/budget/tailored"
+                    options={{
+                        title: "Tailored Budget Method",
+                        headerShown: false,
+                    }}
+                />
+                <Stack.Screen
+                    name="onboarding/budget/structured"
+                    options={{
+                        title: "Structured Budget Method",
+                        headerShown: false,
+                    }}
+                />
 
-            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-        </Stack>
+                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+            </Stack>
+        </GestureHandlerRootView>
     );
 }
