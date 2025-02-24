@@ -33,7 +33,7 @@ import Animated, {
 import {
     Gesture,
     GestureDetector,
-    GestureHandlerRootView,
+    /*GestureHandlerRootView,*/
 } from "react-native-gesture-handler";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -66,12 +66,12 @@ const BudgetTypeSelectorModal: React.FC<BudgetTypeSelectorModalProps> = ({
         "worklet";
         active.value = destination !== SCREEN_HEIGHT;
         translateY.value = withSpring(destination, SPRING_CONFIG);
-    }, []);
+    }, [active, translateY]);
 
     const handleClose = useCallback(() => {
         scrollTo(SCREEN_HEIGHT);
         runOnJS(onClose)();
-    }, [onClose]);
+    }, [onClose, scrollTo]);
 
     React.useEffect(() => {
         if (isVisible) {
