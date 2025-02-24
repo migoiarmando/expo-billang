@@ -81,7 +81,7 @@ const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
         activeOpacity={0.7}
     >
         <View style={styles.addBudgetContent}>
-            <Plus size={24} color="#010101" />
+            <Plus size={24} color="#828282" />
             <Text style={styles.addBudgetText}>Add Budget</Text>
         </View>
     </TouchableOpacity>
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
         fontFamily: "Lexend",
         fontWeight: "400",
         letterSpacing: -0.48,
-        color: "#000",
+        color: "#2B3854",
     },
     headerIcons: {
         flexDirection: "row",
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
         borderStyle: "dashed",
         borderColor: "#dadada",
         borderRadius: 12,
-        padding: 40,
+        padding: 50,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 8,
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     addBudgetText: {
-        color: "#010101",
+        color: "#828282",
         fontFamily: "Lexend_400Regular",
         fontSize: 20,
     },

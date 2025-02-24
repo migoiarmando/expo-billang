@@ -14,7 +14,13 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React from "react";
-import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ViewStyle,
+    DimensionValue,
+} from "react-native";
 import { useFonts, Lexend_500Medium } from "@expo-google-fonts/lexend";
 import { History } from "lucide-react-native";
 
@@ -45,10 +51,10 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
         return null;
     }
 
-    const dynamicStripStyle = {
+    const dynamicStripStyle: ViewStyle = {
         height: stripHeight,
         backgroundColor: stripColor,
-        width: "100%",
+        width: "100%" as DimensionValue,
         ...stripStyle,
     };
 
@@ -110,7 +116,7 @@ const styles = StyleSheet.create({
     },
     budgetName: {
         fontSize: 18,
-        color: "#000",
+        color: "#2B3854",
     },
     amountContainer: {
         flexDirection: "row",
@@ -120,14 +126,14 @@ const styles = StyleSheet.create({
     },
     currency: {
         fontSize: 24,
-        color: "#000",
-        fontFamily: "Lexend_500Medium",
+        color: "#2B3854",
+        fontFamily: "Lexend_300Light",
     },
     amount: {
         fontSize: 40,
         fontWeight: "300",
-        color: "#000",
-        fontFamily: "Lexend_500Medium",
+        color: "#2B3854",
+        fontFamily: "Lexend_300Light",
     },
     progressContainer: {
         backgroundColor: "#eaeaea",
@@ -147,14 +153,14 @@ const styles = StyleSheet.create({
     spentText: {
         fontSize: 14,
         fontWeight: "300",
-        color: "#010101",
-        fontFamily: "Lexend_500Medium",
+        color: "#929292",
+        fontFamily: "Lexend_300Light",
     },
     percentageText: {
         fontSize: 16,
         fontWeight: "300",
-        color: "#010101",
-        fontFamily: "Lexend_500Medium",
+        color: "#929292",
+        fontFamily: "Lexend_300Light",
     },
 });
 
