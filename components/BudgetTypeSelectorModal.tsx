@@ -62,11 +62,14 @@ const BudgetTypeSelectorModal: React.FC<BudgetTypeSelectorModalProps> = ({
         "default" | "structured" | null
     >(null);
 
-    const scrollTo = useCallback((destination: number) => {
-        "worklet";
-        active.value = destination !== SCREEN_HEIGHT;
-        translateY.value = withSpring(destination, SPRING_CONFIG);
-    }, [active, translateY]);
+    const scrollTo = useCallback(
+        (destination: number) => {
+            "worklet";
+            active.value = destination !== SCREEN_HEIGHT;
+            translateY.value = withSpring(destination, SPRING_CONFIG);
+        },
+        [active, translateY],
+    );
 
     const handleClose = useCallback(() => {
         scrollTo(SCREEN_HEIGHT);
