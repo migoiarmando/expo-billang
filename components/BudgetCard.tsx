@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------------------------------------------------
 
-    Last edited: 
+    Last edited:
         Miguel Armand B. Sta. Ana [Feb 23, 2025]
 
     Company: github.com/codekada
@@ -14,7 +14,13 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React from "react";
-import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ViewStyle,
+    DimensionValue,
+} from "react-native";
 import { useFonts, Lexend_500Medium } from "@expo-google-fonts/lexend";
 import { History } from "lucide-react-native";
 
@@ -32,9 +38,8 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     name,
     amount,
     spent,
-    percentage,
     stripColor = "#107DB74D",
-    stripHeight = 15,
+    stripHeight = 12,
     stripStyle,
 }) => {
     let [fontsLoaded] = useFonts({
@@ -45,10 +50,15 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
         return null;
     }
 
-    const dynamicStripStyle = {
+    const amountNumber = parseFloat(amount.replace(/,/g, ""));
+    const spentNumber = parseFloat(spent.replace(/,/g, ""));
+
+    const percentage = Math.min((spentNumber / amountNumber) * 100, 100);
+
+    const dynamicStripStyle: ViewStyle = {
         height: stripHeight,
         backgroundColor: stripColor,
-        width: "100%",
+        width: "100%" as DimensionValue,
         ...stripStyle,
     };
 
@@ -65,7 +75,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                     >
                         {name}
                     </Text>
-                    <History size={20} color="#666" />
+                    <History size={18} color="#666" />
                 </View>
                 <View style={styles.amountContainer}>
                     <Text style={styles.currency}>₱</Text>
@@ -98,43 +108,47 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 3,
         overflow: "hidden",
+        height: 150,
     },
     contentContainer: {
-        padding: 20,
+        padding: 12,
     },
     budgetHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: 2,
+        paddingLeft: 7,
     },
     budgetName: {
-        fontSize: 18,
-        color: "#000",
+        fontSize: 19,
+        color: "#2B3854",
     },
     amountContainer: {
         flexDirection: "row",
         alignItems: "baseline",
         gap: 3,
-        marginBottom: 15,
+        marginBottom: 4,
+        paddingLeft: 9,
+        marginTop: -4,
     },
     currency: {
-        fontSize: 24,
-        color: "#000",
-        fontFamily: "Lexend_500Medium",
+        fontSize: 22,
+        color: "#2B3854",
+        fontFamily: "Lexend_300Light",
     },
     amount: {
-        fontSize: 40,
+        fontSize: 36,
         fontWeight: "300",
-        color: "#000",
-        fontFamily: "Lexend_500Medium",
+        color: "#2B3854",
+        fontFamily: "Lexend_400Regular",
     },
     progressContainer: {
         backgroundColor: "#eaeaea",
         borderRadius: 99,
         height: 12,
         overflow: "hidden",
-        marginBottom: 8,
+        marginBottom: 6,
     },
     progressBar: {
         backgroundColor: "#5fa7c6",
@@ -145,16 +159,16 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     spentText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: "300",
-        color: "#010101",
-        fontFamily: "Lexend_500Medium",
+        color: "#929292",
+        fontFamily: "Lexend_300Light",
     },
     percentageText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: "300",
-        color: "#010101",
-        fontFamily: "Lexend_500Medium",
+        color: "#929292",
+        fontFamily: "Lexend_300Light",
     },
 });
 
