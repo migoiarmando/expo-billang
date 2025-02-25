@@ -15,7 +15,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/expo/useColorScheme";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import {
     useFonts,
@@ -88,7 +88,8 @@ function RootLayoutNav() {
             <Stack
                 screenOptions={{
                     contentStyle: {
-                        backgroundColor: Colors[colorScheme ?? "light"].background,
+                        backgroundColor:
+                            Colors[colorScheme ?? "light"].background,
                     },
                     navigationBarColor:
                         colorScheme === "dark"
@@ -136,8 +137,6 @@ function RootLayoutNav() {
                         headerShown: false,
                     }}
                 />
-
-                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
             </Stack>
         </GestureHandlerRootView>
     );

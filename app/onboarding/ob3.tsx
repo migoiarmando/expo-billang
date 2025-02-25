@@ -62,7 +62,7 @@ export default function OnboardingPage3() {
                     </Text>
                 </View>
 
-                <View className="h-[120px] flex items-center justify-end gap-3">
+                <View className="animate-pulse h-[120px] flex items-center justify-end gap-3">
                     <FontAwesome5
                         name="fingerprint"
                         size={24}

@@ -15,6 +15,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { Link } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { ChevronDown, User } from "lucide-react-native";
 import { View, Text, Button, TextInput, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,13 +24,15 @@ export default function OnboardingPage4() {
     return (
         <SafeAreaView>
             <View className="pt-[100px] h-screen flex items-center justify-start">
-                <Text className="text-[24px] font-lexendBold text-[#0075B2]">
-                    Set up Profile
+                <Text className="w-[250px] text-center text-[24px] font-lexendBold text-[#0075B2]">
+                    We'd love to know your name
                 </Text>
 
                 <View className="mb-5 mt-[100px] flex items-center justify-center">
-                    <View className="w-[100px] h-[100px] bg-bgBorder-2 rounded-full flex items-center justify-center">
-                        <User color="#C9C9C9" size={50} />
+                    <View className="w-[120px] h-[120px] bg-bgBorder-1 rounded-full flex items-center justify-center">
+                        <View className="bg-bgBorder-2 rounded-full p-8">
+                            <User color="#C9C9C9" size={50} />
+                        </View>
                     </View>
 
                     {/* Form */}
@@ -66,6 +69,8 @@ export default function OnboardingPage4() {
                     </Pressable>
                 </Link>
             </View>
+
+            <StatusBar style="dark" />
         </SafeAreaView>
     );
 }

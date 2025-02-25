@@ -17,10 +17,12 @@
 import { Input } from "@/components/input";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import {
     ArrowLeft,
     Calendar,
     ChevronDown,
+    ChevronLeft,
     ChevronRight,
     Info,
     Pencil,
@@ -36,7 +38,7 @@ export default function TailoredBudgetScreen() {
             <View className="mx-[20px] h-screen flex gap-5">
                 <Link href="/onboarding/ob5" asChild>
                     <Pressable className="mt-[30px]">
-                        <ArrowLeft color={"black"} size={20} />
+                        <ChevronLeft color={"black"} size={20} />
                     </Pressable>
                 </Link>
 
@@ -53,7 +55,7 @@ export default function TailoredBudgetScreen() {
                 </View>
 
                 <View className="py-5 flex items-center">
-                    <Text className="underline font-lexend text-[20px] text-gray-600">
+                    <Text className="font-lexend text-[16px] text-gray-700">
                         First Budget
                     </Text>
                     <Text className="text-[64px] text-[#2B3854] font-lexend">
@@ -153,6 +155,8 @@ export default function TailoredBudgetScreen() {
                     </Pressable>
                 </Link>
             </View>
+
+            <StatusBar style="dark" />
         </SafeAreaView>
     );
 }

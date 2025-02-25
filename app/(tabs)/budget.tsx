@@ -87,7 +87,7 @@ const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
     </TouchableOpacity>
 );
 
-const BudgetScreen = () => {
+export default function BudgetScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleAddBudget = () => {
@@ -131,7 +131,7 @@ const BudgetScreen = () => {
             />
         </>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -224,5 +224,3 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
 });
-
-export default BudgetScreen;

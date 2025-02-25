@@ -16,7 +16,13 @@
 
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { ArrowLeft, ChevronRight, Info } from "lucide-react-native";
+import { StatusBar } from "expo-status-bar";
+import {
+    ArrowLeft,
+    ChevronLeft,
+    ChevronRight,
+    Info,
+} from "lucide-react-native";
 import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -26,7 +32,7 @@ export default function OnboardingPage5() {
             <View className="mx-[20px] h-screen">
                 <Link href="/onboarding/ob4" asChild>
                     <Pressable className="mt-[30px]">
-                        <ArrowLeft color={"black"} size={20} />
+                        <ChevronLeft color={"black"} size={20} />
                     </Pressable>
                 </Link>
 
@@ -104,6 +110,8 @@ export default function OnboardingPage5() {
                     </View>
                 </View>
             </View>
+
+            <StatusBar style="dark" />
         </SafeAreaView>
     );
 }
