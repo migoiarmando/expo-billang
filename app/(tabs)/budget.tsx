@@ -1,6 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
+        John Bicierro [Feb 25, 2025]
         Miguel Armand B. Sta. Ana [Feb 23, 2025]
 
     Company: github.com/codekada
@@ -9,8 +10,9 @@
     <Ticket Info>
     Feature ID: BL-2
     Feature Title: Budget Screen
-    Description:  The Budget Screen provides an overview of user's budgets with a searchable list of budgets.
-                  Users can add new budgets by selecting between default or structured budget.
+    Description:
+        - The Budget Screen provides an overview of user's budgets with a searchable list of budgets.
+        - Users can add new budgets by selecting between default or structured budget.
 
 -------------------------------------------------------------------------------------------------------------- */
 

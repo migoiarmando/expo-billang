@@ -9,7 +9,8 @@
     <Ticket Info>
     Feature ID: BL-2
     Feature Title: Budget Screen
-    Description:  This is the modal that pops up when you tap the Add Budget on the Budget Screen.
+    Description:  
+        - This is the modal that pops up when you tap the Add Budget on the Budget Screen.
 
 -------------------------------------------------------------------------------------------------------------- */
 

@@ -1,9 +1,3 @@
-/*
-
-
-
-*/
-
 import {
     DarkTheme,
     DefaultTheme,
