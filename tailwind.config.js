@@ -33,9 +33,9 @@ module.exports = {
             system: {
                 red: "#FD7474",
                 "red-1": "#FFE0E0",
-                yellow: "#E5F7FF",
+                yellow: "#F7861E",
                 "yellow-1": "#FFF3E0",
-                green: "#5FA7C6",
+                green: "#80B154",
                 "green-1": "#D1F2E4",
             },
             white: "#FFFFFF",
