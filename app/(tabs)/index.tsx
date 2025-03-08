@@ -48,27 +48,40 @@ export default function HomeScreen() {
         null,
     );
 
+    const [user, setUser] = useState();
+
+    // Onboarding
     useEffect(() => {
         if (!success) return;
 
         (async () => {
-            await db.delete(user_tb);
+            // Notice: comment this if you want to see onboarding
+            //await db.delete(user_tb);
 
+            // Insert user
             await db.insert(user_tb).values([
                 {
-                    name: "John",
+                    name: "",
                     onboarding: false,
                 },
             ]);
 
             const users = await db.select().from(user_tb);
+            const user = users[0];
             setItems(users);
-            if (users[0].onboarding === false) {
-                // router.replace("/onboarding/ob");
+
+            if (user.onboarding === false) {
+                router.replace("/onboarding/ob");
+                return;
             }
+
+            console.log(
+                `[debug] name: ${user.name} | onboarding: ${user.onboarding}`,
+            );
         })();
     }, [success]);
 
+    // States
     if (error) {
         return (
             <View>
@@ -76,7 +89,6 @@ export default function HomeScreen() {
             </View>
         );
     }
-
     if (!success) {
         return (
             <View>
@@ -84,7 +96,6 @@ export default function HomeScreen() {
             </View>
         );
     }
-
     if (items === null || items.length === 0) {
         return (
             <View>
@@ -95,7 +106,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
-            <View style={{ marginHorizontal: 24 }}>
+            <View className="mt-[30px]" style={{ marginHorizontal: 20 }}>
                 {/* Top Navigation */}
                 <View
                     style={{
@@ -105,7 +116,7 @@ export default function HomeScreen() {
                     }}
                 >
                     <Text className="font-lexend text-[24px]">
-                        Good Day, User!
+                        Good Day, {items[0].name}!
                     </Text>
                     <View
                         style={{
@@ -136,26 +147,7 @@ export default function HomeScreen() {
                 </View>
 
                 {/* Home Content */}
-                {/* <SearchBar /> */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        width: "100%",
-                        marginTop: 20,
-                        borderRadius: 99,
-                        paddingVertical: 1,
-                        paddingHorizontal: 20,
-                        backgroundColor: "#F5F5F5",
-                    }}
-                >
-                    <Search size={20} color="#666" />
-                    <TextInput
-                        className="font-lexend text-[16px] text-[#666] font-[400]"
-                        placeholder="Search transaction"
-                        placeholderTextColor="#666"
-                    />
-                </View>
+
                 {/* Budget Card */}
                 <View
                     style={{

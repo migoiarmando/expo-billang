@@ -117,15 +117,17 @@ function RootLayoutNav() {
                         headerShown: false,
                     }}
                 />
+
+                {/* Edit Budget */}
                 <Stack.Screen
-                    name="onboarding/budget/tailored"
+                    name="budget/editbudget/tailored"
                     options={{
                         title: "Tailored Budget Method",
                         headerShown: false,
                     }}
                 />
                 <Stack.Screen
-                    name="onboarding/budget/structured"
+                    name="budget/editbudget/structured"
                     options={{
                         title: "Structured Budget Method",
                         headerShown: false,

@@ -66,6 +66,11 @@ npx expo lint
 npx expo-doctor
 ```
 
+### assets/images
+1. adaptive-icon - icon app
+2. 
+
+
 ### references
 
 [setup environment](https://docs.expo.dev/get-started/set-up-your-environment/)

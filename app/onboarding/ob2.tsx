@@ -32,13 +32,12 @@ import { useAssets } from "expo-asset";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function OnboardingPage2() {
-    function nextRoute() {
-        console.log("press");
-        router.replace("/onboarding/ob3");
-    }
     return (
         <SafeAreaView className="h-[500px] bg-[#0075B2]">
-            <Pressable onPress={nextRoute} className="h-screen">
+            <Pressable
+                onPress={() => router.replace("/onboarding/ob3")}
+                className="h-screen"
+            >
                 <View className="h-[459px] w-full flex items-center justify-end overflow-hidden">
                     <Image
                         source={require("@/assets/onboarding/ob1.png")}

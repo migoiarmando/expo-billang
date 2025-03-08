@@ -14,13 +14,42 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
+import React, { useState } from "react";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown, User } from "lucide-react-native";
 import { View, Text, Button, TextInput, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { user_tb } from "@/database/schema";
+import { db } from "@/database";
+
+const currencies = [
+    { id: "PHP", name: "Philippine Peso (₱)" },
+    { id: "USD", name: "US Dollar ($)" },
+    { id: "EUR", name: "Euro (€)" },
+    { id: "JPY", name: "Japanese Yen (¥)" },
+    { id: "GBP", name: "British Pound (£)" },
+];
 
 export default function OnboardingPage4() {
+    const [name, setName] = useState("");
+    const [currency, setCurrency] = useState("Philippine Peso ($)");
+
+    // Save name and currency in database
+    async function OnUserContinue() {
+        if (!name) {
+            console.log("[debug] OnUserContinue: no user name value");
+            return;
+        }
+
+        // Save user information
+        await db.update(user_tb).set({
+            name: name,
+        });
+
+        console.log(`[debug] name: ${name} | currency: ${currency}`);
+    }
+
     return (
         <SafeAreaView>
             <View className="pt-[100px] h-screen flex items-center justify-start">
@@ -45,6 +74,10 @@ export default function OnboardingPage4() {
                                 placeholder="John"
                                 placeholderTextColor="#999999"
                                 className="font-lexendBold text-[24px] underline"
+                                value={name}
+                                onChangeText={(text) => {
+                                    setName(text);
+                                }}
                             />
                         </View>
 
@@ -53,7 +86,7 @@ export default function OnboardingPage4() {
                         </Text>
                         <View className="flex flex-row items-center gap-1">
                             <Text className="font-lexendBold text-[24px] text-center text-[#999999]">
-                                Philippine Peso ($)
+                                {currency}
                             </Text>
                             <ChevronDown color="#71717a" size={16} />
                         </View>
@@ -64,7 +97,10 @@ export default function OnboardingPage4() {
                 </View>
 
                 <Link href="/onboarding/ob5" asChild>
-                    <Pressable className="py-3 px-[80px] bg-[#0075B2] rounded-full">
+                    <Pressable
+                        onPress={OnUserContinue}
+                        className="py-3 px-[80px] bg-[#0075B2] rounded-full"
+                    >
                         <Text className="text-white font-lexend">Continue</Text>
                     </Pressable>
                 </Link>

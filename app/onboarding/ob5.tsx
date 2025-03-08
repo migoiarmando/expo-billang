@@ -41,7 +41,7 @@ export default function OnboardingPage5() {
                 </Text>
                 <View className="mt-[100px] flex gap-5">
                     {/* Tailored */}
-                    <Link href="/onboarding/budget/tailored" asChild>
+                    <Link href="/budget/editbudget/tailored" asChild>
                         <Pressable className="overflow-hidden bg-bgBorder-1 rounded-lg px-[20px] py-[15px] flex flex-row items-center justify-between">
                             <Image
                                 source={require("@/assets/onboarding/vector0.png")}
@@ -69,7 +69,7 @@ export default function OnboardingPage5() {
                     </Link>
 
                     {/* Structured */}
-                    <Link href="/onboarding/budget/structured" asChild>
+                    <Link href="/budget/editbudget/structured" asChild>
                         <Pressable className="overflow-hidden bg-bgBorder-1 rounded-lg px-[20px] py-[15px] flex flex-row items-center justify-between">
                             <Image
                                 source={require("@/assets/onboarding/vector1.png")}
