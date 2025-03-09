@@ -3,15 +3,15 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
-        Romar Castro [Feb 27, 2025]
+        Romar Castro [Mar 9, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
 
     <Ticket Info>
-    Feature ID: BL-3
-    Feature Title: Home Screen
-    Description: Home screen for the app oroviding the user an overview of all the details
+    Feature ID: BL-5
+    Feature Title: Home Screen v2
+    Description: Home screen for the app providing the user an overview of all the details
 
 
     npm run start
@@ -20,6 +20,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import {
+    StyleSheet,
     Platform,
     Pressable,
     Text,
@@ -40,6 +41,9 @@ import { Image } from "expo-image";
 import React from "react";
 import { db } from "@/database";
 import { User, Bell, Search, Filter, History } from "lucide-react-native";
+
+// Reusable Components
+import BudgetCard from "@/components/BudgetCard";
 
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
@@ -106,7 +110,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
-            <View className="mt-[30px]" style={{ marginHorizontal: 20 }}>
+            <View style={{ marginHorizontal: 20, marginTop: 20 }}>
                 {/* Top Navigation */}
                 <View
                     style={{
@@ -115,33 +119,21 @@ export default function HomeScreen() {
                         alignItems: "center",
                     }}
                 >
-                    <Text className="font-lexend text-[24px]">
+                    <Text className="font-lexend text-[24px] text-[#2B3854]">
                         Good Day, {items[0].name}!
                     </Text>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            gap: 5,
-                        }}
-                    >
-                        <TouchableOpacity
-                            style={{
-                                backgroundColor: "#E5F7FF",
-                                borderRadius: 50,
-                                padding: 10,
-                            }}
-                        >
-                            <User color="#5FA7C6" size={20} />
+                    <View style={styles.headerIcons}>
+                        <TouchableOpacity>
+                            <Image
+                                source={require("@/assets/images/usericon.png")}
+                                style={styles.icon}
+                            />
                         </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={{
-                                backgroundColor: "#E5F7FF",
-                                borderRadius: 50,
-                                padding: 10,
-                            }}
-                        >
-                            <Bell color="#5FA7C6" size={20} />
+                        <TouchableOpacity>
+                            <Image
+                                source={require("@/assets/images/notification.png")}
+                                style={styles.icon}
+                            />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -151,85 +143,15 @@ export default function HomeScreen() {
                 {/* Budget Card */}
                 <View
                     style={{
-                        backgroundColor: "#F5F5F5",
-                        width: "100%",
-                        height: 150,
-                        borderRadius: 12,
-                        marginVertical: 10,
-                        gap: 10,
+                        marginVertical: 15,
                     }}
                 >
-                    <View
-                        style={{
-                            backgroundColor: "#DBF2FF",
-                            height: 10,
-                            borderRadius: 12,
-                        }}
+                    <BudgetCard
+                        name="Budget Name"
+                        amount="1,000"
+                        spent="0"
+                        percentage={1}
                     />
-                    <View style={{ paddingVertical: 5, paddingHorizontal: 12 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            {/* Dynamic Budget Name */}
-                            <Text className="font-lexendSemiBold text-[16px]">
-                                Budget Name
-                            </Text>
-                            {/* Clickable */}
-                            <History color="#8D8F9A" width={15} />
-                        </View>
-
-                        <View className="flex flex-row">
-                            {/* Dynamic Currency */}
-                            <Text
-                                className="font-lexend font-thin text-[#2B3854] "
-                                style={{
-                                    fontSize: 24,
-                                    lineHeight: 60,
-                                }}
-                            >
-                                ₱
-                            </Text>
-                            {/* Dynamic Budget Amount */}
-                            <Text
-                                className="font-lexend font-thin text-[#2B3854]"
-                                style={{ fontSize: 40 }}
-                                numberOfLines={1}
-                            >
-                                0
-                            </Text>
-                        </View>
-                    </View>
-
-                    {/* Progress Bar */}
-                    <View
-                        style={{
-                            backgroundColor: "#E3E3E3",
-                            height: 12,
-                            borderRadius: 12,
-                            marginHorizontal: 12,
-                            marginTop: -18,
-                        }}
-                    />
-                    <View
-                        className="flex-row justify-between"
-                        style={{ paddingHorizontal: 12, marginTop: -8 }}
-                    >
-                        <Text
-                            className="font-lexend font-thin text-gray-700"
-                            style={{ fontSize: 14 }}
-                        >
-                            ₱0 spent
-                        </Text>
-                        <Text
-                            className="font-lexend font-thin text-gray-700"
-                            style={{ fontSize: 14 }}
-                        >
-                            0%
-                        </Text>
-                    </View>
                 </View>
 
                 {/* Expenses and Income  */}
@@ -242,21 +164,26 @@ export default function HomeScreen() {
                     <View
                         className="flex-row justify-between gap-2 "
                         style={{
-                            backgroundColor: "#F5F5F5",
+                            backgroundColor: "#FFE9E9",
                             width: "48%",
-                            height: 70,
+                            height: 65,
                             borderRadius: 12,
                             padding: 12,
                             alignContent: "center",
                         }}
                     >
                         <View>
-                            <Text className="font-lexendSemiBold">
+                            <Text
+                                className="font-lexendSemiBold text-[#FE6B6B]"
+                                style={{
+                                    color: "#FD7474",
+                                }}
+                            >
                                 Expenses
                             </Text>
                             <Text
                                 className="font-lexend text-gray-700"
-                                style={{ fontSize: 12 }}
+                                style={{ fontSize: 12, color: "#929292" }}
                             >
                                 0 Transactions
                             </Text>
@@ -277,18 +204,26 @@ export default function HomeScreen() {
                     <View
                         className="flex-row justify-between gap-2"
                         style={{
-                            backgroundColor: "#F5F5F5",
+                            backgroundColor: "#E8FFE8",
+
                             width: "48%",
-                            height: 70,
+                            height: 65,
                             borderRadius: 12,
                             padding: 12,
                         }}
                     >
                         <View>
-                            <Text className="font-lexendSemiBold">Income</Text>
                             <Text
-                                className="font-lexend text-gray-700"
-                                style={{ fontSize: 12 }}
+                                className="font-lexendSemiBold"
+                                style={{
+                                    color: "#67AC69",
+                                }}
+                            >
+                                Income
+                            </Text>
+                            <Text
+                                className="font-lexend"
+                                style={{ fontSize: 12, color: "#929292" }}
                             >
                                 0 Transactions
                             </Text>
@@ -360,11 +295,18 @@ export default function HomeScreen() {
                             style={{
                                 backgroundColor: "#F8F8F8",
                                 borderRadius: 99,
-                                paddingVertical: 5,
-                                paddingHorizontal: 10,
+                                paddingVertical: 8,
+                                paddingHorizontal: 8,
                             }}
                         >
-                            <Filter color="#8D8F9A" width={15} />
+                            <Image
+                                source={require("@/assets/home/filter.svg")}
+                                style={{
+                                    width: 12,
+                                    height: 12,
+                                    resizeMode: "contain",
+                                }}
+                            />
                         </TouchableOpacity>
                     </View>
 
@@ -384,7 +326,7 @@ export default function HomeScreen() {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 marginVertical: 10,
-                                height: 180,
+                                height: 280,
                                 borderColor: "#D9D9D9",
                                 borderWidth: 2,
                                 borderRadius: 10,
@@ -420,7 +362,7 @@ export default function HomeScreen() {
                         </View>
                     </View>
                 </View>
-                <View
+                {/* <View
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
@@ -469,9 +411,20 @@ export default function HomeScreen() {
                             Add Transactions
                         </Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
             <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
         </SafeAreaView>
     );
 }
+const styles = StyleSheet.create({
+    icon: {
+        width: 32,
+        height: 32,
+        resizeMode: "contain",
+    },
+    headerIcons: {
+        flexDirection: "row",
+        gap: 12,
+    },
+});

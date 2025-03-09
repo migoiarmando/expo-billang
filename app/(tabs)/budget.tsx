@@ -83,8 +83,8 @@ const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
         activeOpacity={0.7}
     >
         <View style={styles.addBudgetContent}>
-            <Plus size={24} color="#828282" />
-            <Text style={styles.addBudgetText}>Add Budget</Text>
+            <Plus size={16} color="#828282" />
+            <Text style={styles.addBudgetText}>Add Budget!</Text>
         </View>
     </TouchableOpacity>
 );
@@ -116,8 +116,8 @@ export default function BudgetScreen() {
                     <View style={styles.budgetList}>
                         <BudgetCard
                             name="Budget Name"
-                            amount="8,000"
-                            spent="20"
+                            amount="1,000"
+                            spent="755"
                             percentage={1}
                         />
                         <AddBudgetButton onPress={handleAddBudget} />
@@ -148,7 +148,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 20,
-        paddingTop: 23,
+        paddingTop: 20,
+        marginTop: 5,
     },
     time: {
         fontFamily: "Lexend",
@@ -173,7 +174,6 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 24,
         fontFamily: "Lexend",
-        fontWeight: "400",
         letterSpacing: -0.48,
         color: "#2B3854",
     },
@@ -218,11 +218,11 @@ const styles = StyleSheet.create({
     addBudgetContent: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 8,
+        gap: 5,
     },
     addBudgetText: {
         color: "#828282",
         fontFamily: "Lexend_400Regular",
-        fontSize: 20,
+        fontSize: 16,
     },
 });

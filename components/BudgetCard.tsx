@@ -1,6 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited:
+        Romar Castro [Mar 9, 2025]
         Miguel Armand B. Sta. Ana [Feb 23, 2025]
 
     Company: github.com/codekada
@@ -16,6 +17,7 @@
 import React from "react";
 import {
     View,
+    Image,
     Text,
     StyleSheet,
     ViewStyle,
@@ -55,17 +57,28 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
     const percentage = Math.min((spentNumber / amountNumber) * 100, 100);
 
-    const dynamicStripStyle: ViewStyle = {
-        height: stripHeight,
-        backgroundColor: stripColor,
-        width: "100%" as DimensionValue,
-        ...stripStyle,
-    };
+    // const dynamicStripStyle: ViewStyle = {
+    //     height: stripHeight,
+    //     backgroundColor: stripColor,
+    //     width: "100%" as DimensionValue,
+    //     ...stripStyle,
+    // };
 
     return (
         <View style={styles.budgetCard}>
-            <View style={dynamicStripStyle} />
+            {/* <View style={dynamicStripStyle} /> */}
             <View style={styles.contentContainer}>
+                <Image
+                    source={require("@/assets/budget-folders/default.png")}
+                    style={{
+                        width: 430,
+                        height: 330,
+                        zIndex: -1,
+                        position: "absolute",
+                        bottom: -180,
+                        left: -50,
+                    }}
+                />
                 <View style={styles.budgetHeader}>
                     <Text
                         style={[
@@ -75,11 +88,20 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                     >
                         {name}
                     </Text>
-                    <History size={18} color="#666" />
+                    <History
+                        color="#8D8F9A"
+                        width={15}
+                        style={{
+                            position: "absolute",
+                            top: 25,
+                            right: 5,
+                        }}
+                    />
                 </View>
                 <View style={styles.amountContainer}>
-                    <Text style={styles.currency}>₱</Text>
-                    <Text style={styles.amount}>{amount}</Text>
+                    <Text style={styles.amount} numberOfLines={1}>
+                        ₱{amount}
+                    </Text>
                 </View>
                 <View style={styles.progressContainer}>
                     <View
@@ -100,13 +122,8 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
 const styles = StyleSheet.create({
     budgetCard: {
-        borderRadius: 12,
-        backgroundColor: "#fff",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        borderRadius: 14,
+        backgroundColor: "#EDEDED",
         overflow: "hidden",
         height: 150,
     },
@@ -119,9 +136,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 2,
         paddingLeft: 7,
+        paddingVertical: 5,
+        paddingHorizontal: 12,
     },
     budgetName: {
-        fontSize: 19,
+        fontSize: 14,
         color: "#2B3854",
     },
     amountContainer: {
@@ -130,7 +149,6 @@ const styles = StyleSheet.create({
         gap: 3,
         marginBottom: 4,
         paddingLeft: 9,
-        marginTop: -4,
     },
     currency: {
         fontSize: 22,
@@ -138,7 +156,7 @@ const styles = StyleSheet.create({
         fontFamily: "Lexend_300Light",
     },
     amount: {
-        fontSize: 36,
+        fontSize: 32,
         fontWeight: "300",
         color: "#2B3854",
         fontFamily: "Lexend_400Regular",
