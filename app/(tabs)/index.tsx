@@ -33,7 +33,7 @@ import { StatusBar } from "expo-status-bar";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
-import { user_tb } from "@/database/schema";
+import { budget_tb, user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
@@ -44,6 +44,7 @@ import { User, Bell, Search, Filter, History } from "lucide-react-native";
 
 // Reusable Components
 import BudgetCard from "@/components/BudgetCard";
+import { eq } from "drizzle-orm";
 
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
@@ -52,7 +53,9 @@ export default function HomeScreen() {
         null,
     );
 
-    const [user, setUser] = useState();
+    const [budget, setBudget] = useState<
+        (typeof budget_tb.$inferSelect)[] | null
+    >(null);
 
     // Onboarding
     useEffect(() => {
@@ -65,11 +68,17 @@ export default function HomeScreen() {
             // Insert user
             await db.insert(user_tb).values([
                 {
-                    name: "",
                     onboarding: false,
                 },
             ]);
 
+            // Budget
+            const budget = await db.select().from(budget_tb);
+            setBudget(budget);
+
+            console.log(budget);
+
+            // User
             const users = await db.select().from(user_tb);
             const user = users[0];
             setItems(users);
@@ -140,6 +149,8 @@ export default function HomeScreen() {
 
                 {/* Home Content */}
 
+                {budget && <></>}
+
                 {/* Budget Card */}
                 <View
                     style={{
@@ -147,8 +158,8 @@ export default function HomeScreen() {
                     }}
                 >
                     <BudgetCard
-                        name="Budget Name"
-                        amount="1,000"
+                        name={"Test"}
+                        amount={1000}
                         spent="0"
                         percentage={1}
                     />
@@ -417,6 +428,7 @@ export default function HomeScreen() {
         </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
     icon: {
         width: 32,
@@ -428,3 +440,7 @@ const styles = StyleSheet.create({
         gap: 12,
     },
 });
+
+function EmptyScreen() {
+    return;
+}

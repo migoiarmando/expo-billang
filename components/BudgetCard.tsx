@@ -28,7 +28,7 @@ import { History } from "lucide-react-native";
 
 export interface BudgetCardProps {
     name: string;
-    amount: string;
+    amount: number;
     spent: string;
     percentage: number;
     stripColor?: string;
@@ -52,10 +52,9 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
         return null;
     }
 
-    const amountNumber = parseFloat(amount.replace(/,/g, ""));
     const spentNumber = parseFloat(spent.replace(/,/g, ""));
 
-    const percentage = Math.min((spentNumber / amountNumber) * 100, 100);
+    const percentage = Math.min((spentNumber / amount) * 100, 100);
 
     // const dynamicStripStyle: ViewStyle = {
     //     height: stripHeight,

@@ -15,7 +15,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { db } from "@/database";
-import { user_tb } from "@/database/schema";
+import { budget_tb, user_tb } from "@/database/schema";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -35,6 +35,7 @@ import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StructuredScreen() {
+    const [onboarding, setOnboarding] = useState();
     const [amount, setAmount] = useState("");
 
     const inputRef = useRef<TextInput>(null); // Create the ref
@@ -42,18 +43,34 @@ export default function StructuredScreen() {
 
     // Save budget
     async function SaveBudget() {
-        // Set the onboarding to true
-        await db.update(user_tb).set({ onboarding: true });
+        try {
+            // Ensure amount is a valid number
+            const numericAmount = parseFloat(amount);
+            if (isNaN(numericAmount)) {
+                console.error("[error] Invalid amount entered:", amount);
+                return;
+            }
 
-        // Save budget details
-        // -- Budget name
-        // -- Budget method type
-        // -- First transaction (Amount)
-        console.log(`[debug] amount: ${amount} | title: ${title}`);
+            // Set onboarding to true for the specific user (modify where clause as needed)
+            await db.update(user_tb).set({ onboarding: true });
 
-        // Route home page
-        router.replace("/");
-        return;
+            // Insert budget details
+            await db.insert(budget_tb).values([
+                {
+                    title: title.trim(), // Trim to remove unnecessary spaces
+                    amount: numericAmount,
+                },
+            ]);
+
+            console.log(
+                `[debug] amount: ${numericAmount} | title: ${title.trim()}`,
+            );
+
+            // Redirect to home page
+            router.replace("/");
+        } catch (error) {
+            console.error("[error] Failed to save budget:", error);
+        }
     }
 
     // Ask me later
@@ -62,7 +79,7 @@ export default function StructuredScreen() {
         await db.update(user_tb).set({ onboarding: true });
 
         // Route home page
-        //router.replace("/");
+        router.replace("/");
         return;
     }
 
@@ -71,7 +88,7 @@ export default function StructuredScreen() {
             <View className="mx-[20px] h-screen flex">
                 {/* Header */}
                 <View className="mt-[30px] flex-row items-center">
-                    <Link href="/onboarding/ob5" asChild>
+                    <Link href=".." asChild>
                         <Pressable>
                             <ChevronLeft color={"black"} size={20} />
                         </Pressable>

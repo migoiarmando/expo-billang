@@ -14,7 +14,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown, User } from "lucide-react-native";
@@ -34,6 +34,14 @@ const currencies = [
 export default function OnboardingPage4() {
     const [name, setName] = useState("");
     const [currency, setCurrency] = useState("Philippine Peso ($)");
+    const inputRef = useRef<TextInput>(null);
+
+    useEffect(() => {
+        // Automatically open the keyboard when the screen is mounted
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 500); // Adding delay for smooth transition
+    }, []);
 
     // Save name and currency in database
     async function OnUserContinue() {
@@ -71,7 +79,8 @@ export default function OnboardingPage4() {
                                 I'm
                             </Text>
                             <TextInput
-                                placeholder="John"
+                                ref={inputRef}
+                                placeholder="Smith"
                                 placeholderTextColor="#999999"
                                 className="font-lexendBold text-[24px] underline"
                                 value={name}

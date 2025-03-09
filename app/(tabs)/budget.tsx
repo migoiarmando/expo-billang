@@ -32,6 +32,7 @@ import { Search, Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
+import { router } from "expo-router";
 
 const CustomStatusBar = () => (
     <View style={styles.statusBar}>
@@ -106,6 +107,8 @@ export default function BudgetScreen() {
         // Handle the selected budget type here
     };
 
+    // Fetch data
+
     return (
         <>
             <SafeAreaView style={styles.container}>
@@ -116,7 +119,7 @@ export default function BudgetScreen() {
                     <View style={styles.budgetList}>
                         <BudgetCard
                             name="Budget Name"
-                            amount="1,000"
+                            amount={1000}
                             spent="755"
                             percentage={1}
                         />

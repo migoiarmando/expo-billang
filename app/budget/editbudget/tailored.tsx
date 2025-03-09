@@ -69,7 +69,7 @@ export default function TailoredBudgetScreen() {
             <View className="mx-[20px] h-screen flex">
                 {/* Header */}
                 <View className="mt-[30px] flex-row items-center">
-                    <Link href="/onboarding/ob5" asChild>
+                    <Link href=".." asChild>
                         <Pressable>
                             <ChevronLeft color={"black"} size={20} />
                         </Pressable>
