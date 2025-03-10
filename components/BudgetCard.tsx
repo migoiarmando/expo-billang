@@ -112,7 +112,9 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                 </View>
                 <View style={styles.budgetFooter}>
                     <Text style={styles.spentText}>₱{spent} spent</Text>
-                    <Text style={styles.percentageText}>{percentage}%</Text>
+                    <Text style={styles.percentageText}>
+                        {percentage.toFixed(1)}%
+                    </Text>
                 </View>
             </View>
         </View>
