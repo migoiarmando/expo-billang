@@ -33,6 +33,8 @@ import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
+import UserIcon from "@/assets/images/usericon.svg";
+import NotificationIcon from "@/assets/images/notification.svg";
 
 const CustomStatusBar = () => (
     <View style={styles.statusBar}>
@@ -50,14 +52,8 @@ const Header = () => (
             Budgets
         </Text>
         <View style={styles.headerIcons}>
-            <Image
-                source={require("@/assets/images/usericon.png")}
-                style={styles.icon}
-            />
-            <Image
-                source={require("@/assets/images/notification.png")}
-                style={styles.icon}
-            />
+            <UserIcon width={32} height={32} style={styles.icon} />
+            <NotificationIcon width={32} height={32} style={styles.icon} />
         </View>
     </View>
 );
@@ -110,31 +106,41 @@ export default function BudgetScreen() {
     // Fetch data
 
     return (
-        <>
-            <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+            <ScrollView style={styles.scrollView}>
                 <CustomStatusBar />
                 <Header />
                 <SearchBar />
-                <ScrollView style={styles.scrollView}>
-                    <View style={styles.budgetList}>
-                        <BudgetCard
-                            name="Budget Name"
-                            amount={1000}
-                            spent="755"
-                            percentage={1}
-                        />
-                        <AddBudgetButton onPress={handleAddBudget} />
-                    </View>
-                </ScrollView>
-                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-            </SafeAreaView>
+                <View style={styles.budgetList}>
+                    <BudgetCard
+                        name="A Budget"
+                        amount={1500}
+                        spent="545"
+                        percentage={1}
+                    />
+                    <BudgetCard
+                        name="B Budget"
+                        amount={2500}
+                        spent="545"
+                        percentage={1}
+                    />
+                    <BudgetCard
+                        name="C Budget"
+                        amount={8550}
+                        spent="545"
+                        percentage={1}
+                    />
+                    <AddBudgetButton onPress={handleAddBudget} />
+                </View>
+            </ScrollView>
+            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
 
             <BudgetTypeSelectorModal
                 isVisible={isModalVisible}
                 onClose={handleCloseModal}
                 onSelect={handleSelectBudgetType}
             />
-        </>
+        </View>
     );
 }
 

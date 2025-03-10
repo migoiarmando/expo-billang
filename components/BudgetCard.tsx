@@ -25,6 +25,7 @@ import {
 } from "react-native";
 import { useFonts, Lexend_500Medium } from "@expo-google-fonts/lexend";
 import { History } from "lucide-react-native";
+import SpentPercentageIcon from "@/assets/images/spentpercentageicon.svg";
 
 export interface BudgetCardProps {
     name: string;
@@ -112,9 +113,18 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                 </View>
                 <View style={styles.budgetFooter}>
                     <Text style={styles.spentText}>₱{spent} spent</Text>
-                    <Text style={styles.percentageText}>
-                        {percentage.toFixed(1)}%
-                    </Text>
+                    <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                        <Text style={styles.percentageText}>
+                            {percentage.toFixed(1)}%
+                        </Text>
+                        <SpentPercentageIcon
+                            width={8}
+                            height={8}
+                            style={{ marginLeft: 5, marginRight: 7 }}
+                        />
+                    </View>
                 </View>
             </View>
         </View>
@@ -148,7 +158,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "baseline",
         gap: 3,
-        marginBottom: 4,
+        marginBottom: 10,
         paddingLeft: 9,
     },
     currency: {
@@ -167,7 +177,7 @@ const styles = StyleSheet.create({
         borderRadius: 99,
         height: 12,
         overflow: "hidden",
-        marginBottom: 6,
+        marginBottom: 11,
     },
     progressBar: {
         backgroundColor: "#5fa7c6",
@@ -184,9 +194,9 @@ const styles = StyleSheet.create({
         fontFamily: "Lexend_300Light",
     },
     percentageText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: "300",
-        color: "#929292",
+        color: "#FE6B6B",
         fontFamily: "Lexend_300Light",
     },
 });
