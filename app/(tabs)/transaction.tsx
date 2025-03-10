@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
+import { useFonts, Lexend_400Regular } from "@expo-google-fonts/lexend";
+import EditLogo from "@/assets/images/editlogo.svg"; // Import the SVG file
 
 // ----------------------
 // Components
@@ -50,7 +52,7 @@ interface Transaction {
     status?: "paid" | "pending";
 }
 
-// A card component to display each transaction’s details
+// A card component to display each transaction's details
 const TransactionCard = ({
     icon,
     title,
@@ -221,6 +223,9 @@ const DEFAULT_TRANSACTION_DATA = {
 
 export default function TransactionScreen() {
     const navigation = useNavigation(); // Ensure navigation works properly
+    const [fontsLoaded] = useFonts({
+        Lexend_400Regular,
+    });
 
     const [transactions, setTransactions] = useState(DEFAULT_TRANSACTION_DATA);
     const [loading, setLoading] = useState<boolean>(true);
@@ -238,6 +243,10 @@ export default function TransactionScreen() {
 
         getTransactions();
     }, []);
+
+    if (!fontsLoaded) {
+        return null;
+    }
 
     if (loading) {
         return (
@@ -265,18 +274,18 @@ export default function TransactionScreen() {
             >
                 <View className="px-4 py-6">
                     <View className="flex flex-row justify-between items-center mb-6">
-                        <Text className="text-2xl font-bold text-gray-900">
+                        <Text
+                            style={{
+                                fontFamily: "Lexend_400Regular",
+                                fontSize: 24,
+                                color: "#2B3854",
+                            }}
+                        >
                             Transactions
                         </Text>
                         <TouchableOpacity className="p-2 rounded-full">
-                            <Image
-                                source={require("../../assets/images/editlogo.png")}
-                                style={{
-                                    width: 40,
-                                    height: 40,
-                                    resizeMode: "contain",
-                                }}
-                            />
+                            <EditLogo width={36} height={36} />{" "}
+                            {/* Use the SVG component */}
                         </TouchableOpacity>
                     </View>
 

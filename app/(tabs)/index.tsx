@@ -46,6 +46,9 @@ import { User, Bell, Search, Filter, History } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import { eq } from "drizzle-orm";
 
+import UserIcon from "@/assets/images/usericon.svg";
+import NotificationIcon from "@/assets/images/notification.svg";
+
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const { success, error } = useMigrations(db, migrations);
@@ -133,14 +136,16 @@ export default function HomeScreen() {
                     </Text>
                     <View style={styles.headerIcons}>
                         <TouchableOpacity>
-                            <Image
-                                source={require("@/assets/images/usericon.png")}
+                            <UserIcon
+                                width={32}
+                                height={32}
                                 style={styles.icon}
                             />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Image
-                                source={require("@/assets/images/notification.png")}
+                            <NotificationIcon
+                                width={32}
+                                height={32}
                                 style={styles.icon}
                             />
                         </TouchableOpacity>

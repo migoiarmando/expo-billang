@@ -81,7 +81,7 @@ const ProfileSection: React.FC = () => {
     });
 
     if (!fontsLoaded) {
-        return null; // Or a loading indicator
+        return null; 
     }
 
     return (
