@@ -33,7 +33,7 @@ import { Plus, ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import BudgetCard from "@/components/BudgetCard";
-import { SvgXml } from "react-native-svg";
+import { SvgXml } from "react-native-svg"; 
 import ProfilePic from "@/assets/images/profilepic.svg";
 import { Link } from "expo-router";
 import StreakIcon from "@/assets/images/streak.svg";
