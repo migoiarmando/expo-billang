@@ -32,9 +32,11 @@ import { Search, Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/types";
 
 const CustomStatusBar = () => (
     <View style={styles.statusBar}>
@@ -46,17 +48,34 @@ const CustomStatusBar = () => (
     </View>
 );
 
-const Header = () => (
-    <View style={styles.header}>
-        <Text style={[styles.headerTitle, { fontFamily: "Lexend_500Medium" }]}>
-            Budgets
-        </Text>
-        <View style={styles.headerIcons}>
-            <UserIcon width={32} height={32} style={styles.icon} />
-            <NotificationIcon width={32} height={32} style={styles.icon} />
+const Header = () => {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    return (
+        <View style={styles.header}>
+            <Text
+                style={[styles.headerTitle, { fontFamily: "Lexend_500Medium" }]}
+            >
+                Budgets
+            </Text>
+            <View style={styles.headerIcons}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("profile")}
+                >
+                    <UserIcon width={32} height={32} style={styles.icon} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <NotificationIcon
+                        width={32}
+                        height={32}
+                        style={styles.icon}
+                    />
+                </TouchableOpacity>
+            </View>
         </View>
-    </View>
-);
+    );
+};
 
 const SearchBar = () => (
     <View style={styles.searchContainer}>
@@ -100,10 +119,7 @@ export default function BudgetScreen() {
     const handleSelectBudgetType = (type: "default" | "structured") => {
         console.log("Selected budget type:", type);
         setIsModalVisible(false);
-        // Handle the selected budget type here
     };
-
-    // Fetch data
 
     return (
         <View style={styles.container}>

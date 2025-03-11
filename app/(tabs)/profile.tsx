@@ -69,7 +69,6 @@ const Header = () => (
             Settings
         </Text>
         <View style={styles.headerIcons}>
-            <UserIcon width={32} height={32} style={styles.icon} />
             <NotificationIcon width={32} height={32} style={styles.icon} />
         </View>
     </View>

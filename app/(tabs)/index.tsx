@@ -30,6 +30,9 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import { useNavigation } from "expo-router";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/types";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
@@ -50,6 +53,8 @@ import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
 
 export default function HomeScreen() {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const { success, error } = useMigrations(db, migrations);
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(
@@ -135,7 +140,9 @@ export default function HomeScreen() {
                         Good Day, {items[0].name}!
                     </Text>
                     <View style={styles.headerIcons}>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate("profile")}
+                        >
                             <UserIcon
                                 width={32}
                                 height={32}
