@@ -284,8 +284,7 @@ export default function TransactionScreen() {
                             Transactions
                         </Text>
                         <TouchableOpacity className="p-2 rounded-full">
-                            <EditLogo width={36} height={36} />{" "}
-                            {/* Use the SVG component */}
+                            <EditLogo width={36} height={36} />
                         </TouchableOpacity>
                     </View>
 
