@@ -19,7 +19,6 @@ import React, { useState, useRef } from "react";
 import {
     View,
     Text,
-    StyleSheet,
     SafeAreaView,
     ScrollView,
     TouchableOpacity,
@@ -33,7 +32,7 @@ import { Plus, ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import BudgetCard from "@/components/BudgetCard";
-import { SvgXml } from "react-native-svg"; 
+import { SvgXml } from "react-native-svg";
 import ProfilePic from "@/assets/images/profilepic.svg";
 import { Link } from "expo-router";
 import StreakIcon from "@/assets/images/streak.svg";
@@ -54,22 +53,20 @@ import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
 
 const CustomStatusBar = () => (
-    <View style={styles.statusBar}>
-        <View style={styles.statusIcons}>
-            <View style={styles.icon} />
-            <View style={styles.icon} />
-            <View style={styles.icon} />
+    <View className="flex-row justify-between items-center px-5 pt-[23px]">
+        <View className="flex-row gap-2">
+            <View className="w-8 h-8" />
+            <View className="w-8 h-8" />
+            <View className="w-8 h-8" />
         </View>
     </View>
 );
 
 const Header = () => (
-    <View style={styles.header}>
-        <Text style={[styles.headerTitle, { fontFamily: "Lexend_500Medium" }]}>
-            Settings
-        </Text>
-        <View style={styles.headerIcons}>
-            <NotificationIcon width={32} height={32} style={styles.icon} />
+    <View className="flex-row justify-between items-center px-5">
+        <Text className="text-2xl text-[#2B3854] font-lexend">Settings</Text>
+        <View className="flex-row gap-3">
+            <NotificationIcon width={32} height={32} className="w-8 h-8" />
         </View>
     </View>
 );
@@ -80,33 +77,32 @@ const ProfileSection: React.FC = () => {
     });
 
     if (!fontsLoaded) {
-        return null; 
+        return null;
     }
 
     return (
-        <View style={styles.profileContainer}>
-            <View style={styles.avatarContainer}>
-                <ProfilePic width={100} height={100} style={styles.avatar} />
+        <View className="flex-row items-center p-8 bg-transparent rounded-xl mx-5 -mt-2.5 -mb-2.5">
+            <View className="mr-8 ml-[-27px]">
+                <ProfilePic
+                    width={100}
+                    height={100}
+                    className="w-[100px] h-[100px] rounded-[35px]"
+                />
             </View>
-            <View style={styles.infoContainer}>
-                <View style={styles.nameStreak}>
-                    <Text
-                        style={[
-                            styles.name,
-                            { fontFamily: "Lexend_400Regular" },
-                        ]}
-                    >
+            <View className="flex-1">
+                <View className="flex-row items-center mb-1.5">
+                    <Text className="text-[22px] text-[#2B3854] font-lexend">
                         John Doe
                     </Text>
-                    <View style={styles.streakContainer}>
+                    <View className="flex-row items-center ml-2.5">
                         <StreakIcon
                             width={35}
                             height={35}
-                            style={styles.streakIcon}
+                            className="w-[35px] h-[35px]"
                         />
                     </View>
                 </View>
-                <Text style={[styles.email, { fontFamily: "Lexend_300Light" }]}>
+                <Text className="text-base text-[#666] font-lexend">
                     johndoe@gmail.com
                 </Text>
             </View>
@@ -120,20 +116,13 @@ interface AddBudgetButtonProps {
 
 const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
     <TouchableOpacity
-        style={styles.addBudgetContainer}
+        className="border border-dashed border-[#dadada] rounded-xl p-11 w-[90%] items-center justify-center bg-transparent"
         onPress={onPress}
         activeOpacity={0.7}
     >
-        <View style={styles.addBudgetContent}>
+        <View className="flex-row items-center gap-2.5">
             <Plus size={24} color="#828282" />
-            <Text
-                style={[
-                    styles.addBudgetText,
-                    { fontFamily: "Lexend_300Light" },
-                ]}
-            >
-                Add Budget
-            </Text>
+            <Text className="text-lg text-[#666] font-lexend">Add Budget</Text>
         </View>
     </TouchableOpacity>
 );
@@ -171,25 +160,17 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
     return (
         <Link href="/+not-found" asChild>
             <TouchableOpacity
-                style={styles.menuItem}
+                className="flex-row items-center justify-between py-2.5 pr-3.5"
                 onPress={onPress}
                 activeOpacity={0.7}
             >
-                <View style={styles.menuItemLeft}>
+                <View className="flex-row items-center pl-5">
                     <IconComponent
                         width={16}
                         height={16}
-                        style={styles.menuIcon}
+                        className="w-4 h-4 mr-2"
                     />
-                    <Text
-                        style={[
-                            styles.menuItemText,
-                            {
-                                fontFamily: "Lexend_400Regular",
-                                color: "#2B3854",
-                            },
-                        ]}
-                    >
+                    <Text className="text-base text-[#2B3854] font-lexend ml-3">
                         {label}
                     </Text>
                 </View>
@@ -235,17 +216,17 @@ export default function ProfileScreen() {
 
     return (
         <>
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView className="flex-1 bg-white">
                 <CustomStatusBar />
                 <Header />
 
                 <ScrollView
-                    style={styles.mainScrollView}
+                    className="flex-1"
                     showsVerticalScrollIndicator={false}
                 >
                     <ProfileSection />
 
-                    <View style={styles.budgetCardsSection}>
+                    <View className="h-[180px] -mt-2.5">
                         <ScrollView
                             ref={horizontalScrollViewRef}
                             horizontal
@@ -253,9 +234,9 @@ export default function ProfileScreen() {
                             showsHorizontalScrollIndicator={false}
                             onScroll={handleScroll}
                             scrollEventThrottle={16}
-                            contentContainerStyle={styles.scrollViewContent}
+                            className="px-0"
                         >
-                            <View style={styles.budgetCardWrapper}>
+                            <View className="w-screen px-5 justify-center">
                                 <BudgetCard
                                     name="Monthly Budget"
                                     amount={5000}
@@ -263,14 +244,14 @@ export default function ProfileScreen() {
                                     percentage={50}
                                 />
                             </View>
-                            <View style={styles.budgetCardWrapper}>
+                            <View className="w-screen px-5 justify-center">
                                 <AddBudgetButton onPress={handleAddBudget} />
                             </View>
                         </ScrollView>
                     </View>
 
-                    <View style={styles.sectionTitle}>
-                        <Text style={styles.sectionTitleText}>
+                    <View className="px-5 py-2.5">
+                        <Text className="text-lg text-[#2B3854] font-medium font-lexend">
                             Your Activity
                         </Text>
                     </View>
@@ -291,8 +272,10 @@ export default function ProfileScreen() {
                         onPress={() => handleMenuPress("activity")}
                     />
 
-                    <View style={styles.sectionTitle}>
-                        <Text style={styles.sectionTitleText}>General</Text>
+                    <View className="px-5 py-2.5">
+                        <Text className="text-lg text-[#2B3854] font-medium font-lexend">
+                            General
+                        </Text>
                     </View>
 
                     <SettingsMenuItem
@@ -330,170 +313,3 @@ export default function ProfileScreen() {
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
-    scrollViewContent: {
-        paddingHorizontal: 0,
-    },
-    budgetCardsSection: {
-        height: 180,
-        marginTop: -10,
-    },
-    budgetCardWrapper: {
-        width: width,
-        paddingHorizontal: 20,
-        justifyContent: "center",
-    },
-    sectionTitle: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-    },
-    sectionTitleText: {
-        fontSize: 18,
-        fontWeight: "500",
-        color: "#2B3854",
-        fontFamily: "Lexend_400Regular",
-    },
-    menuScrollView: {
-        flex: 1,
-    },
-    statusBar: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingTop: 23,
-    },
-    time: {
-        fontFamily: "Lexend",
-        fontSize: 16,
-        fontWeight: "500",
-    },
-    statusIcons: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    icon: {
-        width: 32,
-        height: 32,
-        resizeMode: "contain",
-    },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontFamily: "Lexend",
-        fontWeight: "400",
-        letterSpacing: -0.48,
-        color: "#2B3854",
-    },
-    headerIcons: {
-        flexDirection: "row",
-        gap: 12,
-    },
-    avatarContainer: {
-        marginRight: 30,
-        marginLeft: -27,
-    },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 35,
-    },
-    infoContainer: {
-        flex: 1,
-    },
-    nameStreak: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 6,
-    },
-    name: {
-        fontSize: 22,
-        color: "#2B3854",
-    },
-    email: {
-        fontSize: 16,
-        color: "#666",
-    },
-    streakContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginLeft: 10,
-    },
-    streakIcon: {
-        width: 35,
-        height: 35,
-    },
-    streakCount: {
-        fontSize: 25,
-        fontWeight: "bold",
-        color: "#FF9500",
-    },
-    profileContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 30,
-        backgroundColor: "transparent",
-        borderRadius: 12,
-        marginHorizontal: 20,
-        marginTop: -10,
-        marginBottom: -10,
-    },
-    settingsContainer: {
-        marginTop: 20,
-        paddingHorizontal: 20,
-    },
-    menuItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: 10,
-        paddingRight: 14,
-    },
-    menuItemLeft: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingLeft: 20,
-    },
-    menuIcon: {
-        width: 16,
-        height: 16,
-        marginRight: 8,
-    },
-    menuItemText: {
-        fontSize: 16,
-        color: "#2B3854",
-    },
-    addBudgetContainer: {
-        borderWidth: 1,
-        borderStyle: "dashed",
-        borderColor: "#dadada",
-        borderRadius: 12,
-        padding: 45,
-        width: "90%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "transparent",
-    },
-    addBudgetContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-    },
-    addBudgetText: {
-        fontSize: 18,
-        color: "#666",
-    },
-    mainScrollView: {
-        flex: 1,
-    },
-});
