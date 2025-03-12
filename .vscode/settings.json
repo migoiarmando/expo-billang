@@ -1,3 +1,13 @@
+/* --------------------------------------------------------------------------------------------------------------
+
+    Last edited: 
+        John Bicierro [March 12, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+-------------------------------------------------------------------------------------------------------------- */
+
 {
     "cSpell.words": [
         "activitylog",
@@ -10,5 +20,18 @@
         "spentpercentageicon",
         "streaksbadges",
         "usericon"
-    ]
+    ],
+    // Readable tabs for same filename
+    "workbench.editor.customLabels.patterns": {
+        "**/app/**/_layout.tsx": "${dirname}/_layout.${extname}"
+    },
+
+    // More readable for configuration files
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "package.json": "package-lock.json, .eslint*, .prettierrc, .gitignore, expo-env.d.ts, tsconfig.json",
+        "tailwind.config.js": "global*, nativewind-env.d.ts",
+        "app.json": "babel.config.js, drizzle.config.ts, eas.json, metro.config.js",
+        "README.md": "CODE_OF_CONDUCT.md, LICENSE"
+    }
 }
