@@ -20,12 +20,9 @@ import React, { useState } from "react";
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView,
     ScrollView,
     TextInput,
     TouchableOpacity,
-    Image,
     Platform,
 } from "react-native";
 import { Search, Plus } from "lucide-react-native";
@@ -35,42 +32,29 @@ import { StatusBar } from "expo-status-bar";
 import { router, useNavigation } from "expo-router";
 import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/navigation/types";
 
 const CustomStatusBar = () => (
-    <View style={styles.statusBar}>
-        <View style={styles.statusIcons}>
-            <View style={styles.icon} />
-            <View style={styles.icon} />
-            <View style={styles.icon} />
+    <View className="flex-row justify-between items-center px-5 pt-5 mt-1">
+        <View className="flex-row gap-2">
+            <View className="w-8 h-8" />
+            <View className="w-8 h-8" />
+            <View className="w-8 h-8" />
         </View>
     </View>
 );
 
 const Header = () => {
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
     return (
-        <View style={styles.header}>
-            <Text
-                style={[styles.headerTitle, { fontFamily: "Lexend_500Medium" }]}
-            >
+        <View className="flex-row justify-between items-center px-5">
+            <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend-regular">
                 Budgets
             </Text>
-            <View style={styles.headerIcons}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("profile")}
-                >
-                    <UserIcon width={32} height={32} style={styles.icon} />
+            <View className="flex-row gap-3">
+                <TouchableOpacity onPress={() => router.replace("/profile")}>
+                    <UserIcon width={32} height={32} />
                 </TouchableOpacity>
                 <TouchableOpacity>
-                    <NotificationIcon
-                        width={32}
-                        height={32}
-                        style={styles.icon}
-                    />
+                    <NotificationIcon width={32} height={32} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -78,10 +62,10 @@ const Header = () => {
 };
 
 const SearchBar = () => (
-    <View style={styles.searchContainer}>
-        <Search size={20} color="#666" style={{ marginRight: 8 }} />
+    <View className="mt-5 mx-5 rounded-full py-0.5 px-5 bg-[#F5F5F5] flex-row items-center">
+        <Search size={20} color="#666" className="mr-2" />
         <TextInput
-            style={styles.searchInput}
+            className="flex-1 font-lexend text-base text-[#666] font-normal"
             placeholder="Search budgets"
             placeholderTextColor="#666"
         />
@@ -94,19 +78,25 @@ interface AddBudgetButtonProps {
 
 const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
     <TouchableOpacity
-        style={styles.addBudgetContainer}
+        className="border border-dashed border-[#dadada] rounded-xl p-12 items-center justify-center mt-2"
         onPress={onPress}
         activeOpacity={0.7}
     >
-        <View style={styles.addBudgetContent}>
+        <View className="flex-row items-center gap-1">
             <Plus size={16} color="#828282" />
-            <Text style={styles.addBudgetText}>Add Budget!</Text>
+            <Text className="text-[#828282] font-lexend-regular text-base">
+                Add Budget!
+            </Text>
         </View>
     </TouchableOpacity>
 );
 
 export default function BudgetScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const handleBudgetCardPress = (budgetId: string) => {
+        router.push("/budget/editbudget/structured");
+    };
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -117,35 +107,51 @@ export default function BudgetScreen() {
     };
 
     const handleSelectBudgetType = (type: "default" | "structured") => {
-        console.log("Selected budget type:", type);
         setIsModalVisible(false);
+        if (type === "default") {
+            router.push("/budget/editbudget/tailored");
+        } else if (type === "structured") {
+            router.push("/budget/editbudget/structured");
+        }
     };
 
     return (
-        <View style={styles.container}>
-            <ScrollView style={styles.scrollView}>
+        <View className="flex-1 bg-white max-w-[440px] self-center w-full">
+            <ScrollView className="flex-1">
                 <CustomStatusBar />
                 <Header />
                 <SearchBar />
-                <View style={styles.budgetList}>
-                    <BudgetCard
-                        name="A Budget"
-                        amount={1500}
-                        spent="545"
-                        percentage={1}
-                    />
-                    <BudgetCard
-                        name="B Budget"
-                        amount={2500}
-                        spent="545"
-                        percentage={1}
-                    />
-                    <BudgetCard
-                        name="C Budget"
-                        amount={8550}
-                        spent="545"
-                        percentage={1}
-                    />
+                <View className="p-5 gap-3.5">
+                    <TouchableOpacity
+                        onPress={() => handleBudgetCardPress("A")}
+                    >
+                        <BudgetCard
+                            name="A Budget"
+                            amount={1500}
+                            spent="545"
+                            percentage={1}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => handleBudgetCardPress("B")}
+                    >
+                        <BudgetCard
+                            name="B Budget"
+                            amount={2500}
+                            spent="545"
+                            percentage={1}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => handleBudgetCardPress("C")}
+                    >
+                        <BudgetCard
+                            name="C Budget"
+                            amount={8550}
+                            spent="545"
+                            percentage={1}
+                        />
+                    </TouchableOpacity>
                     <AddBudgetButton onPress={handleAddBudget} />
                 </View>
             </ScrollView>
@@ -159,95 +165,3 @@ export default function BudgetScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        maxWidth: 440,
-        alignSelf: "center",
-        width: "100%",
-    },
-    statusBar: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        marginTop: 5,
-    },
-    time: {
-        fontFamily: "Lexend",
-        fontSize: 16,
-        fontWeight: "500",
-    },
-    statusIcons: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    icon: {
-        width: 32,
-        height: 32,
-        resizeMode: "contain",
-    },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontFamily: "Lexend",
-        letterSpacing: -0.48,
-        color: "#2B3854",
-    },
-    headerIcons: {
-        flexDirection: "row",
-        gap: 12,
-    },
-    searchContainer: {
-        marginTop: 20,
-        marginHorizontal: 20,
-        borderRadius: 99,
-        paddingVertical: 1,
-        paddingHorizontal: 20,
-        backgroundColor: "#F5F5F5",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    searchInput: {
-        fontFamily: "Lexend",
-        fontSize: 16,
-        color: "#666",
-        fontWeight: "400",
-        flex: 1,
-    },
-    scrollView: {
-        flex: 1,
-    },
-    budgetList: {
-        padding: 20,
-        gap: 14,
-    },
-    addBudgetContainer: {
-        borderWidth: 1,
-        borderStyle: "dashed",
-        borderColor: "#dadada",
-        borderRadius: 12,
-        padding: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 8,
-    },
-    addBudgetContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 5,
-    },
-    addBudgetText: {
-        color: "#828282",
-        fontFamily: "Lexend_400Regular",
-        fontSize: 16,
-    },
-});

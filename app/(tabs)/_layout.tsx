@@ -5,7 +5,7 @@ import Colors from "../../constants/Colors";
 import { useColorScheme } from "../../components/expo/useColorScheme";
 import { useClientOnlyValue } from "../../components/expo/useClientOnlyValue";
 import { Home, Plus, Search, User, WalletCards } from "lucide-react-native";
-import { Modal, Pressable, View, Text } from "react-native";
+import { Modal, Pressable, View} from "react-native";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();

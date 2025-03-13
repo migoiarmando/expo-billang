@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/expo/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
 import {
     useFonts,
@@ -28,6 +30,7 @@ import {
 // Nativewind
 import "../global.css";
 import Colors from "@/constants/Colors";
+import GoBackIcon from "@/assets/images/goback.svg";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -75,6 +78,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
+    const router = useRouter();
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -130,6 +134,28 @@ function RootLayoutNav() {
                     options={{
                         title: "Structured Budget Method",
                         headerShown: false,
+                    }}
+                />
+                <Stack.Screen
+                    name="budget/editbudget/budgettransaction"
+                    options={{
+                        title: "Budget Transactions",
+                        headerShown: false,
+                    }}
+                />
+                <Stack.Screen
+                    name="+not-found"
+                    options={{
+                        title: "Go Back",
+                        headerShown: true,
+                        headerLeft: (props) => (
+                            <TouchableOpacity
+                                onPress={() => router.back()}
+                                style={{ marginLeft: 15 }}
+                            >
+                                <GoBackIcon width={24} height={24} />
+                            </TouchableOpacity>
+                        ),
                     }}
                 />
             </Stack>
