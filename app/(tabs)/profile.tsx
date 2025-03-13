@@ -38,9 +38,6 @@ import { Link } from "expo-router";
 import StreakIcon from "@/assets/images/streak.svg";
 import { useFonts, Lexend_300Light } from "@expo-google-fonts/lexend";
 
-// Get screen width
-const { width } = Dimensions.get("window");
-
 // Import SVG files directly
 import SpendingSummary from "@/assets/images/spendingsummary.svg";
 import StreaksBadges from "@/assets/images/streaksbadges.svg";
@@ -51,6 +48,9 @@ import About from "@/assets/images/about.svg";
 import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
 import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
+
+// Get screen width
+const { width } = Dimensions.get("window");
 
 const CustomStatusBar = () => (
     <View className="flex-row justify-between items-center px-5 pt-[23px]">

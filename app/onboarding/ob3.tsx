@@ -14,21 +14,11 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import {
-    View,
-    Text,
-    FlatList,
-    useWindowDimensions,
-    Button,
-    TouchableWithoutFeedback,
-    Pressable,
-} from "react-native";
-
+import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Image } from "expo-image";
-import { useAssets } from "expo-asset";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function OnboardingPage3() {

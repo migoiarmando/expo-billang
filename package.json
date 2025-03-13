@@ -1,7 +1,7 @@
 {
     "name": "billang",
     "main": "expo-router/entry",
-    "version": "0.4.18",
+    "version": "0.4.19",
     "scripts": {
         "start": "expo start",
         "android": "expo run:android",

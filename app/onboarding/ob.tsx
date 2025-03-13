@@ -14,21 +14,11 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import {
-    View,
-    Text,
-    FlatList,
-    useWindowDimensions,
-    Button,
-    TouchableWithoutFeedback,
-    Pressable,
-} from "react-native";
-
+import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Image } from "expo-image";
-import { useAssets } from "expo-asset";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function OnboardingPage() {
@@ -80,64 +70,5 @@ export default function OnboardingPage() {
             {/* Light status bar because of blue background */}
             <StatusBar style="light" />
         </SafeAreaView>
-    );
-}
-
-const onboardingList = [
-    {
-        id: 0,
-        title: "Track all in one place",
-        desc: "Easily track all your bills, expenses, and needs seamlessly",
-        button: false,
-    },
-    {
-        id: 1,
-        title: "Stay on top of your finances",
-        desc: "Get notified instantly so you never miss a payment or exceed your budget again.",
-        button: false,
-    },
-    {
-        id: 2,
-        title: "Start your financial journey with Billang",
-        desc: "Have everything in one place to manage your finances easily",
-        button: true,
-    },
-];
-
-export function Onboarding() {
-    return (
-        <View className="pt-[150px] items-center justify-center gap-[10px]">
-            <FlatList
-                data={onboardingList}
-                renderItem={({ item }) => <OnboardingItem item={item} />}
-                horizontal
-                showsHorizontalScrollIndicator
-                pagingEnabled
-                bounces={false}
-            />
-        </View>
-    );
-}
-
-function OnboardingItem({ item }: any) {
-    const { width } = useWindowDimensions();
-
-    function test() {
-        router.replace("/");
-    }
-
-    return (
-        <View
-            className="items-center gap-5 border border-red-500"
-            style={[{ width }]}
-        >
-            <Text className="font-lexendBold text-center text-[24px]">
-                {item.title}
-            </Text>
-            <Text className="font-lexend text-center text-[16px]">
-                {item.desc}
-            </Text>
-            {item.button ? <Button title="Get started" onPress={test} /> : ""}
-        </View>
     );
 }
