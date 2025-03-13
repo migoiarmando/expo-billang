@@ -22,7 +22,6 @@ import {
     SafeAreaView,
     ScrollView,
     TouchableOpacity,
-    Image,
     Platform,
     Dimensions,
     NativeSyntheticEvent,
@@ -32,9 +31,8 @@ import { Plus, ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import BudgetCard from "@/components/BudgetCard";
-import { SvgXml } from "react-native-svg";
 import ProfilePic from "@/assets/images/profilepic.svg";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import StreakIcon from "@/assets/images/streak.svg";
 import { useFonts, Lexend_300Light } from "@expo-google-fonts/lexend";
 
@@ -46,7 +44,6 @@ import SettingsCustomization from "@/assets/images/settingscustomization.svg";
 import Notifications from "@/assets/images/notifications.svg";
 import About from "@/assets/images/about.svg";
 import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
-import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
 
 // Get screen width
@@ -185,6 +182,7 @@ export default function ProfileScreen() {
     const scrollViewRef = useRef<ScrollView>(null);
     const horizontalScrollViewRef = useRef<ScrollView>(null);
     const [showAddBudget, setShowAddBudget] = useState(false);
+    const router = useRouter();
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -259,17 +257,17 @@ export default function ProfileScreen() {
                     <SettingsMenuItem
                         icon="chart"
                         label="Spending Summary"
-                        onPress={() => handleMenuPress("spending")}
+                        onPress={() => router.push("/+not-found")}
                     />
                     <SettingsMenuItem
                         icon="badge"
                         label="Streaks & Badges"
-                        onPress={() => handleMenuPress("streaks")}
+                        onPress={() => router.push("/+not-found")}
                     />
                     <SettingsMenuItem
                         icon="history"
                         label="Activity Log"
-                        onPress={() => handleMenuPress("activity")}
+                        onPress={() => router.push("/+not-found")}
                     />
 
                     <View className="px-5 py-2.5">
@@ -281,24 +279,22 @@ export default function ProfileScreen() {
                     <SettingsMenuItem
                         icon="settings"
                         label="Settings & Customizations"
-                        onPress={() => handleMenuPress("settings")}
+                        onPress={() => router.push("/+not-found")}
                     />
                     <SettingsMenuItem
                         icon="notification"
                         label="Notifications"
-                        onPress={() => handleMenuPress("notifications")}
+                        onPress={() => router.push("/+not-found")}
                     />
                     <SettingsMenuItem
                         icon="about"
                         label="About"
-                        onPress={() => handleMenuPress("about")}
+                        onPress={() => router.push("/+not-found")}
                     />
                     <SettingsMenuItem
                         icon="privacy policy & terms"
                         label="Privacy Policy & Terms"
-                        onPress={() =>
-                            handleMenuPress("privacy policy & terms")
-                        }
+                        onPress={() => router.push("/+not-found")}
                     />
                 </ScrollView>
 
