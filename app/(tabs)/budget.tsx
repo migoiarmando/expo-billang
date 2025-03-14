@@ -45,11 +45,11 @@ const CustomStatusBar = () => (
 
 const Header = () => {
     return (
-        <View className="flex-row justify-between items-center px-5">
-            <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend-regular">
+        <View className="flex-row justify-between items-center ml-5 mr-6 pb-1">
+            <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend ml-1">
                 Budgets
             </Text>
-            <View className="flex-row gap-3">
+            <View className="flex-row gap-3.5">
                 <TouchableOpacity onPress={() => router.replace("/profile")}>
                     <UserIcon width={32} height={32} />
                 </TouchableOpacity>
