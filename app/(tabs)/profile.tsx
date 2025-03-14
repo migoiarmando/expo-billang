@@ -60,11 +60,11 @@ const CustomStatusBar = () => (
 );
 
 const Header = () => (
-    <View className="flex-row justify-between items-center px-5">
-        <Text className="text-2xl text-[#2B3854] font-lexend">Settings</Text>
-        <View className="flex-row gap-3">
-            <NotificationIcon width={32} height={32} className="w-8 h-8" />
-        </View>
+    <View className="flex-row justify-between items-center ml-5 mr-6 pb-1">
+        <Text className="text-[24px] text-[#2B3854] font-lexend">Settings</Text>
+        <TouchableOpacity className="flex-row">
+            <NotificationIcon width={32} height={32}/>
+        </TouchableOpacity>
     </View>
 );
 
