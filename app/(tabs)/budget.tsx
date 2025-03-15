@@ -45,7 +45,7 @@ const CustomStatusBar = () => (
 
 const Header = () => {
     return (
-        <View className="flex-row justify-between items-center ml-5 mr-6 pb-1">
+        <View className="flex-row justify-between items-center ml-5 mt-4 mr-6 pb-1">
             <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend ml-1">
                 Budgets
             </Text>
@@ -95,7 +95,10 @@ export default function BudgetScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleBudgetCardPress = (budgetId: string) => {
-        router.push("/budget/editbudget/structured");
+        router.push({
+            pathname: "/budget/editbudget/allbudgettransaction",
+            params: { budgetId },
+        });
     };
 
     const handleAddBudget = () => {

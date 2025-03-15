@@ -272,8 +272,8 @@ export default function TransactionScreen() {
                     paddingBottom: 50,
                 }}
             >
-                <View className="px-4 py-6">
-                    <View className="flex flex-row justify-between items-center mb-6">
+                <View className="px-5 py-5">
+                    <View className="flex flex-row justify-between items-center pl-1 mb-6">
                         <Text
                             style={{
                                 fontFamily: "Lexend_400Regular",
