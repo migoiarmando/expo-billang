@@ -24,7 +24,7 @@ import {
     Lexend_600SemiBold,
     Lexend_700Bold,
     Lexend_800ExtraBold,
-    Lexend_900Black,
+    Lexend_900Black, 
 } from "@expo-google-fonts/lexend";
 
 // Nativewind
@@ -137,25 +137,10 @@ function RootLayoutNav() {
                     }}
                 />
                 <Stack.Screen
-                    name="budget/editbudget/budgettransaction"
+                    name="budget/editbudget/allbudgettransaction"
                     options={{
-                        title: "Budget Transactions",
+                        title: "All Budget Transactions",
                         headerShown: false,
-                    }}
-                />
-                <Stack.Screen
-                    name="+not-found"
-                    options={{
-                        title: "Go Back",
-                        headerShown: true,
-                        headerLeft: (props) => (
-                            <TouchableOpacity
-                                onPress={() => router.back()}
-                                style={{ marginLeft: 15 }}
-                            >
-                                <GoBackIcon width={24} height={24} />
-                            </TouchableOpacity>
-                        ),
                     }}
                 />
             </Stack>
