@@ -29,7 +29,7 @@ import { Search, Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import UserIcon from "@/assets/images/usericon.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
 
@@ -94,10 +94,10 @@ const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
 export default function BudgetScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const handleBudgetCardPress = (budgetId: string) => {
+    const handleBudgetCardPress = (budgetName: string) => {
         router.push({
             pathname: "/budget/editbudget/allbudgettransaction",
-            params: { budgetId },
+            params: { budgetName },
         });
     };
 
