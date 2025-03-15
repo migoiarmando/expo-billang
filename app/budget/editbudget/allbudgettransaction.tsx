@@ -21,6 +21,7 @@ import IncomeIcon from "@/assets/images/income.svg";
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
+import EditLogo from "@/assets/images/editlogo.svg";
 
 const CustomStatusBar = () => (
     <View className="flex-row justify-between items-center px-5 pt-5 mt-1">
@@ -40,10 +41,7 @@ const Header = () => {
             </Text>
             <View className="flex-row gap-3.5">
                 <TouchableOpacity onPress={() => router.replace("/profile")}>
-                    <UserIcon width={32} height={32} />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <NotificationIcon width={32} height={32} />
+                    <EditLogo width={36} height={36} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -66,9 +64,11 @@ const TransactionFilters = ({ selectedFilter, onFilterChange }) => {
         <View className="flex-row justify-evenly items-center px-5 py-4">
             <TouchableOpacity
                 onPress={() => onFilterChange("all")}
-                className={`flex-1 mx-2 rounded-full py-2 bg-[#F5F5F5] items-center ${
-                    selectedFilter === "all" ? "bg-[#E5F7FF]" : "bg-[#F5F5F5]"
-                }`}
+                style={{
+                    backgroundColor:
+                        selectedFilter === "all" ? "#E5F7FF" : "#F5F5F5",
+                }}
+                className="flex-1 mx-2 rounded-full py-2 items-center"
             >
                 <Text
                     className={`font-lexend text-base ${
@@ -89,8 +89,12 @@ const TransactionFilters = ({ selectedFilter, onFilterChange }) => {
                         : "bg-[#F5F5F5]"
                 }`}
             >
-                <View className="flex-row items-center">
-                    <GrayArrow width={10} height={10} className="mr-1" />
+                <View className="flex-row items-center gap-2">
+                    {selectedFilter === "expense" ? (
+                        <ExpenseArrow width={10} height={10} className="mr-1" />
+                    ) : (
+                        <GrayArrow width={10} height={10} className="mr-1" />
+                    )}
                     <Text
                         className={`font-lexend text-base ${
                             selectedFilter === "expense"
@@ -105,16 +109,30 @@ const TransactionFilters = ({ selectedFilter, onFilterChange }) => {
 
             <TouchableOpacity
                 onPress={() => onFilterChange("income")}
-                className={`flex-1 mx-2 rounded-full py-2 bg-[#F5F5F5] items-center ${
+                className={`flex-1 mx-2 rounded-full py-2 items-center ${
                     selectedFilter === "income"
                         ? "bg-[#80B154]"
                         : "bg-[#F5F5F5]"
                 }`}
             >
-                <View className="flex-row items-center">
-                    <View style={{ transform: [{ rotate: "180deg" }] }}>
-                        <GrayArrow width={10} height={10} className="mr-1" />
-                    </View>
+                <View className="flex-row items-center gap-1">
+                    {selectedFilter === "income" ? (
+                        <View style={{ transform: [{ rotate: "0deg" }] }}>
+                            <IncomeArrow
+                                width={10}
+                                height={10}
+                                className="ml-1"
+                            />
+                        </View>
+                    ) : (
+                        <View style={{ transform: [{ rotate: "180deg" }] }}>
+                            <GrayArrow
+                                width={10}
+                                height={10}
+                                className="ml-1"
+                            />
+                        </View>
+                    )}
                     <Text
                         className={`font-lexend text-base ${
                             selectedFilter === "income"
@@ -155,7 +173,7 @@ const TransactionItem = ({ title, date, amount, iconUrl, amountColor }) => {
                     </View>
                 </View>
             </View>
-            <View className="flex-row items-center">
+            <View className="flex-row items-center gap-1">
                 {amountColor === "#FD7474" ? (
                     <>
                         <ExpenseIcon width={10} height={10} className="mr-1" />
@@ -176,7 +194,7 @@ const TransactionItem = ({ title, date, amount, iconUrl, amountColor }) => {
     );
 };
 
-const TransactionList = () => {
+const TransactionList = ({ selectedFilter }) => {
     const transactions = [
         {
             id: "1",
@@ -196,13 +214,22 @@ const TransactionList = () => {
         },
     ];
 
+    const filteredTransactions = transactions.filter((transaction) => {
+        if (selectedFilter === "all") return true;
+        if (selectedFilter === "expense")
+            return transaction.amountColor === "#FD7474";
+        if (selectedFilter === "income")
+            return transaction.amountColor === "#80B154";
+        return true;
+    });
+
     return (
         <View className="flex-1">
             <Text className="px-5 py-3 text-[16px] font-lexend text-[#676666]">
                 Transactions
             </Text>
             <ScrollView>
-                {transactions.map((transaction) => (
+                {filteredTransactions.map((transaction) => (
                     <TransactionItem
                         key={transaction.id}
                         title={transaction.title}
@@ -230,7 +257,7 @@ export const AllBudgetTransaction = () => {
                     selectedFilter={selectedFilter}
                     onFilterChange={setSelectedFilter}
                 />
-                <TransactionList />
+                <TransactionList selectedFilter={selectedFilter} />
             </ScrollView>
             <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
         </View>
