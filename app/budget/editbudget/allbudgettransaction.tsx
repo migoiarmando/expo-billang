@@ -5,16 +5,12 @@ import {
     ScrollView,
     TextInput,
     TouchableOpacity,
-    SafeAreaView,
     Image,
     Platform,
 } from "react-native";
 import { Search } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import UserIcon from "@/assets/images/usericon.svg";
-import NotificationIcon from "@/assets/images/notification.svg";
-import Svg, { Path, Circle } from "react-native-svg";
 import CashIcon from "@/assets/images/cash.svg";
 import ExpenseIcon from "@/assets/images/expense.svg";
 import IncomeIcon from "@/assets/images/income.svg";
@@ -59,7 +55,13 @@ const SearchBar = () => (
     </View>
 );
 
-const TransactionFilters = ({ selectedFilter, onFilterChange }) => {
+const TransactionFilters = ({
+    selectedFilter,
+    onFilterChange,
+}: {
+    selectedFilter: string;
+    onFilterChange: (filter: string) => void;
+}) => {
     return (
         <View className="flex-row justify-evenly items-center px-5 py-4">
             <TouchableOpacity
@@ -148,7 +150,19 @@ const TransactionFilters = ({ selectedFilter, onFilterChange }) => {
     );
 };
 
-const TransactionItem = ({ title, date, amount, iconUrl, amountColor }) => {
+const TransactionItem = ({
+    title,
+    date,
+    amount,
+    iconUrl,
+    amountColor,
+}: {
+    title: string;
+    date: string;
+    amount: string;
+    iconUrl: string | "cash";
+    amountColor: string;
+}) => {
     return (
         <View className="flex-row items-center justify-between px-5 py-3 border-b border-[#F8F8F8]">
             <View className="flex-row items-center">
@@ -158,7 +172,7 @@ const TransactionItem = ({ title, date, amount, iconUrl, amountColor }) => {
                     </View>
                 ) : (
                     <Image
-                        source={iconUrl}
+                        source={{ uri: iconUrl }}
                         className="w-10 h-10 rounded-full mr-3"
                     />
                 )}
@@ -194,7 +208,7 @@ const TransactionItem = ({ title, date, amount, iconUrl, amountColor }) => {
     );
 };
 
-const TransactionList = ({ selectedFilter }) => {
+const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
     const transactions = [
         {
             id: "1",
