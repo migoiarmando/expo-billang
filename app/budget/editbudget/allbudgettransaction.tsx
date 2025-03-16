@@ -8,7 +8,7 @@ import {
     Image,
     Platform,
 } from "react-native";
-import { Search } from "lucide-react-native";
+import { Search, Plus } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import CashIcon from "@/assets/images/cash.svg";
@@ -33,7 +33,7 @@ const Header = () => {
     return (
         <View className="flex-row justify-between items-center ml-5 mt-4 mr-6 pb-1">
             <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend ml-1">
-                A Budget
+                My Budget
             </Text>
             <View className="flex-row gap-3.5">
                 <TouchableOpacity onPress={() => router.replace("/profile")}>
@@ -208,25 +208,31 @@ const TransactionItem = ({
     );
 };
 
+const AddTransactionButton = ({ onPress }: { onPress: () => void }) => (
+    <TouchableOpacity
+        className="border border-dashed border-[#dadada] rounded-xl p-12 items-center justify-center mt-2"
+        onPress={onPress}
+        activeOpacity={0.7}
+    >
+        <View className="flex-row items-center gap-1">
+            <Plus size={16} color="#828282" />
+            <Text className="text-[#828282] font-lexend-regular text-base">
+                Add Transaction!
+            </Text>
+        </View>
+    </TouchableOpacity>
+);
+
+const EmptyState = () => (
+    <View className="flex-1 items-center justify-center mt-10">
+        <AddTransactionButton
+            onPress={() => console.log("Add transaction pressed")}
+        />
+    </View>
+);
+
 const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
-    const transactions = [
-        {
-            id: "1",
-            title: "Electricity Bill",
-            date: "February 30",
-            amount: "₱7,700",
-            iconUrl: "cash",
-            amountColor: "#FD7474",
-        },
-        {
-            id: "2",
-            title: "Electricity Bill",
-            date: "February 30",
-            amount: "₱7,700",
-            iconUrl: "cash",
-            amountColor: "#80B154",
-        },
-    ];
+    const transactions: any[] = []; // Empty transactions array
 
     const filteredTransactions = transactions.filter((transaction) => {
         if (selectedFilter === "all") return true;
@@ -242,18 +248,22 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
             <Text className="px-5 py-3 text-[16px] font-lexend text-[#676666]">
                 Transactions
             </Text>
-            <ScrollView>
-                {filteredTransactions.map((transaction) => (
-                    <TransactionItem
-                        key={transaction.id}
-                        title={transaction.title}
-                        date={transaction.date}
-                        amount={transaction.amount}
-                        iconUrl={transaction.iconUrl}
-                        amountColor={transaction.amountColor}
-                    />
-                ))}
-            </ScrollView>
+            {filteredTransactions.length > 0 ? (
+                <ScrollView>
+                    {filteredTransactions.map((transaction) => (
+                        <TransactionItem
+                            key={transaction.id}
+                            title={transaction.title}
+                            date={transaction.date}
+                            amount={transaction.amount}
+                            iconUrl={transaction.iconUrl}
+                            amountColor={transaction.amountColor}
+                        />
+                    ))}
+                </ScrollView>
+            ) : (
+                <EmptyState />
+            )}
         </View>
     );
 };
