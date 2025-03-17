@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-        John Bicierro [Feb 25, 2025]
+        John Bicierro [Mar 17, 2025]
         Miguel Armand B. Sta. Ana [Feb 23, 2025]
 
     Company: github.com/codekada
@@ -16,7 +16,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -32,17 +32,21 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
+import { db } from "@/database";
+import { budget_tb } from "@/database/schema";
+import { useFocusEffect } from "@react-navigation/native";
+import { SearchBar } from "@/components/SearchBar";
 
-const SearchBar = () => (
-    <View className="mt-5 rounded-full py-3 px-5 bg-[#F5F5F5] flex-row items-center gap-2">
-        <Search size={16} color="#666" />
-        <TextInput
-            className="flex-1 font-lexend text-base text-[#666] font-normal"
-            placeholder="Search budgets"
-            placeholderTextColor="#666"
-        />
-    </View>
-);
+// const SearchBar = () => (
+//     <View className="mt-5 rounded-full py-3 px-5 bg-[#F5F5F5] flex-row items-center gap-2">
+//         <Search size={16} color="#666" />
+//         <TextInput
+//             className="flex-1 font-lexend text-base text-[#666] font-normal"
+//             placeholder="Search budgets"
+//             placeholderTextColor="#666"
+//         />
+//     </View>
+// );
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -63,7 +67,29 @@ const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
     </TouchableOpacity>
 );
 
+interface Budget {
+    id: number;
+    title: string;
+    amount: number;
+    themeColor: string; // Added missing field
+}
+
 export default function BudgetScreen() {
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchBudget() {
+                try {
+                    const budgets = await db.select().from(budget_tb);
+                    setBudgets(budgets);
+                } catch (err) {
+                    console.error("[error] Failed to fetch budget.*:", err);
+                }
+            }
+            fetchBudget();
+        }, []),
+    );
+
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleBudgetCardPress = (budgetName: string) => {
@@ -92,41 +118,25 @@ export default function BudgetScreen() {
 
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
-            <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px]">
+            <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px] ">
                 <Header name="Budget" />
-                <SearchBar />
+                <SearchBar title="Search budget" className="mt-[20px]" />
                 <ScrollView className="flex-1">
-                    <View className="py-5 gap-3.5">
-                        <TouchableOpacity
-                            onPress={() => handleBudgetCardPress("A")}
-                        >
-                            <BudgetCard
-                                name="A Budget"
-                                amount={1500}
-                                spent="545"
-                                percentage={1}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => handleBudgetCardPress("B")}
-                        >
-                            <BudgetCard
-                                name="B Budget"
-                                amount={2500}
-                                spent="545"
-                                percentage={1}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => handleBudgetCardPress("C")}
-                        >
-                            <BudgetCard
-                                name="C Budget"
-                                amount={8550}
-                                spent="545"
-                                percentage={1}
-                            />
-                        </TouchableOpacity>
+                    <View className="gap-3.5">
+                        {budgets.map((budget) => (
+                            <TouchableOpacity
+                                key={budget.id}
+                                onPress={() => handleBudgetCardPress("A")}
+                            >
+                                <BudgetCard
+                                    name={budget.title}
+                                    amount={budget.amount}
+                                    spent="0"
+                                    percentage={1}
+                                />
+                            </TouchableOpacity>
+                        ))}
+
                         <AddBudgetButton onPress={handleAddBudget} />
                     </View>
                 </ScrollView>

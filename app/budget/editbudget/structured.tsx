@@ -16,70 +16,65 @@
 
 import { db } from "@/database";
 import { budget_tb, user_tb } from "@/database/schema";
-import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-    ArrowLeft,
-    Calendar,
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    Info,
-    Pencil,
-    PhilippinePeso,
-    RotateCw,
-} from "lucide-react-native";
-import { useRef, useState } from "react";
+import { Calendar, ChevronLeft, Pencil, RotateCw } from "lucide-react-native";
+import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StructuredScreen() {
-    const [onboarding, setOnboarding] = useState();
-    const [amount, setAmount] = useState("");
-
     const inputRef = useRef<TextInput>(null); // Create the ref
-    const [title, setTitle] = useState("");
 
-    // Save budget
+    // Fetch the user for validation if new
+    const [onboarding, setOnboarding] = useState<boolean | null>(null);
+    useEffect(() => {
+        async function fetchUser() {
+            try {
+                const [user] = await db.select().from(user_tb);
+                setOnboarding(user.onboarding);
+            } catch (err) {
+                console.error("Error fetching user:", err);
+            }
+        }
+        fetchUser();
+    }, []);
+
+    const [title, setTitle] = useState("");
+    const [amount, setAmount] = useState("");
     async function SaveBudget() {
         try {
-            // Ensure amount is a valid number
             const numericAmount = parseFloat(amount);
             if (isNaN(numericAmount)) {
                 console.error("[error] Invalid amount entered:", amount);
                 return;
             }
 
-            // Set onboarding to true for the specific user (modify where clause as needed)
-            await db.update(user_tb).set({ onboarding: true });
-
-            // Insert budget details
             await db.insert(budget_tb).values([
                 {
-                    title: title.trim(), // Trim to remove unnecessary spaces
+                    title: title.trim(),
                     amount: numericAmount,
                 },
             ]);
 
-            console.log(
-                `[debug] amount: ${numericAmount} | title: ${title.trim()}`,
-            );
-
-            // Redirect to home page
-            router.replace("/");
+            if (!onboarding) {
+                await db.update(user_tb).set({ onboarding: true });
+                router.replace("/");
+            } else {
+                router.replace("..");
+            }
         } catch (error) {
             console.error("[error] Failed to save budget:", error);
         }
     }
 
-    // Ask me later
     async function LaterBudget() {
-        // Set the onboarding to true
-        await db.update(user_tb).set({ onboarding: true });
-
-        // Route home page
-        router.replace("/");
+        try {
+            await db.update(user_tb).set({ onboarding: true });
+            router.replace("/");
+        } catch (error) {
+            console.error("[error] Failed to update user.onboarding:", error);
+        }
         return;
     }
 
@@ -104,7 +99,7 @@ export default function StructuredScreen() {
                 {/* Edit number */}
                 <View className="items-center mt-[50px]">
                     <View className="flex-row items-center gap-1">
-                        <Text className="font-lexend text-[20px]">$</Text>
+                        <Text className="font-lexend text-[20px]">₱</Text>
                         <TextInput
                             keyboardType="numeric"
                             placeholder="0"
@@ -241,15 +236,16 @@ export default function StructuredScreen() {
                             Save Budget
                         </Text>
                     </Pressable>
-
-                    <Pressable
-                        onPress={LaterBudget}
-                        className="mt-3 bg-bgBorder-2 py-3 rounded-lg flex items-center"
-                    >
-                        <Text className="font-lexend text-gray-700">
-                            Ask me later
-                        </Text>
-                    </Pressable>
+                    {!onboarding && (
+                        <Pressable
+                            onPress={LaterBudget}
+                            className="mt-3 bg-bgBorder-2 py-3 rounded-lg flex items-center"
+                        >
+                            <Text className="font-lexend text-gray-700">
+                                Ask me later
+                            </Text>
+                        </Pressable>
+                    )}
                 </View>
             </View>
 

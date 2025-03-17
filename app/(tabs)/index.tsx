@@ -49,44 +49,39 @@ export default function HomeScreen() {
         null,
     );
 
-    const [budget, setBudget] = useState<
-        (typeof budget_tb.$inferSelect)[] | null
-    >(null);
-
     // Onboarding
+
     useEffect(() => {
         if (!success) return;
 
         (async () => {
             // Notice: comment this if you want to see onboarding
             //await db.delete(user_tb);
+            //await db.delete(budget_tb);
 
-            // Insert user
-            await db.insert(user_tb).values([
-                {
-                    onboarding: false,
-                },
-            ]);
-
-            // Budget
-            const budget = await db.select().from(budget_tb);
-            setBudget(budget);
-
-            console.log(budget);
-
-            // User
+            // Check if a user already exists
             const users = await db.select().from(user_tb);
-            const user = users[0];
-            setItems(users);
+            if (users.length > 0) {
+                console.log("User already exists, skipping insert.");
+            } else {
+                await db.insert(user_tb).values([
+                    {
+                        onboarding: false,
+                    },
+                ]);
+            }
+
+            const updatedUsers = await db.select().from(user_tb);
+            const user = updatedUsers[0];
+
+            console.log(updatedUsers);
 
             if (user.onboarding === false) {
                 router.replace("/onboarding/ob");
                 return;
             }
 
-            console.log(
-                `[debug] name: ${user.name} | onboarding: ${user.onboarding}`,
-            );
+            setItems(updatedUsers);
         })();
     }, [success]);
 
@@ -120,8 +115,6 @@ export default function HomeScreen() {
 
                 {/* Home Content */}
 
-                {budget && <></>}
-
                 {/* Budget Card */}
                 <View
                     style={{
@@ -129,10 +122,10 @@ export default function HomeScreen() {
                     }}
                 >
                     <BudgetCard
-                        name={"Test"}
-                        amount={1000}
-                        spent="0"
-                        percentage={1}
+                        name="Monthly Budget"
+                        amount={5000}
+                        spent="2500"
+                        percentage={50}
                     />
                 </View>
 

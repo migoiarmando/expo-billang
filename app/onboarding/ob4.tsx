@@ -15,7 +15,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown, User } from "lucide-react-native";
 import { View, Text, Button, TextInput, Pressable } from "react-native";
@@ -32,10 +32,7 @@ const currencies = [
 ];
 
 export default function OnboardingPage4() {
-    const [name, setName] = useState("");
-    const [currency, setCurrency] = useState("Philippine Peso ($)");
     const inputRef = useRef<TextInput>(null);
-
     useEffect(() => {
         // Automatically open the keyboard when the screen is mounted
         setTimeout(() => {
@@ -44,18 +41,19 @@ export default function OnboardingPage4() {
     }, []);
 
     // Save name and currency in database
+    const [name, setName] = useState("");
+    const [currency, setCurrency] = useState("Philippine Peso ($)");
     async function OnUserContinue() {
         if (!name) {
             console.log("[debug] OnUserContinue: no user name value");
             return;
         }
 
-        // Save user information
         await db.update(user_tb).set({
             name: name,
         });
 
-        console.log(`[debug] name: ${name} | currency: ${currency}`);
+        router.replace("/onboarding/ob5");
     }
 
     return (
@@ -74,15 +72,15 @@ export default function OnboardingPage4() {
 
                     {/* Form */}
                     <View className="mt-10 mb-5 flex gap-3 items-center">
-                        <View className="flex flex-row gap-2">
+                        <View className="flex flex-row gap-2 justify-center">
                             <Text className="font-lexendBold text-[24px] text-center flex items-center justify-center">
                                 I'm
                             </Text>
                             <TextInput
                                 ref={inputRef}
-                                placeholder="Smith"
+                                placeholder="Text"
                                 placeholderTextColor="#999999"
-                                className="font-lexendBold text-[24px] underline"
+                                className="font-lexendBold text-[24px] text-primary"
                                 value={name}
                                 onChangeText={(text) => {
                                     setName(text);
@@ -105,14 +103,12 @@ export default function OnboardingPage4() {
                     </Text>
                 </View>
 
-                <Link href="/onboarding/ob5" asChild>
-                    <Pressable
-                        onPress={OnUserContinue}
-                        className="py-3 px-[80px] bg-[#0075B2] rounded-full"
-                    >
-                        <Text className="text-white font-lexend">Continue</Text>
-                    </Pressable>
-                </Link>
+                <Pressable
+                    onPress={OnUserContinue}
+                    className="py-3 px-[80px] bg-[#0075B2] rounded-full"
+                >
+                    <Text className="text-white font-lexend">Continue</Text>
+                </Pressable>
             </View>
 
             <StatusBar style="dark" />

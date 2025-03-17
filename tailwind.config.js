@@ -11,6 +11,7 @@ module.exports = {
             fontFamily: {
                 lexend: ["Lexend_400Regular"],
                 lexendLight: ["Lexend_300Light"],
+                lexendRegular: ["Lexend_400Regular"],
                 lexendMedium: ["Lexend_500Medium"],
                 lexendSemiBold: ["Lexend_600SemiBold"],
                 lexendBold: ["Lexend_700Bold"],

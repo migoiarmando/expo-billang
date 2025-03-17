@@ -82,7 +82,7 @@ export default function AddTransaction() {
                 {/* Edit number */}
                 <View className="items-center mt-[50px]">
                     <View className="flex-row items-center gap-1">
-                        <Text className="font-lexend text-[20px]">$</Text>
+                        <Text className="font-lexend text-[20px]">₱</Text>
                         <TextInput
                             keyboardType="numeric"
                             placeholder="0"

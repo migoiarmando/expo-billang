@@ -27,6 +27,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
+import { SearchBar } from "@/components/SearchBar";
 
 // -----------------------------------------------------------------------------
 // Interfaces & Utility Functions
@@ -232,21 +233,22 @@ const TransactionFilter = ({
 };
 
 // SearchBar Component
-const SearchBar = () => {
-    return (
-        <View className="relative mb-[20px]">
-            <Image
-                source={require("../../assets/images/transaction-folders/searchlogo.png")}
-                style={styles.searchlogo} // ✅ Correct
-            />
-            <TextInput
-                placeholder="Search transaction"
-                placeholderTextColor="D1D1D6"
-                style={styles.searchBar}
-            />
-        </View>
-    );
-};
+// const SearchBar = () => {
+//     return (
+//         <View className="relative mb-[20px]">
+//             <Image
+//                 source={require("../../assets/images/transaction-folders/searchlogo.png")}
+//                 style={styles.searchlogo} // ✅ Correct
+//             />
+//             <TextInput
+//                 placeholder="Search transaction"
+//                 placeholderTextColor="D1D1D6"
+//                 style={styles.searchBar}
+//                 className="text-[16px] font-lexendRegular"
+//             />
+//         </View>
+//     );
+// };
 
 // TransactionSection Component
 const TransactionSection = ({
@@ -407,7 +409,7 @@ export default function TransactionScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    <SearchBar />
+                    <SearchBar title="Search transactions" />
 
                     {/* ✅ Transaction Filter Component */}
                     <TransactionFilter
@@ -498,7 +500,7 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingLeft: 40,
         paddingRight: 10,
-        paddingVertical: 10,
+        height: 42,
         backgroundColor: "#F5F5F5",
         borderRadius: 30,
         borderColor: "#F5F5F5",
@@ -523,7 +525,7 @@ const styles = StyleSheet.create({
         flexDirection: "row", // ✅ Icon & text in a row
         alignItems: "center",
         justifyContent: "center",
-        paddingVertical: 10,
+        height: 40,
         paddingHorizontal: 30,
         borderRadius: 30,
         borderWidth: 1.5,
@@ -648,7 +650,7 @@ const styles = StyleSheet.create({
 
     transactionDivider: {
         height: 1,
-        backgroundColor: "#E5E7EB", // ✅ Light gray divider
+        backgroundColor: "#F8F8F8", // ✅ Light gray divider
     },
 
     transactionIcon: {

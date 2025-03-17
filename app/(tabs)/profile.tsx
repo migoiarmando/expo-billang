@@ -34,7 +34,6 @@ import BudgetCard from "@/components/BudgetCard";
 import ProfilePic from "@/assets/images/profilepic.svg";
 import { Link, useRouter } from "expo-router";
 import StreakIcon from "@/assets/images/streak.svg";
-import { useFonts, Lexend_300Light } from "@expo-google-fonts/lexend";
 
 // Import SVG files directly
 import SpendingSummary from "@/assets/images/spendingsummary.svg";
@@ -44,7 +43,7 @@ import SettingsCustomization from "@/assets/images/settingscustomization.svg";
 import Notifications from "@/assets/images/notifications.svg";
 import About from "@/assets/images/about.svg";
 import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
-import NotificationIcon from "@/assets/images/notification.svg";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 
@@ -52,34 +51,18 @@ import { Header } from "@/components/Header";
 const { width } = Dimensions.get("window");
 
 const ProfileSection: React.FC = () => {
-    const [fontsLoaded] = useFonts({
-        Lexend_300Light,
-    });
-
-    if (!fontsLoaded) {
-        return null;
-    }
-
     return (
-        <View className="flex-row items-center p-8 -mt-2.5 -mb-2.5">
-            <View className="mr-8 ml-[-27px]">
-                <ProfilePic
-                    width={100}
-                    height={100}
-                    className="w-[100px] h-[100px] rounded-[35px]"
-                />
+        <View className="flex-row items-center mt-5 mb-5">
+            <View className="mr-4">
+                <ProfilePic width={60} height={60} className="rounded-[35px]" />
             </View>
             <View className="flex-1">
-                <View className="flex-row items-center mb-1.5">
-                    <Text className="text-[22px] text-[#2B3854] font-lexend">
+                <View className="flex-row items-center">
+                    <Text className="text-[16px] text-[#2B3854] font-lexend">
                         John Doe
                     </Text>
-                    <View className="flex-row items-center ml-2.5">
-                        <StreakIcon
-                            width={35}
-                            height={35}
-                            className="w-[35px] h-[35px]"
-                        />
+                    <View className="flex-row items-center ml-2">
+                        <StreakIcon width={35} height={35} />
                     </View>
                 </View>
             </View>
@@ -204,7 +187,7 @@ export default function ProfileScreen() {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection />
 
-                        <View className="my-[20px]">
+                        {/* <View className="my-[20px]">
                             <ScrollView
                                 ref={horizontalScrollViewRef}
                                 horizontal
@@ -227,9 +210,16 @@ export default function ProfileScreen() {
                                     />
                                 </View>
                             </ScrollView>
-                        </View>
+                        </View> */}
 
-                        <View className="py-2.5">
+                        <BudgetCard
+                            name="Monthly Budget"
+                            amount={5000}
+                            spent="2500"
+                            percentage={50}
+                        />
+
+                        <View className="py-2 mt-[20px]">
                             <Text className="text-lg text-[#2B3854] font-medium font-lexend">
                                 Your Activity
                             </Text>
