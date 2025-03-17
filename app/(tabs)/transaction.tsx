@@ -1,6 +1,26 @@
+/* --------------------------------------------------------------------------------------------------------------
+    Route -> "transaction.tsx"
+
+    Last edited: 
+        Peter Joshua O. Jornales [March  4, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+    <Ticket Info>
+    Feature ID: BL-4
+    Feature Title: Transaction Screen
+    Description: Transaction screen for users to track their transaction history.
+
+    npm run start
+    press s (switch to expo go)
+    press a (switch to android emulator)
+-------------------------------------------------------------------------------------------------------------- */
+
 import React, { useEffect, useState } from "react";
-import { Image } from "react-native";
 import {
+    Image,
+    StyleSheet,
     View,
     Text,
     TextInput,
@@ -9,300 +29,641 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
-import { useFonts, Lexend_400Regular } from "@expo-google-fonts/lexend";
-import EditLogo from "@/assets/images/editlogo.svg"; // Import the SVG file
 
-// ----------------------
-// Components
-// ----------------------
+// -----------------------------------------------------------------------------
+// Interfaces & Utility Functions
+// -----------------------------------------------------------------------------
 
-// A simple search bar with a search icon
-const SearchBar = () => {
-    return (
-        <View className="relative mb-6">
-            {/* Positioned search icon */}
-            <Image
-                source={require("../../assets/images/searchlogo.png")}
-                style={{
-                    width: 20,
-                    height: 20,
-                    position: "absolute",
-                    left: 12,
-                    top: "50%",
-                    transform: [{ translateY: -10 }],
-                }}
-            />
-
-            {/* Search Input */}
-            <TextInput
-                placeholder="Search transaction"
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl text-gray-900 placeholder-gray-500 border-[#D9D9D9] border-[1.5px]"
-            />
-        </View>
-    );
-};
-
-// Define the shape of a transaction object
 interface Transaction {
-    icon: string;
+    icon: number | { uri: string }; // ✅ Supports require() and remote URLs
     title: string;
     amount: string;
-    date: string;
+    timestamp: string;
     type: "expense" | "income";
-    status?: "paid" | "pending";
 }
 
-// A card component to display each transaction's details
+// Format timestamp to "March 1 at 1:25 AM"
+const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+
+    const options: Intl.DateTimeFormatOptions = {
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true, // AM/PM format
+    };
+
+    return date.toLocaleString("en-PH", options); // Output: "March 1 at 1:25 AM"
+};
+
+// function to format the date (e.g., "March 2")
+const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+};
+
+// Dynamically show "Today, Month" or fixed date
+const getTransactionTitle = (timestamp?: string) => {
+    if (!timestamp) return "";
+
+    const transactionDate = new Date(timestamp);
+    const today = new Date();
+
+    // If the transaction is today, label it as "Today, Month Day"
+    if (
+        transactionDate.getDate() === today.getDate() &&
+        transactionDate.getMonth() === today.getMonth() &&
+        transactionDate.getFullYear() === today.getFullYear()
+    ) {
+        return `Today, ${formatDate(transactionDate)}`;
+    }
+
+    // Otherwise, return just "Month Day"
+    return formatDate(transactionDate);
+};
+
+// -----------------------------------------------------------------------------
+// Components
+// -----------------------------------------------------------------------------
+
+// TransactionCard Component
 const TransactionCard = ({
     icon,
     title,
     amount,
-    date,
+    timestamp,
     type,
-    status,
 }: Transaction) => {
     return (
-        <View className="flex flex-row justify-between p-3 bg-white rounded-xl border-[#D9D9D9] border-[1.5px] mb-2">
-            <View className="flex flex-row items-center space-x-3">
-                <View
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        type === "expense" ? "bg-red-100" : "bg-green-100"
-                    }`}
-                >
-                    <View className="h-13 rounded-lg flex items-center justify-start bg-gray-100 px-5">
-                        {typeof icon === "string" ? (
-                            <Text className="text-lg">{icon}</Text>
-                        ) : (
-                            <Image
-                                source={icon}
-                                style={{
-                                    width: 24,
-                                    height: 24,
-                                    resizeMode: "contain",
-                                }}
-                            />
-                        )}
-                    </View>
-                </View>
-                <View>
-                    {/* Title with Updated Font & Color */}
-                    <Text
-                        style={{
-                            fontFamily: "Lexend",
-                            fontSize: 14,
-                            color: "#2C2C2C",
-                            fontWeight: "400",
-                        }}
-                    >
-                        {title}
-                    </Text>
-
-                    {/* Date with Updated Font & Color */}
-                    <Text
-                        style={{
-                            fontFamily: "Lexend",
-                            fontSize: 12,
-                            color: "#9D9D9D",
-                            fontWeight: "300",
-                        }}
-                    >
-                        {date}
-                    </Text>
-                </View>
-            </View>
-
-            {/* Status, Down Arrow, and Amount */}
-            <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
-            >
-                {/* Show "Paid" only if status is paid */}
-                {status === "paid" && (
-                    <View
-                        style={{
-                            backgroundColor: "#D1F2E4",
-                            paddingVertical: 3,
-                            paddingHorizontal: 5,
-                            borderRadius: 4,
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 10,
-                                fontWeight: "600",
-                                color: "#34D399",
-                            }}
-                        >
-                            Paid
+        <>
+            <View style={styles.transactionRow}>
+                <View style={styles.transactionDetails}>
+                    <Image
+                        source={typeof icon === "string" ? { uri: icon } : icon}
+                        style={styles.transactionIcon}
+                    />
+                    <View>
+                        <Text style={styles.transactionTitle}>{title}</Text>
+                        <Text style={styles.transactionTimestamp}>
+                            {formatTimestamp(timestamp)}
                         </Text>
                     </View>
-                )}
+                </View>
 
-                {/* Down Arrow PNG */}
-                <Image
-                    source={require("../../assets/images/down.png")}
-                    style={{
-                        width: 9,
-                        height: 9,
-                        resizeMode: "contain",
-                    }}
-                />
-
-                {/* Transaction Amount */}
-                <Text
-                    style={{
-                        color: type === "expense" ? "#FD7474" : "#34D399",
-                        fontWeight: "600",
-                    }}
-                >
-                    {amount}
-                </Text>
+                {/* ✅ Amount with Icon */}
+                <View style={styles.transactionAmountWrapper}>
+                    <Image
+                        source={
+                            type === "expense"
+                                ? require("../../assets/images/transaction-folders/expense.png")
+                                : require("../../assets/images/transaction-folders/income.png")
+                        }
+                        style={styles.transactionTypeIcon}
+                    />
+                    <Text
+                        style={[
+                            styles.transactionAmount,
+                            type === "expense"
+                                ? styles.expenseAmount
+                                : styles.incomeAmount,
+                        ]}
+                    >
+                        {amount}
+                    </Text>
+                </View>
             </View>
+
+            {/* ✅ Divider */}
+            <View style={styles.transactionDivider} />
+        </>
+    );
+};
+
+// TransactionFilter Component
+const TransactionFilter = ({
+    selectedFilter,
+    setSelectedFilter,
+}: {
+    selectedFilter: "all" | "expense" | "income";
+    setSelectedFilter: (filter: "all" | "expense" | "income") => void;
+}) => {
+    return (
+        <View style={styles.filterWrapper}>
+            {/* ✅ ALL Button */}
+            <TouchableOpacity
+                style={[
+                    styles.filterButton,
+                    selectedFilter === "all"
+                        ? styles.activeFilterAll
+                        : styles.inactiveFilter,
+                ]}
+                onPress={() => setSelectedFilter("all")}
+            >
+                <Text
+                    style={
+                        selectedFilter === "all"
+                            ? styles.activeText
+                            : styles.inactiveText
+                    }
+                >
+                    All
+                </Text>
+            </TouchableOpacity>
+
+            {/* ✅ EXPENSE Button */}
+            <TouchableOpacity
+                style={[
+                    styles.filterButton,
+                    selectedFilter === "expense"
+                        ? styles.activeFilterExpense
+                        : styles.inactiveFilter,
+                ]}
+                onPress={() => setSelectedFilter("expense")}
+            >
+                <Image
+                    source={require("../../assets/images/transaction-folders/expense.png")}
+                    style={[
+                        styles.filterIcon,
+                        selectedFilter === "expense"
+                            ? styles.filterIconExpense
+                            : styles.filterIconInactive,
+                    ]}
+                />
+                <Text
+                    style={
+                        selectedFilter === "expense"
+                            ? styles.filterTextWhite
+                            : styles.filterTextInactive
+                    }
+                >
+                    Expense
+                </Text>
+            </TouchableOpacity>
+
+            {/* ✅ INCOME Button */}
+            <TouchableOpacity
+                style={[
+                    styles.filterButton,
+                    selectedFilter === "income"
+                        ? styles.activeFilterIncome
+                        : styles.inactiveFilter,
+                ]}
+                onPress={() => setSelectedFilter("income")}
+            >
+                <Image
+                    source={require("../../assets/images/transaction-folders/income.png")}
+                    style={[
+                        styles.filterIcon,
+                        selectedFilter === "income"
+                            ? styles.filterIconIncome
+                            : styles.filterIconInactive,
+                    ]}
+                />
+                <Text
+                    style={
+                        selectedFilter === "income"
+                            ? styles.filterTextWhite
+                            : styles.filterTextInactive
+                    }
+                >
+                    Income
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
-// ----------------------
-// Data & Service
-// ----------------------
+// SearchBar Component
+const SearchBar = () => {
+    return (
+        <View className="relative mb-6">
+            <Image
+                source={require("../../assets/images/transaction-folders/searchlogo.png")}
+                style={styles.searchlogo} // ✅ Correct
+            />
+            <TextInput
+                placeholder="Search transaction"
+                placeholderTextColor="D1D1D6"
+                style={styles.searchBar}
+            />
+        </View>
+    );
+};
 
-// Default static transaction data for development.
+// TransactionSection Component
+const TransactionSection = ({
+    title,
+    transactions,
+}: {
+    title: string;
+    transactions: Transaction[];
+}) => {
+    if (!transactions || transactions.length === 0) return null;
+
+    return (
+        <View className="mb-4">
+            <Text style={styles.transactionSection}>{title}</Text>
+            {transactions.map((transaction, index) => (
+                <TransactionCard key={index} {...transaction} />
+            ))}
+        </View>
+    );
+};
+
+// -----------------------------------------------------------------------------
+// Data & Service
+// -----------------------------------------------------------------------------
+
 const DEFAULT_TRANSACTION_DATA = {
     upcoming: [
         {
-            icon: require("../../assets/images/category/billFees.png"),
+            icon: require("../../assets/images/transaction-folders/category/billFees.png"),
+            title: "Freelance Income",
+            amount: "₱100,000",
+            timestamp: "2025-03-3T10:30:00Z", // Fixed timestamp
+            type: "income" as const,
+        },
+        {
+            icon: require("../../assets/images/transaction-folders/category/billFees.png"),
             title: "Electricity Bill",
-            amount: "₱2,700",
-            date: "January 30",
+            amount: "₱7,700",
+            timestamp: "2025-03-3T10:30:00Z", // Fixed timestamp
             type: "expense" as const,
-            status: "paid" as const,
         },
     ],
     todayTransactions: [
         {
-            icon: require("../../assets/images/category/billFees.png"),
-            title: "Water Bill",
-            amount: "₱50",
-            date: "February 11",
+            icon: require("../../assets/images/transaction-folders/category/entertainment.png"),
+            title: "Cinema Captain America 4",
+            amount: "₱333",
+            timestamp: "2025-03-09T15:45:00Z",
             type: "expense" as const,
-            status: "paid" as const,
+        },
+        {
+            icon: require("../../assets/images/transaction-folders/category/food.png"),
+            title: "Lunch",
+            amount: "₱237",
+            timestamp: "2025-03-09T12:30:00Z",
+            type: "expense" as const,
+        },
+        {
+            icon: require("../../assets/images/transaction-folders/category/transit.png"),
+            title: "Bus Fare",
+            amount: "₱50",
+            timestamp: "2025-03-09T08:10:00Z",
+            type: "expense" as const,
         },
     ],
     pastTransactions: [
         {
-            icon: require("../../assets/images/category/billFees.png"),
-            title: "Water Bill",
-            amount: "₱50",
-            date: "February 11",
-            type: "expense" as const,
-            status: "pending" as const,
-        },
-    ],
-    overdue: [
-        {
-            icon: require("../../assets/images/category/billFees.png"),
-            title: "Water Bill",
-            amount: "₱50",
-            date: "February 11",
-            type: "expense" as const,
-            status: "pending" as const,
-        },
-        {
-            icon: require("../../assets/images/category/entertainment.png"),
+            icon: require("../../assets/images/transaction-folders/category/subscription.png"),
             title: "Disney+ Subscription",
             amount: "₱149",
-            date: "February 10",
+            timestamp: "2025-02-25T18:45:00Z",
             type: "expense" as const,
-            status: "paid" as const,
+        },
+        {
+            icon: require("../../assets/images/transaction-folders/category/income.png"),
+            title: "Freelance Income",
+            amount: "₱18,000",
+            timestamp: "2025-02-25T18:45:00Z",
+            type: "income" as const,
+        },
+    ],
+    overDue: [
+        {
+            icon: require("../../assets/images/transaction-folders/category/billFees.png"),
+            title: "Water Bill",
+            amount: "₱50",
+            timestamp: "2025-02-10T09:00:00Z",
+            type: "expense" as const,
         },
     ],
 };
 
-// ----------------------
+// -----------------------------------------------------------------------------
 // Main Screen Component
-// ----------------------
+// -----------------------------------------------------------------------------
 
 export default function TransactionScreen() {
-    const navigation = useNavigation(); // Ensure navigation works properly
-    const [fontsLoaded] = useFonts({
-        Lexend_400Regular,
-    });
-
+    const navigation = useNavigation();
     const [transactions, setTransactions] = useState(DEFAULT_TRANSACTION_DATA);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const [selectedFilter, setSelectedFilter] = useState<
+        "all" | "expense" | "income"
+    >("all");
 
     useEffect(() => {
         const getTransactions = async () => {
             try {
+                const response = await fetch(
+                    "https://your-backend.com/api/transactions",
+                );
+                const data = await response.json();
+                setTransactions(data.transactions);
             } catch (err) {
                 setError("Error fetching transactions");
             } finally {
                 setLoading(false);
             }
         };
-
         getTransactions();
     }, []);
 
-    if (!fontsLoaded) {
-        return null;
-    }
-
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
+            <SafeAreaView style={styles.container}>
                 <Text>Loading transactions...</Text>
             </SafeAreaView>
         );
     }
 
-    if (error) {
-        return (
-            <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
-                <Text>{error}</Text>
-            </SafeAreaView>
-        );
-    }
+    // **Filter Transactions Based on Selected Filter**
+    const filterTransactions = (transactionsList: Transaction[]) => {
+        if (selectedFilter === "all") return transactionsList;
+        return transactionsList.filter((txn) => txn.type === selectedFilter);
+    };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
-            <ScrollView
-                contentContainerStyle={{
-                    backgroundColor: "#FFFFFF",
-                    paddingBottom: 50,
-                }}
-            >
-                <View className="px-5 py-5">
-                    <View className="flex flex-row justify-between items-center pl-1 mb-6">
-                        <Text
-                            style={{
-                                fontFamily: "Lexend_400Regular",
-                                fontSize: 24,
-                                color: "#2B3854",
-                            }}
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
+                <View style={styles.innerContainer}>
+                    {/* Header row with left text and right icon */}
+                    <View style={styles.headerRow}>
+                        <Text style={styles.title}>Transactions</Text>
+                        <TouchableOpacity
+                            onPress={() =>
+                                console.log("Settings / Edit icon pressed")
+                            }
                         >
-                            Transactions
-                        </Text>
-                        <TouchableOpacity className="p-2 rounded-full">
-                            <EditLogo width={36} height={36} />
+                            <Image
+                                source={require("../../assets/images/transaction-folders/editlogo.png")}
+                                style={styles.headerIcon}
+                            />
                         </TouchableOpacity>
                     </View>
 
                     <SearchBar />
 
-                    {/* Display Transactions */}
-                    {Object.entries(transactions).map(([key, items]) => (
-                        <View key={key} className="mb-4">
-                            <Text className="text-lg font-semibold text-gray-900 mb-2">
-                                {key.charAt(0).toUpperCase() + key.slice(1)}
-                            </Text>
-                            {items.map((transaction, index) => (
-                                <TransactionCard key={index} {...transaction} />
-                            ))}
-                        </View>
-                    ))}
+                    {/* ✅ Transaction Filter Component */}
+                    <TransactionFilter
+                        selectedFilter={selectedFilter}
+                        setSelectedFilter={setSelectedFilter}
+                    />
+
+                    {/* ✅ Apply Filter to Each Transaction List */}
+                    <TransactionSection
+                        title="Upcoming"
+                        transactions={filterTransactions(transactions.upcoming)}
+                    />
+                    <TransactionSection
+                        title="March"
+                        transactions={filterTransactions(
+                            transactions.todayTransactions,
+                        )}
+                    />
+                    <TransactionSection
+                        title="Febuary"
+                        transactions={filterTransactions(
+                            transactions.pastTransactions,
+                        )}
+                    />
+                    <TransactionSection
+                        title="Overdue"
+                        transactions={filterTransactions(transactions.overDue)}
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
+
+// -----------------------------------------------------------------------------
+// Styles
+// -----------------------------------------------------------------------------
+
+const styles = StyleSheet.create({
+    /* --------------------------------------------------------------------------------------------------------------
+        🔹 GLOBAL CONTAINER (Applies to All Elements)
+    -------------------------------------------------------------------------------------------------------------- */
+    container: {
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+    },
+
+    /* 🔹 Added New Inner Container */
+    innerContainer: {
+        marginTop: 30, // ✅ mt-30px applied globally
+        marginHorizontal: 20, // ✅ mx-20px applied globally
+    },
+
+    /* --------------------------------------------------------------------------------------------------------------
+        🔹 PAGE TITLE / HEADER
+    -------------------------------------------------------------------------------------------------------------- */
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#2B3854", // ✅ Matches requested color
+        marginBottom: 10, // Ensure spacing after title
+    },
+
+    /* 🔹 Header Row (NEW) */
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+    headerIcon: {
+        width: 30,
+        height: 30,
+        resizeMode: "contain",
+    },
+
+    /* --------------------------------------------------------------------------------------------------------------
+        🔹 SEARCH BAR COMPONENT
+    -------------------------------------------------------------------------------------------------------------- */
+    searchlogo: {
+        width: 20,
+        height: 20,
+        position: "absolute",
+        left: 12,
+        top: "50%",
+        transform: [{ translateY: -10 }],
+        zIndex: 1, // Ensures it appears above the search bar
+    },
+    searchBar: {
+        width: "100%",
+        paddingLeft: 40,
+        paddingRight: 10,
+        paddingVertical: 10,
+        backgroundColor: "#F5F5F5",
+        borderRadius: 30,
+        borderColor: "#F5F5F5",
+        borderWidth: 1.5,
+    },
+
+    /* --------------------------------------------------------------------------------------------------------------
+        🔹 TRANSACTION FILTER COMPONENT
+    -------------------------------------------------------------------------------------------------------------- */
+
+    /* ✅ Filter Wrapper */
+    filterWrapper: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 10,
+        gap: 10,
+        padding: 8,
+        borderRadius: 20,
+    },
+
+    /* ✅ Default Filter Button */
+    filterButton: {
+        flexDirection: "row", // ✅ Icon & text in a row
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        borderRadius: 30,
+        borderWidth: 1.5,
+        gap: 3, // ✅ Space between icon & text
+    },
+
+    filterIconInactive: {
+        width: 8,
+        height: 8,
+        resizeMode: "contain",
+        tintColor: "#BABABA", // ✅ Sets inactive icon color to BABABA
+        marginRight: 2, // ✅ Adds space between icon & text
+    },
+    /* ✅ Expense & Income Icons */
+    filterIcon: {
+        width: 10, // ✅ Adjust icon size if needed
+        height: 10,
+        resizeMode: "contain",
+    },
+
+    /* ✅ Active States */
+    activeFilterAll: {
+        backgroundColor: "#E5F7FF",
+        borderColor: "#E5F7FF",
+    },
+    activeFilterExpense: {
+        backgroundColor: "#FD7474",
+        borderColor: "#FD7474",
+    },
+    activeFilterIncome: {
+        backgroundColor: "#80B154",
+        borderColor: "#80B154",
+    },
+
+    /* ✅ Default Inactive Button */
+    inactiveFilter: {
+        backgroundColor: "#F5F5F5",
+        borderColor: "#F5F5F5",
+    },
+    filterTextInactive: {
+        color: "#6B7280", // ✅ Text color for inactive filter
+        fontWeight: "500",
+    },
+
+    /* ✅ Text Colors */
+    activeText: {
+        color: "#5FA7C6",
+        fontWeight: "600",
+    },
+    inactiveText: {
+        color: "#BABABA",
+        fontWeight: "500",
+    },
+    filterTextWhite: {
+        color: "#FFFFFF",
+        fontWeight: "600",
+    },
+
+    /* ✅ Icon Colors */
+    filterIconExpense: {
+        tintColor: "#CB4F4F", // ✅ Turns Red when Expense is active
+    },
+    filterIconIncome: {
+        tintColor: "#FFFFFF", // ✅ Turns White when Income is active
+    },
+
+    /* --------------------------------------------------------------------------------------------------------------
+        🔹 TRANSACTION SECTION HEADER
+    -------------------------------------------------------------------------------------------------------------- */
+    transactionSection: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#676666", // ✅ Updated to requested color
+        marginTop: 10, // ✅ Ensures consistent spacing from the filter bar
+        marginBottom: 5,
+    },
+    /* --------------------------------------------------------------------------------------------------------------
+            🔹 TRANSACTION CARD COMPONENT
+        -------------------------------------------------------------------------------------------------------------- */
+
+    transactionAmountWrapper: {
+        flexDirection: "row", // ✅ Align icon and text in a row
+        alignItems: "center",
+        justifyContent: "flex-start", // ✅ Ensures alignment to the left
+        gap: 5, // ✅ Adds spacing between icon and text
+    },
+
+    transactionTypeIcon: {
+        width: 10, // ✅ Adjust size as needed
+        height: 10,
+        resizeMode: "contain",
+    },
+    transactionRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between", // ✅ Ensures both sides (title & amount) align properly
+        paddingVertical: 12,
+    },
+
+    transactionDetails: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        flex: 1, // ✅ Allows proper spacing
+    },
+
+    transactionAmount: {
+        fontSize: 14,
+        fontWeight: "600",
+        textAlign: "left", // ✅ Aligns the amount text to the right
+        minWidth: 50, // ✅ Ensures alignment without shifting
+    },
+
+    expenseAmount: {
+        color: "#FD7474", // Red for expenses
+    },
+
+    incomeAmount: {
+        color: "#80B154", // Green for income
+    },
+
+    transactionDivider: {
+        height: 1,
+        backgroundColor: "#E5E7EB", // ✅ Light gray divider
+    },
+
+    transactionIcon: {
+        width: 30,
+        height: 30,
+        borderRadius: 5,
+    },
+    transactionTitle: {
+        fontSize: 16,
+        fontWeight: "500",
+        color: "#2C2C2C",
+    },
+    transactionTimestamp: {
+        fontSize: 12,
+        fontWeight: "400",
+        color: "#9D9D9D",
+    },
+});
