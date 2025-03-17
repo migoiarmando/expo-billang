@@ -2,6 +2,7 @@
     Route -> "transaction.tsx"
 
     Last edited: 
+        John Bicierro [Mar 17, 2025]
         Peter Joshua O. Jornales [March  4, 2025]
 
     Company: github.com/codekada
@@ -12,9 +13,6 @@
     Feature Title: Transaction Screen
     Description: Transaction screen for users to track their transaction history.
 
-    npm run start
-    press s (switch to expo go)
-    press a (switch to android emulator)
 -------------------------------------------------------------------------------------------------------------- */
 
 import React, { useEffect, useState } from "react";
@@ -148,7 +146,7 @@ const TransactionFilter = ({
     setSelectedFilter: (filter: "all" | "expense" | "income") => void;
 }) => {
     return (
-        <View style={styles.filterWrapper}>
+        <View style={styles.filterWrapper} className="mb-[20px]">
             {/* ✅ ALL Button */}
             <TouchableOpacity
                 style={[
@@ -236,7 +234,7 @@ const TransactionFilter = ({
 // SearchBar Component
 const SearchBar = () => {
     return (
-        <View className="relative mb-6">
+        <View className="relative mb-[20px]">
             <Image
                 source={require("../../assets/images/transaction-folders/searchlogo.png")}
                 style={styles.searchlogo} // ✅ Correct
@@ -261,7 +259,7 @@ const TransactionSection = ({
     if (!transactions || transactions.length === 0) return null;
 
     return (
-        <View className="mb-4">
+        <View className="mb-[20px]">
             <Text style={styles.transactionSection}>{title}</Text>
             {transactions.map((transaction, index) => (
                 <TransactionCard key={index} {...transaction} />
@@ -391,7 +389,12 @@ export default function TransactionScreen() {
                 <View style={styles.innerContainer}>
                     {/* Header row with left text and right icon */}
                     <View style={styles.headerRow}>
-                        <Text style={styles.title}>Transactions</Text>
+                        <Text
+                            style={styles.title}
+                            className="font-lexend text-[24px]"
+                        >
+                            Transactions
+                        </Text>
                         <TouchableOpacity
                             onPress={() =>
                                 console.log("Settings / Edit icon pressed")
@@ -454,7 +457,7 @@ const styles = StyleSheet.create({
 
     /* 🔹 Added New Inner Container */
     innerContainer: {
-        marginTop: 30, // ✅ mt-30px applied globally
+        marginTop: 20, // ✅ mt-30px applied globally
         marginHorizontal: 20, // ✅ mx-20px applied globally
     },
 
@@ -462,8 +465,6 @@ const styles = StyleSheet.create({
         🔹 PAGE TITLE / HEADER
     -------------------------------------------------------------------------------------------------------------- */
     title: {
-        fontSize: 24,
-        fontWeight: "bold",
         color: "#2B3854", // ✅ Matches requested color
         marginBottom: 10, // Ensure spacing after title
     },
@@ -476,8 +477,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     headerIcon: {
-        width: 30,
-        height: 30,
+        width: 32,
+        height: 32,
         resizeMode: "contain",
     },
 
@@ -511,12 +512,10 @@ const styles = StyleSheet.create({
     /* ✅ Filter Wrapper */
     filterWrapper: {
         flexDirection: "row",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 10,
+        borderRadius: 100,
         gap: 10,
-        padding: 8,
-        borderRadius: 20,
     },
 
     /* ✅ Default Filter Button */
@@ -528,7 +527,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         borderRadius: 30,
         borderWidth: 1.5,
-        gap: 3, // ✅ Space between icon & text
+        flexGrow: 1,
+        gap: 5, // ✅ Space between icon & text
     },
 
     filterIconInactive: {

@@ -3,6 +3,7 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
+        John Bicierro [Mar 17, 2025]
         Romar Castro [Mar 9, 2025]
 
     Company: github.com/codekada
@@ -13,18 +14,12 @@
     Feature Title: Home Screen v2
     Description: Home screen for the app providing the user an overview of all the details
 
-
-    npm run start
-    press s (switch to expo go)
-    press a (switch to android emulator)
 -------------------------------------------------------------------------------------------------------------- */
 
 import {
     StyleSheet,
     Platform,
-    Pressable,
     Text,
-    TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
@@ -33,24 +28,17 @@ import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "expo-router";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/types";
-
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
 import { budget_tb, user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-
-import React from "react";
 import { db } from "@/database";
-import { User, Bell, Search, Filter, History } from "lucide-react-native";
 
 // Reusable Components
 import BudgetCard from "@/components/BudgetCard";
-import { eq } from "drizzle-orm";
-
-import UserIcon from "@/assets/images/usericon.svg";
-import NotificationIcon from "@/assets/images/notification.svg";
+import { Header } from "@/components/Header";
 
 export default function HomeScreen() {
     const navigation =
@@ -128,36 +116,7 @@ export default function HomeScreen() {
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View style={{ marginHorizontal: 20, marginTop: 20 }}>
-                {/* Top Navigation */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <Text className="font-lexend text-[24px] text-[#2B3854]">
-                        Good Day, {items[0].name}!
-                    </Text>
-                    <View style={styles.headerIcons}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("profile")}
-                        >
-                            <UserIcon
-                                width={32}
-                                height={32}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <NotificationIcon
-                                width={32}
-                                height={32}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <Header name={`Good Day, ${items[0].name}!`} />
 
                 {/* Home Content */}
 
@@ -166,7 +125,7 @@ export default function HomeScreen() {
                 {/* Budget Card */}
                 <View
                     style={{
-                        marginVertical: 15,
+                        marginVertical: 20,
                     }}
                 >
                     <BudgetCard

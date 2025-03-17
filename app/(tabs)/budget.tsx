@@ -30,40 +30,12 @@ import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import UserIcon from "@/assets/images/usericon.svg";
-import NotificationIcon from "@/assets/images/notification.svg";
-
-const CustomStatusBar = () => (
-    <View className="flex-row justify-between items-center px-5 pt-5 mt-1">
-        <View className="flex-row gap-2">
-            <View className="w-8 h-8" />
-            <View className="w-8 h-8" />
-            <View className="w-8 h-8" />
-        </View>
-    </View>
-);
-
-const Header = () => {
-    return (
-        <View className="flex-row justify-between items-center ml-5 mt-4 mr-6 pb-1">
-            <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend ml-1">
-                Budgets
-            </Text>
-            <View className="flex-row gap-3.5">
-                <TouchableOpacity onPress={() => router.replace("/profile")}>
-                    <UserIcon width={32} height={32} />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <NotificationIcon width={32} height={32} />
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
-};
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Header } from "@/components/Header";
 
 const SearchBar = () => (
-    <View className="mt-5 mx-5 rounded-full py-0.5 px-5 bg-[#F5F5F5] flex-row items-center">
-        <Search size={20} color="#666" className="mr-2" />
+    <View className="mt-5 rounded-full py-3 px-5 bg-[#F5F5F5] flex-row items-center gap-2">
+        <Search size={16} color="#666" />
         <TextInput
             className="flex-1 font-lexend text-base text-[#666] font-normal"
             placeholder="Search budgets"
@@ -119,45 +91,47 @@ export default function BudgetScreen() {
     };
 
     return (
-        <View className="flex-1 bg-white max-w-[440px] self-center w-full">
-            <ScrollView className="flex-1">
-                <CustomStatusBar />
-                <Header />
+        <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
+            <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px]">
+                <Header name="Budget" />
                 <SearchBar />
-                <View className="p-5 gap-3.5">
-                    <TouchableOpacity
-                        onPress={() => handleBudgetCardPress("A")}
-                    >
-                        <BudgetCard
-                            name="A Budget"
-                            amount={1500}
-                            spent="545"
-                            percentage={1}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => handleBudgetCardPress("B")}
-                    >
-                        <BudgetCard
-                            name="B Budget"
-                            amount={2500}
-                            spent="545"
-                            percentage={1}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => handleBudgetCardPress("C")}
-                    >
-                        <BudgetCard
-                            name="C Budget"
-                            amount={8550}
-                            spent="545"
-                            percentage={1}
-                        />
-                    </TouchableOpacity>
-                    <AddBudgetButton onPress={handleAddBudget} />
-                </View>
-            </ScrollView>
+                <ScrollView className="flex-1">
+                    <View className="py-5 gap-3.5">
+                        <TouchableOpacity
+                            onPress={() => handleBudgetCardPress("A")}
+                        >
+                            <BudgetCard
+                                name="A Budget"
+                                amount={1500}
+                                spent="545"
+                                percentage={1}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => handleBudgetCardPress("B")}
+                        >
+                            <BudgetCard
+                                name="B Budget"
+                                amount={2500}
+                                spent="545"
+                                percentage={1}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => handleBudgetCardPress("C")}
+                        >
+                            <BudgetCard
+                                name="C Budget"
+                                amount={8550}
+                                spent="545"
+                                percentage={1}
+                            />
+                        </TouchableOpacity>
+                        <AddBudgetButton onPress={handleAddBudget} />
+                    </View>
+                </ScrollView>
+            </View>
+
             <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
 
             <BudgetTypeSelectorModal
@@ -165,6 +139,6 @@ export default function BudgetScreen() {
                 onClose={handleCloseModal}
                 onSelect={handleSelectBudgetType}
             />
-        </View>
+        </SafeAreaView>
     );
 }

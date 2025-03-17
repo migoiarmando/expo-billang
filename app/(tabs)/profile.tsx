@@ -1,6 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
+        John Bicierro [Mar 17, 2025]
         Miguel Armand B. Sta. Ana [Mar 10, 2025]
 
     Company: github.com/codekada
@@ -19,7 +20,6 @@ import React, { useState, useRef } from "react";
 import {
     View,
     Text,
-    SafeAreaView,
     ScrollView,
     TouchableOpacity,
     Platform,
@@ -45,28 +45,11 @@ import Notifications from "@/assets/images/notifications.svg";
 import About from "@/assets/images/about.svg";
 import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Header } from "@/components/Header";
 
 // Get screen width
 const { width } = Dimensions.get("window");
-
-const CustomStatusBar = () => (
-    <View className="flex-row justify-between items-center px-5 pt-[23px]">
-        <View className="flex-row gap-2">
-            <View className="w-8 h-8" />
-            <View className="w-8 h-8" />
-            <View className="w-8 h-8" />
-        </View>
-    </View>
-);
-
-const Header = () => (
-    <View className="flex-row justify-between items-center ml-6 mr-6 pb-1">
-        <Text className="text-[24px] text-[#2B3854] font-lexend">Settings</Text>
-        <TouchableOpacity className="flex-row">
-            <NotificationIcon width={32} height={32} />
-        </TouchableOpacity>
-    </View>
-);
 
 const ProfileSection: React.FC = () => {
     const [fontsLoaded] = useFonts({
@@ -78,7 +61,7 @@ const ProfileSection: React.FC = () => {
     }
 
     return (
-        <View className="flex-row items-center p-8 bg-transparent rounded-xl mx-5 -mt-2.5 -mb-2.5">
+        <View className="flex-row items-center p-8 -mt-2.5 -mb-2.5">
             <View className="mr-8 ml-[-27px]">
                 <ProfilePic
                     width={100}
@@ -99,9 +82,6 @@ const ProfileSection: React.FC = () => {
                         />
                     </View>
                 </View>
-                <Text className="text-base text-[#666] font-lexend">
-                    johndoe@gmail.com
-                </Text>
             </View>
         </View>
     );
@@ -214,91 +194,91 @@ export default function ProfileScreen() {
 
     return (
         <>
-            <SafeAreaView className="flex-1 bg-white">
-                <CustomStatusBar />
-                <Header />
+            <SafeAreaView
+                className="h-full"
+                style={{ backgroundColor: "#fff" }}
+            >
+                <View style={{ marginHorizontal: 20, marginTop: 20 }}>
+                    <Header name="Profile" />
 
-                <ScrollView
-                    className="flex-1"
-                    showsVerticalScrollIndicator={false}
-                >
-                    <ProfileSection />
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <ProfileSection />
 
-                    <View className="h-[180px] -mt-2.5">
-                        <ScrollView
-                            ref={horizontalScrollViewRef}
-                            horizontal
-                            pagingEnabled
-                            showsHorizontalScrollIndicator={false}
-                            onScroll={handleScroll}
-                            scrollEventThrottle={16}
-                            className="px-0"
-                        >
-                            <View className="w-screen px-5 justify-center">
-                                <BudgetCard
-                                    name="Monthly Budget"
-                                    amount={5000}
-                                    spent="2500"
-                                    percentage={50}
-                                />
-                            </View>
-                            <View className="w-screen px-5 justify-center">
-                                <AddBudgetButton onPress={handleAddBudget} />
-                            </View>
-                        </ScrollView>
-                    </View>
+                        <View className="my-[20px]">
+                            <ScrollView
+                                ref={horizontalScrollViewRef}
+                                horizontal
+                                pagingEnabled
+                                showsHorizontalScrollIndicator={false}
+                                onScroll={handleScroll}
+                                scrollEventThrottle={16}
+                            >
+                                <View className="w-screen px-5 justify-center">
+                                    <BudgetCard
+                                        name="Monthly Budget"
+                                        amount={5000}
+                                        spent="2500"
+                                        percentage={50}
+                                    />
+                                </View>
+                                <View className="w-screen justify-center">
+                                    <AddBudgetButton
+                                        onPress={handleAddBudget}
+                                    />
+                                </View>
+                            </ScrollView>
+                        </View>
 
-                    <View className="px-5 py-2.5">
-                        <Text className="text-lg text-[#2B3854] font-medium font-lexend">
-                            Your Activity
-                        </Text>
-                    </View>
+                        <View className="py-2.5">
+                            <Text className="text-lg text-[#2B3854] font-medium font-lexend">
+                                Your Activity
+                            </Text>
+                        </View>
 
-                    <SettingsMenuItem
-                        icon="chart"
-                        label="Spending Summary"
-                        onPress={() => router.push("/+not-found")}
-                    />
-                    <SettingsMenuItem
-                        icon="badge"
-                        label="Streaks & Badges"
-                        onPress={() => router.push("/+not-found")}
-                    />
-                    <SettingsMenuItem
-                        icon="history"
-                        label="Activity Log"
-                        onPress={() => router.push("/+not-found")}
-                    />
+                        <SettingsMenuItem
+                            icon="chart"
+                            label="Spending Summary"
+                            onPress={() => router.push("/+not-found")}
+                        />
+                        <SettingsMenuItem
+                            icon="badge"
+                            label="Streaks & Badges"
+                            onPress={() => router.push("/+not-found")}
+                        />
+                        <SettingsMenuItem
+                            icon="history"
+                            label="Activity Log"
+                            onPress={() => router.push("/+not-found")}
+                        />
 
-                    <View className="px-5 py-2.5">
-                        <Text className="text-lg text-[#2B3854] font-medium font-lexend">
-                            General
-                        </Text>
-                    </View>
+                        <View className="py-2.5">
+                            <Text className="text-lg text-[#2B3854] font-medium font-lexend">
+                                General
+                            </Text>
+                        </View>
 
-                    <SettingsMenuItem
-                        icon="settings"
-                        label="Settings & Customizations"
-                        onPress={() => router.push("/+not-found")}
-                    />
-                    <SettingsMenuItem
-                        icon="notification"
-                        label="Notifications"
-                        onPress={() => router.push("/+not-found")}
-                    />
-                    <SettingsMenuItem
-                        icon="about"
-                        label="About"
-                        onPress={() => router.push("/+not-found")}
-                    />
-                    <SettingsMenuItem
-                        icon="privacy policy & terms"
-                        label="Privacy Policy & Terms"
-                        onPress={() => router.push("/+not-found")}
-                    />
-                </ScrollView>
-
-                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+                        <SettingsMenuItem
+                            icon="settings"
+                            label="Settings & Customizations"
+                            onPress={() => router.push("/+not-found")}
+                        />
+                        <SettingsMenuItem
+                            icon="notification"
+                            label="Notifications"
+                            onPress={() => router.push("/+not-found")}
+                        />
+                        <SettingsMenuItem
+                            icon="about"
+                            label="About"
+                            onPress={() => router.push("/+not-found")}
+                        />
+                        <SettingsMenuItem
+                            icon="privacy policy & terms"
+                            label="Privacy Policy & Terms"
+                            onPress={() => router.push("/+not-found")}
+                        />
+                    </ScrollView>
+                </View>
             </SafeAreaView>
 
             <BudgetTypeSelectorModal
@@ -306,6 +286,8 @@ export default function ProfileScreen() {
                 onClose={handleCloseModal}
                 onSelect={handleSelectBudgetType}
             />
+
+            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
         </>
     );
 }

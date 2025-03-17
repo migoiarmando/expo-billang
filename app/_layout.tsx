@@ -1,17 +1,19 @@
-import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
-} from "@react-navigation/native";
+/* --------------------------------------------------------------------------------------------------------------
 
-//import { useFonts } from "expo-font";
+    Last edited: 
+        John Bicierro [Feb 22, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+-------------------------------------------------------------------------------------------------------------- */
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/expo/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 
 import {
@@ -24,13 +26,12 @@ import {
     Lexend_600SemiBold,
     Lexend_700Bold,
     Lexend_800ExtraBold,
-    Lexend_900Black, 
+    Lexend_900Black,
 } from "@expo-google-fonts/lexend";
 
 // Nativewind
 import "../global.css";
 import Colors from "@/constants/Colors";
-import GoBackIcon from "@/assets/images/goback.svg";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -78,7 +79,6 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
-    const router = useRouter();
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>

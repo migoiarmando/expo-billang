@@ -74,7 +74,7 @@ export default function AddTransaction() {
                         Add transaction
                     </Text>
 
-                    <Pressable className="w-[30px] h-[30px] bg-[#F8F8F8] rounded-full items-center justify-center">
+                    <Pressable className="w-[32px] h-[32px] bg-[#F8F8F8] rounded-full items-center justify-center">
                         <Save color={"#8D8F9A"} size={20} />
                     </Pressable>
                 </View>
