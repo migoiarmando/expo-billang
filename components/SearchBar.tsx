@@ -1,5 +1,5 @@
 import { TextInput, View, StyleSheet } from "react-native";
-import { Image } from "expo-image";
+import SearchLogo from "@/assets/images/transaction-folders/searchlogo.svg";
 
 interface Search {
     title: string;
@@ -9,15 +9,14 @@ interface Search {
 export function SearchBar(props: Search) {
     return (
         <View className={`relative mb-[20px] ${props.className}`}>
-            <Image
-                source={require("@/assets/images/transaction-folders/searchlogo.png")}
-                style={styles.searchlogo} // ✅ Correct
-            />
+            <View className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
+                <SearchLogo width={20} height={20} />
+            </View>
             <TextInput
                 placeholder={props.title}
                 placeholderTextColor="D1D1D6"
                 style={styles.searchBar}
-                className="text-[16px] font-lexendRegular"
+                className="text-[16px] font-lexendRegular pl-10"
             />
         </View>
     );
@@ -26,21 +25,12 @@ export function SearchBar(props: Search) {
 const styles = StyleSheet.create({
     searchBar: {
         width: "100%",
-        paddingLeft: 45,
+        paddingLeft: 40,
         paddingRight: 10,
         height: 42,
         backgroundColor: "#F5F5F5",
         borderRadius: 30,
         borderColor: "#F5F5F5",
         borderWidth: 1.5,
-    },
-    searchlogo: {
-        width: 20,
-        height: 20,
-        position: "absolute",
-        left: 20,
-        top: "50%",
-        transform: [{ translateY: -10 }],
-        zIndex: 1, // Ensures it appears above the search bar
     },
 });

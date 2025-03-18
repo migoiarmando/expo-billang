@@ -2,6 +2,7 @@
     Route -> "transaction.tsx"
 
     Last edited: 
+        Miguel Armand B. Sta. Ana [Mar 18, 2025]
         John Bicierro [Mar 17, 2025]
         Peter Joshua O. Jornales [March  4, 2025]
 
@@ -114,8 +115,8 @@ const TransactionCard = ({
                     <Image
                         source={
                             type === "expense"
-                                ? require("../../assets/images/transaction-folders/expense.png")
-                                : require("../../assets/images/transaction-folders/income.png")
+                                ? require("../../assets/images/expense.svg")
+                                : require("../../assets/images/income.svg")
                         }
                         style={styles.transactionTypeIcon}
                     />

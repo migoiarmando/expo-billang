@@ -1,3 +1,23 @@
+/* --------------------------------------------------------------------------------------------------------------
+    
+
+    Last edited: 
+        
+        Miguel Armand B. Sta. Ana [March  18, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+    <Ticket Info>
+    Feature ID: BL-10
+    Feature Title: Budget Screen v2
+    Description:
+        - The Budget Screen provides an overview of user's budgets with a searchable list of budgets.
+        - Users can add new budgets by selecting between default or structured budget.
+        - Users can track their transaction history.
+
+-------------------------------------------------------------------------------------------------------------- */
+
 import React, { useState } from "react";
 import {
     View,
@@ -18,9 +38,10 @@ import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
 import EditLogo from "@/assets/images/editlogo.svg";
+import { SearchBar } from "@/components/SearchBar";
 
 const CustomStatusBar = () => (
-    <View className="flex-row justify-between items-center px-5 pt-5 mt-1">
+    <View className="flex-row justify-between items-center px-5 pt-2 mt-2">
         <View className="flex-row gap-2">
             <View className="w-8 h-8" />
             <View className="w-8 h-8" />
@@ -31,7 +52,7 @@ const CustomStatusBar = () => (
 
 const Header = () => {
     return (
-        <View className="flex-row justify-between items-center ml-5 mt-4 mr-6 pb-1">
+        <View className="flex-row justify-between items-center ml-5 mt-1 mr-6 pb-1">
             <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend ml-1">
                 My Budget
             </Text>
@@ -44,17 +65,6 @@ const Header = () => {
     );
 };
 
-const SearchBar = () => (
-    <View className="mt-5 mx-5 rounded-full py-0.5 px-5 bg-[#F5F5F5] flex-row items-center">
-        <Search size={20} color="#666" className="mr-2" />
-        <TextInput
-            className="flex-1 font-lexend text-base text-[#666] font-normal"
-            placeholder="Search transaction"
-            placeholderTextColor="#666"
-        />
-    </View>
-);
-
 const TransactionFilters = ({
     selectedFilter,
     onFilterChange,
@@ -63,88 +73,93 @@ const TransactionFilters = ({
     onFilterChange: (filter: string) => void;
 }) => {
     return (
-        <View className="flex-row justify-evenly items-center px-5 py-4">
+        <View className="flex-row justify-between items-center rounded-full gap-2.5 mb-5 px-5 mt-2">
+            {/* All Button */}
             <TouchableOpacity
                 onPress={() => onFilterChange("all")}
-                style={{
-                    backgroundColor:
-                        selectedFilter === "all" ? "#E5F7FF" : "#F5F5F5",
-                }}
-                className="flex-1 mx-2 rounded-full py-2 items-center"
+                className={`
+                    flex-1 h-10 px-7 rounded-full border-1.5 items-center justify-center
+                    ${
+                        selectedFilter === "all"
+                            ? "bg-[#E5F7FF] border-[#E5F7FF]"
+                            : "bg-[#F5F5F5] border-[#F5F5F5]"
+                    }
+                `}
             >
                 <Text
-                    className={`font-lexend text-base ${
+                    className={`
+                    font-lexend text-base
+                    ${
                         selectedFilter === "all"
-                            ? "text-[#5FA7C6]"
-                            : "text-[#666]"
-                    }`}
+                            ? "text-[#5FA7C6] font-semibold"
+                            : "text-[#BABABA] font-medium"
+                    }
+                `}
                 >
                     All
                 </Text>
             </TouchableOpacity>
 
+            {/* Expense Button */}
             <TouchableOpacity
                 onPress={() => onFilterChange("expense")}
-                className={`flex-1 mx-2 rounded-full py-2 bg-[#F5F5F5] items-center ${
-                    selectedFilter === "expense"
-                        ? "bg-[#FD7474]"
-                        : "bg-[#F5F5F5]"
-                }`}
+                className={`
+                    flex-1 h-10 px-7 rounded-full border-1.5 flex-row items-center justify-center gap-1
+                    ${
+                        selectedFilter === "expense"
+                            ? "bg-[#FD7474] border-[#FD7474]"
+                            : "bg-[#F5F5F5] border-[#F5F5F5]"
+                    }
+                `}
             >
-                <View className="flex-row items-center gap-2">
-                    {selectedFilter === "expense" ? (
-                        <ExpenseArrow width={10} height={10} className="mr-1" />
-                    ) : (
-                        <GrayArrow width={10} height={10} className="mr-1" />
-                    )}
-                    <Text
-                        className={`font-lexend text-base ${
-                            selectedFilter === "expense"
-                                ? "text-white"
-                                : "text-[#666]"
-                        }`}
-                    >
-                        Expense
-                    </Text>
-                </View>
+                {selectedFilter === "expense" ? (
+                    <ExpenseArrow width={10} height={10} className="mr-1" />
+                ) : (
+                    <GrayArrow width={10} height={10} className="mr-1" />
+                )}
+                <Text
+                    className={`
+                    font-lexend text-base
+                    ${
+                        selectedFilter === "expense"
+                            ? "text-white font-semibold"
+                            : "text-[#6B7280] font-medium"
+                    }
+                `}
+                >
+                    Expense
+                </Text>
             </TouchableOpacity>
 
+            {/* Income Button */}
             <TouchableOpacity
                 onPress={() => onFilterChange("income")}
-                className={`flex-1 mx-2 rounded-full py-2 items-center ${
-                    selectedFilter === "income"
-                        ? "bg-[#80B154]"
-                        : "bg-[#F5F5F5]"
-                }`}
+                className={`
+                    flex-1 h-10 px-7 rounded-full border-1.5 flex-row items-center justify-center gap-1
+                    ${
+                        selectedFilter === "income"
+                            ? "bg-[#80B154] border-[#80B154]"
+                            : "bg-[#F5F5F5] border-[#F5F5F5]"
+                    }
+                `}
             >
-                <View className="flex-row items-center gap-1">
-                    {selectedFilter === "income" ? (
-                        <View style={{ transform: [{ rotate: "0deg" }] }}>
-                            <IncomeArrow
-                                width={10}
-                                height={10}
-                                className="ml-1"
-                            />
-                        </View>
-                    ) : (
-                        <View style={{ transform: [{ rotate: "180deg" }] }}>
-                            <GrayArrow
-                                width={10}
-                                height={10}
-                                className="ml-1"
-                            />
-                        </View>
-                    )}
-                    <Text
-                        className={`font-lexend text-base ${
-                            selectedFilter === "income"
-                                ? "text-white"
-                                : "text-[#666]"
-                        }`}
-                    >
-                        Income
-                    </Text>
-                </View>
+                {selectedFilter === "income" ? (
+                    <IncomeArrow width={10} height={10} className="mr-1" />
+                ) : (
+                    <GrayArrow width={10} height={10} className="mr-1" />
+                )}
+                <Text
+                    className={`
+                    font-lexend text-base
+                    ${
+                        selectedFilter === "income"
+                            ? "text-white font-semibold"
+                            : "text-[#6B7280] font-medium"
+                    }
+                `}
+                >
+                    Income
+                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -210,7 +225,7 @@ const TransactionItem = ({
 
 const AddTransactionButton = ({ onPress }: { onPress: () => void }) => (
     <TouchableOpacity
-        className="border border-dashed border-[#dadada] rounded-xl p-12 items-center justify-center mt-2"
+        className="border border-dashed border-[#dadada] rounded-xl px-32 py-12 mx-5 items-center justify-center mt-2"
         onPress={onPress}
         activeOpacity={0.7}
     >
@@ -232,7 +247,25 @@ const EmptyState = () => (
 );
 
 const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
-    const transactions: any[] = []; // Empty transactions array
+    // Dummy transactions data
+    const transactions = [
+        {
+            id: 1,
+            title: "Electricity Bill",
+            date: "March 3, 2025",
+            amount: "₱7,700",
+            iconUrl: "cash",
+            amountColor: "#FD7474", // Red for expense
+        },
+        {
+            id: 2,
+            title: "Freelance Income",
+            date: "March 3, 2025",
+            amount: "₱7,700",
+            iconUrl: "cash",
+            amountColor: "#80B154", // Green for income
+        },
+    ];
 
     const filteredTransactions = transactions.filter((transaction) => {
         if (selectedFilter === "all") return true;
@@ -248,22 +281,18 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
             <Text className="px-5 py-3 text-[16px] font-lexend text-[#676666]">
                 Transactions
             </Text>
-            {filteredTransactions.length > 0 ? (
-                <ScrollView>
-                    {filteredTransactions.map((transaction) => (
-                        <TransactionItem
-                            key={transaction.id}
-                            title={transaction.title}
-                            date={transaction.date}
-                            amount={transaction.amount}
-                            iconUrl={transaction.iconUrl}
-                            amountColor={transaction.amountColor}
-                        />
-                    ))}
-                </ScrollView>
-            ) : (
-                <EmptyState />
-            )}
+            <ScrollView>
+                {filteredTransactions.map((transaction) => (
+                    <TransactionItem
+                        key={transaction.id}
+                        title={transaction.title}
+                        date={transaction.date}
+                        amount={transaction.amount}
+                        iconUrl={transaction.iconUrl}
+                        amountColor={transaction.amountColor}
+                    />
+                ))}
+            </ScrollView>
         </View>
     );
 };
@@ -276,7 +305,7 @@ export const AllBudgetTransaction = () => {
             <ScrollView className="flex-1">
                 <CustomStatusBar />
                 <Header />
-                <SearchBar />
+                <SearchBar title="Search transaction" className="mt-3 mx-5" />
                 <TransactionFilters
                     selectedFilter={selectedFilter}
                     onFilterChange={setSelectedFilter}
