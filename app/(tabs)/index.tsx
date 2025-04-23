@@ -66,7 +66,7 @@ export default function HomeScreen() {
             await db.insert(user_tb).values([
                 {
                     name: "",
-                    onboarding: false,
+                    onboarding: true,
                 },
             ]);
 
