@@ -183,14 +183,14 @@ const BudgetTypeSelectorModal: React.FC<BudgetTypeSelectorModalProps> = ({
 
                         <BudgetOption
                             type="default"
-                            title="Default"
+                            title="Tailored Template"
                             description="Adapts to your spending habits and financial goals based on your inputs."
                         />
 
                         <BudgetOption
                             type="structured"
                             title="Structured Template"
-                            description="Split income into needs, wants, and savings"
+                            description="50% for needs, 30% for wants, and 20% for savings."
                         />
                     </View>
                 </Animated.View>

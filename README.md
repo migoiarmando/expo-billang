@@ -20,10 +20,6 @@ an expense and bills management tracker application
 
 - drizzle orm + sqlite
 
-## billang features
-
-- [ ] firebase (auth, realtime db)
-
 ## for developers
 
 ### install dependencies
@@ -65,11 +61,6 @@ key: shift + m
 npx expo lint
 npx expo-doctor
 ```
-
-### assets/images
-1. adaptive-icon - icon app
-2. 
-
 
 ### references
 

@@ -1,15 +1,20 @@
-import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
-} from "@react-navigation/native";
-//import { useFonts } from "expo-font";
+/* --------------------------------------------------------------------------------------------------------------
+
+    Last edited: 
+        John Bicierro [Feb 22, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+-------------------------------------------------------------------------------------------------------------- */
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/expo/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useRouter } from "expo-router";
 
 import {
     useFonts,
@@ -26,8 +31,6 @@ import {
 
 // Nativewind
 import "../global.css";
-import { Platform } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import Colors from "@/constants/Colors";
 
 export {
@@ -130,6 +133,13 @@ function RootLayoutNav() {
                     name="budget/editbudget/structured"
                     options={{
                         title: "Structured Budget Method",
+                        headerShown: false,
+                    }}
+                />
+                <Stack.Screen
+                    name="budget/editbudget/allbudgettransaction"
+                    options={{
+                        title: "All Budget Transactions",
                         headerShown: false,
                     }}
                 />

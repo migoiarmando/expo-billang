@@ -3,6 +3,7 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
+        John Bicierro [Mar 17, 2025]
         Romar Castro [Mar 9, 2025]
 
     Company: github.com/codekada
@@ -13,54 +14,50 @@
     Feature Title: Home Screen v2
     Description: Home screen for the app providing the user an overview of all the details
 
-
-    npm run start
-    press s (switch to expo go)
-    press a (switch to android emulator)
 -------------------------------------------------------------------------------------------------------------- */
 
 import {
     StyleSheet,
     Platform,
-    Pressable,
     Text,
-    TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-
+import { useNavigation } from "expo-router";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/types";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
-import { user_tb } from "@/database/schema";
+import { budget_tb, user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-
-import React from "react";
 import { db } from "@/database";
-import { User, Bell, Search, Filter, History } from "lucide-react-native";
 
 // Reusable Components
 import BudgetCard from "@/components/BudgetCard";
+import { Header } from "@/components/Header";
 
 export default function HomeScreen() {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const { success, error } = useMigrations(db, migrations);
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(
         null,
     );
 
-    const [user, setUser] = useState();
-
     // Onboarding
+
     useEffect(() => {
         if (!success) return;
 
         (async () => {
             // Notice: comment this if you want to see onboarding
             //await db.delete(user_tb);
+            //await db.delete(budget_tb);
 
             // Insert user
             await db.insert(user_tb).values([
@@ -70,18 +67,29 @@ export default function HomeScreen() {
                 },
             ]);
 
+            // Check if a user already exists
             const users = await db.select().from(user_tb);
-            const user = users[0];
-            setItems(users);
+            if (users.length > 0) {
+                console.log("User already exists, skipping insert.");
+            } else {
+                await db.insert(user_tb).values([
+                    {
+                        onboarding: false,
+                    },
+                ]);
+            }
+
+            const updatedUsers = await db.select().from(user_tb);
+            const user = updatedUsers[0];
+
+            console.log(updatedUsers);
 
             if (user.onboarding === false) {
                 router.replace("/onboarding/ob");
                 return;
             }
 
-            console.log(
-                `[debug] name: ${user.name} | onboarding: ${user.onboarding}`,
-            );
+            setItems(updatedUsers);
         })();
     }, [success]);
 
@@ -111,46 +119,21 @@ export default function HomeScreen() {
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View style={{ marginHorizontal: 20, marginTop: 20 }}>
-                {/* Top Navigation */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <Text className="font-lexend text-[24px] text-[#2B3854]">
-                        Good Day, {items[0].name}!
-                    </Text>
-                    <View style={styles.headerIcons}>
-                        <TouchableOpacity>
-                            <Image
-                                source={require("@/assets/images/usericon.png")}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image
-                                source={require("@/assets/images/notification.png")}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <Header name={`Good Day, ${items[0].name}!`} />
 
                 {/* Home Content */}
 
                 {/* Budget Card */}
                 <View
                     style={{
-                        marginVertical: 15,
+                        marginVertical: 20,
                     }}
                 >
                     <BudgetCard
-                        name="Budget Name"
-                        amount="1,000"
-                        spent="0"
-                        percentage={1}
+                        name="Monthly Budget"
+                        amount={5000}
+                        spent="2500"
+                        percentage={50}
                     />
                 </View>
 
@@ -417,6 +400,7 @@ export default function HomeScreen() {
         </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
     icon: {
         width: 32,
@@ -428,3 +412,7 @@ const styles = StyleSheet.create({
         gap: 12,
     },
 });
+
+function EmptyScreen() {
+    return;
+}
