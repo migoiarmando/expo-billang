@@ -3,7 +3,6 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
-        John Bicierro [Mar 17, 2025]
         Romar Castro [Mar 9, 2025]
 
     Company: github.com/codekada
@@ -14,74 +13,84 @@
     Feature Title: Home Screen v2
     Description: Home screen for the app providing the user an overview of all the details
 
+
+    npm run start
+    press s (switch to expo go)
+    press a (switch to android emulator)
 -------------------------------------------------------------------------------------------------------------- */
 
 import {
     StyleSheet,
     Platform,
+    Pressable,
     Text,
+    TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { useNavigation } from "expo-router";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/navigation/types";
+
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
-import { budget_tb, user_tb } from "@/database/schema";
+import { user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
+
+import React from "react";
 import { db } from "@/database";
+import { User, Bell, Search, Filter, History } from "lucide-react-native";
 
 // Reusable Components
 import BudgetCard from "@/components/BudgetCard";
-import { Header } from "@/components/Header";
 
 export default function HomeScreen() {
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const { success, error } = useMigrations(db, migrations);
+    const [transactions, setTransactions] = useState<any[]>([]);
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(
         null,
     );
 
+    const [user, setUser] = useState();
+    useEffect(() => {
+        // Simulate loading
+        setTimeout(() => {
+            setTransactions([
+                { title: "Grocery", amount: 500 },
+                { title: "Salary", amount: 5000 },
+            ]);
+        }, 1500);
+    }, []);
     // Onboarding
-
     useEffect(() => {
         if (!success) return;
 
         (async () => {
             // Notice: comment this if you want to see onboarding
             //await db.delete(user_tb);
-            //await db.delete(budget_tb);
 
-            // Check if a user already exists
+            // Insert user
+            await db.insert(user_tb).values([
+                {
+                    name: "",
+                    onboarding: false,
+                },
+            ]);
+
             const users = await db.select().from(user_tb);
-            if (users.length > 0) {
-                console.log("User already exists, skipping insert.");
-            } else {
-                await db.insert(user_tb).values([
-                    {
-                        onboarding: false,
-                    },
-                ]);
-            }
-
-            const updatedUsers = await db.select().from(user_tb);
-            const user = updatedUsers[0];
-
-            console.log(updatedUsers);
+            const user = users[0];
+            setItems(users);
 
             if (user.onboarding === false) {
                 router.replace("/onboarding/ob");
                 return;
             }
 
-            setItems(updatedUsers);
+            console.log(
+                `[debug] name: ${user.name} | onboarding: ${user.onboarding}`,
+            );
         })();
     }, [success]);
 
@@ -111,21 +120,46 @@ export default function HomeScreen() {
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View style={{ marginHorizontal: 20, marginTop: 20 }}>
-                <Header name={`Good Day, ${items[0].name}!`} />
+                {/* Top Navigation */}
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <Text className="font-lexend text-[24px] text-[#2B3854]">
+                        Good Day, {items[0].name}!
+                    </Text>
+                    <View style={styles.headerIcons}>
+                        <TouchableOpacity>
+                            <Image
+                                source={require("@/assets/images/usericon.png")}
+                                style={styles.icon}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Image
+                                source={require("@/assets/images/notification.png")}
+                                style={styles.icon}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
                 {/* Home Content */}
 
                 {/* Budget Card */}
                 <View
                     style={{
-                        marginVertical: 20,
+                        marginVertical: 15,
                     }}
                 >
                     <BudgetCard
-                        name="Monthly Budget"
-                        amount={5000}
-                        spent="2500"
-                        percentage={50}
+                        name="Budget Name"
+                        amount={2000}
+                        spent="0"
+                        percentage={1}
                     />
                 </View>
 
@@ -254,8 +288,9 @@ export default function HomeScreen() {
                         </View>
                     ))}
                 </View>
+
                 {/* Recent Transactions */}
-                <View>
+                <View style={{ marginTop: 30 }}>
                     <View
                         style={{
                             flexDirection: "row",
@@ -285,22 +320,12 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Recent Transactions Stack */}
-                    <View>
-                        <Text
-                            className="font-lexend text-[13px]"
-                            style={{ color: "#C2C2C2" }}
-                        >
-                            {/* Dynamic Time */}
-                            Today, 12:00 PM
-                        </Text>
-
-                        {/* Empty State */}
+                    {transactions.length === 0 ? (
                         <View
                             style={{
                                 justifyContent: "center",
                                 alignItems: "center",
-                                marginVertical: 10,
+                                marginVertical: 20,
                                 height: 280,
                                 borderColor: "#D9D9D9",
                                 borderWidth: 2,
@@ -309,90 +334,88 @@ export default function HomeScreen() {
                             }}
                         >
                             <Text className="font-lexend text-[14px] text-gray-700">
-                                {" "}
                                 + Add Transaction!
                             </Text>
-
-                            {/* Loading State */}
-                            {/* <View
-                            className="flex-col justify-center gap-2"
-                            style={{
-                                marginVertical: 10,
-                               
-                            }}
-                            > */}
-                            {/* <View
-                                style={{
-                                    backgroundColor: "#F5F5F5",
-                                    width: "100%",
-                                    height: 50,
-                                    borderRadius: 10,
-                                }}
-                            /> */}
-
-                            {/* onPress={nextRoute}  */}
-                            {/* <Pressable>
-                                <Text className="text-center">View more</Text>
-                            </Pressable> */}
                         </View>
-                    </View>
-                </View>
-                {/* <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: "#F5F5F5",
-                            width: "48%",
-                            height: 90,
-                            borderRadius: 10,
-                            padding: 10,
-                            gap: 5,
-                        }}
-                    >
-                        <Image
-                            source={require("@/assets/home/view-transactions.svg")}
-                            style={{
-                                width: 38,
-                                height: 38,
-                            }}
-                        />
-                        <Text className="font-lexend text-[12px] text-gray-900">
-                            View Transactions
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: "#F5F5F5",
-                            width: "48%",
-                            height: 90,
-                            borderRadius: 10,
-                            padding: 10,
-                            gap: 5,
-                        }}
-                    >
-                        <Image
-                            source={require("@/assets/home/add-transactions.svg")}
-                            style={{
-                                width: 55,
-                                height: 38,
-                            }}
-                        />
+                    ) : (
+                        <View style={{ marginTop: 15 }}>
+                            {transactions.map((tx, index) => (
+                                <View
+                                    key={index}
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingVertical: 12,
+                                        borderBottomColor: "#EFEFEF",
+                                        borderBottomWidth: 1,
+                                    }}
+                                >
+                                    {/* Icon */}
+                                    <View
+                                        style={{
+                                            width: 40,
+                                            height: 40,
+                                            marginRight: 12,
+                                        }}
+                                    >
+                                        <Image
+                                            source={tx.icon}
+                                            style={{
+                                                width: 40,
+                                                height: 40,
+                                                resizeMode: "contain",
+                                            }}
+                                        />
+                                    </View>
 
-                        <Text className="font-lexend text-[12px] text-gray-900">
-                            Add Transactions
-                        </Text>
-                    </TouchableOpacity>
-                </View> */}
+                                    {/* Text Section */}
+                                    <View style={{ flex: 1 }}>
+                                        <Text className="font-lexend text-[15px] text-black">
+                                            {tx.title}
+                                        </Text>
+                                        <Text className="font-lexend text-[12px] text-gray-500">
+                                            {tx.date}
+                                        </Text>
+                                    </View>
+
+                                    {/* Amount */}
+                                    <View
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <Image
+                                            source={require("@/assets/icons/downArrow.svg")}
+                                            style={{
+                                                width: 12,
+                                                height: 12,
+                                                marginRight: 4,
+                                            }}
+                                        />
+                                        <Text className="font-lexend text-[14px] text-[#FF4D4F]">
+                                            ₱{tx.amount}
+                                        </Text>
+                                    </View>
+                                </View>
+                            ))}
+
+                            {/* View More */}
+                            <TouchableOpacity
+                                style={{ marginTop: 10, alignItems: "center" }}
+                            >
+                                <Text className="font-lexend text-[13px] text-gray-500 underline">
+                                    View more
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </View>
             </View>
             <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
         </SafeAreaView>
     );
 }
-
 const styles = StyleSheet.create({
     icon: {
         width: 32,
@@ -404,7 +427,3 @@ const styles = StyleSheet.create({
         gap: 12,
     },
 });
-
-function EmptyScreen() {
-    return;
-}

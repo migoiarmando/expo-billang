@@ -25,7 +25,9 @@ import {
     ChevronDown,
     ChevronLeft,
     ChevronRight,
+    Clock,
     Info,
+    Paperclip,
     Pencil,
     PhilippinePeso,
     RotateCw,
@@ -38,12 +40,27 @@ import {
     Pressable,
     TextInput,
     TouchableOpacity,
+    Modal,
+    ScrollView,
+    Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { transactions_tb } from "@/database/schema";
+
+// Transaction Images
+import FoodIcon from "@/assets/transaction-icons/food.svg";
+import TransitIcon from "@/assets/transaction-icons/transit.svg";
+import GroceryIcon from "@/assets/transaction-icons/grocery.svg";
+import BillsIcon from "@/assets/transaction-icons/bills.svg";
+import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
+import IncomeIcon from "@/assets/transaction-icons/income.svg";
+import WorkIcon from "@/assets/transaction-icons/work.svg";
+import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
+import { JSX } from "react/jsx-runtime";
 
 export default function AddTransaction() {
     const [amount, setAmount] = useState("");
-
+    const [selectedCategory, setSelectedCategory] = useState("");
     const [selected, setSelected] = useState<"expense" | "income">("expense");
 
     const inputRef = useRef<TextInput>(null); // Create the ref
@@ -129,7 +146,7 @@ export default function AddTransaction() {
                         }`}
                     >
                         <Text
-                            className={`font-lexendMedium ${
+                            className={`font-slexendMedium ${
                                 selected === "income"
                                     ? "text-white"
                                     : "text-[#BABABA]"
@@ -142,7 +159,7 @@ export default function AddTransaction() {
 
                 {/* Dynamic Content */}
                 {selected === "expense" ? (
-                    <ExpenseContent />
+                    <ExpenseContent amount={amount} setAmount={setAmount} />
                 ) : (
                     <IncomeContent />
                 )}
@@ -152,18 +169,209 @@ export default function AddTransaction() {
         </SafeAreaView>
     );
 }
+function ExpenseContent({
+    amount,
+    setAmount,
+}: {
+    amount: string;
+    setAmount: React.Dispatch<React.SetStateAction<string>>;
+}) {
+    const categoryIcons = [
+        { name: "Food", icon: <FoodIcon width={24} height={24} /> },
+        { name: "Transit", icon: <TransitIcon width={24} height={24} /> },
+        { name: "Grocery", icon: <GroceryIcon width={24} height={24} /> },
+        { name: "Bills", icon: <BillsIcon width={24} height={24} /> },
+        {
+            name: "Entertainment",
+            icon: <EntertainmentIcon width={24} height={24} />,
+        },
+        { name: "Income", icon: <IncomeIcon width={24} height={24} /> },
+        { name: "Work", icon: <WorkIcon width={24} height={24} /> },
+        {
+            name: "Subscription",
+            icon: <SubscriptionIcon width={24} height={24} />,
+        },
+    ];
 
-function ExpenseContent() {
+    const [selectedCategory, setSelectedCategory] = useState(categoryIcons[0]);
+    const [title, setTitle] = useState("");
+    const [notes, setNotes] = useState("");
+    // const [date, setDate] = useState(new Date());
+    // const [showDatePicker, setShowDatePicker] = useState(false);
+    // const [showTimePicker, setShowTimePicker] = useState(false);
+
+    // const handleDateChange = (_event: any, selected?: Date) => {
+    //     const current = selected || date;
+    //     setShowDatePicker(false);
+    //     setDate(current);
+    // };
+
+    // const handleTimeChange = (_event: any, selected?: Date) => {
+    //     const current = selected || date;
+    //     setShowTimePicker(false);
+    //     setDate(current);
+    // };
+    async function saveTransaction() {
+        try {
+            // Parse the amount and check if it's a valid number
+            const numericAmount = parseFloat(amount);
+            if (isNaN(numericAmount) || numericAmount <= 0) {
+                console.error("[error] Invalid amount:", amount);
+                return;
+            }
+
+            // Ensure title and category are not empty
+            if (!title.trim()) {
+                console.error("[error] Title is required");
+                return;
+            }
+
+            if (!selectedCategory.name) {
+                console.error("[error] Category is required");
+                return;
+            }
+
+            // Save to the database
+            await db.insert(transactions_tb).values([
+                {
+                    title: title.trim(),
+                    notes: notes.trim(),
+                    amount: numericAmount,
+                    category: selectedCategory.name,
+                },
+            ]);
+
+            // Clear form after saving
+            setTitle("");
+            setNotes("");
+            setAmount("");
+            setSelectedCategory(categoryIcons[0]);
+            console.log("[debug] Transaction saved successfully!");
+        } catch (err) {
+            console.error("[error] Failed to save transaction:", err);
+        }
+    }
+
     return (
         <View className="flex-grow mt-[20px]">
-            <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                <RotateCw color="#9D9D9D" size={12} />
-                <TextInput placeholder="Food" className="font-lexend" />
+            {/* Category Dropdown */}
+            <View style={{ maxHeight: 60 }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {categoryIcons.map((item, index) => {
+                        const isSelected = selectedCategory.name === item.name;
+                        return (
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() => setSelectedCategory(item)}
+                            >
+                                <View
+                                    className={`flex-row items-center gap-2 rounded-xl py-2 px-5 mr-2 ${
+                                        isSelected
+                                            ? "bg-[#FFDBDB]"
+                                            : "bg-bgBorder-2"
+                                    }`}
+                                    style={{
+                                        borderWidth: isSelected ? 1.5 : 0,
+                                        borderColor: isSelected
+                                            ? "#9D9D9D"
+                                            : "transparent",
+                                    }}
+                                >
+                                    {item.icon}
+                                    <Text
+                                        className={`font-lexend ${
+                                            isSelected
+                                                ? "text-[#FF5E5E] font-semibold"
+                                                : "text-[#9D9D9D]"
+                                        }`}
+                                    >
+                                        {item.name}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </ScrollView>
             </View>
+
+            {/* Date and Time Row */}
+            {/* <View className="flex-row justify-between mt-4">
+                <Pressable
+                    className="flex-1 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mr-2"
+                    // onPress={() => setShowDatePicker(true)}
+                >
+                    <Calendar color="#9D9D9D" size={12} />
+                    <Text className="text-[#9D9D9D]">
+                        {date.toLocaleDateString()}
+                    </Text>
+                </Pressable>
+                <Pressable
+                    className="flex-1 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl ml-2"
+                    // onPress={() => setShowTimePicker(true)}
+                >
+                    <Clock color="#9D9D9D" size={12} />
+                    <Text className="text-[#9D9D9D]">
+                        {date.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })}
+                    </Text>
+                </Pressable>
+            </View> */}
+
+            {/* {showDatePicker && (
+                <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display={Platform.OS === "ios" ? "inline" : "default"}
+                    onChange={handleDateChange}
+                />
+            )}
+
+            {showTimePicker && (
+                <DateTimePicker
+                    value={date}
+                    mode="time"
+                    display={Platform.OS === "ios" ? "inline" : "default"}
+                    onChange={handleTimeChange}
+                />
+            )} */}
+
+            {/* Title Input */}
+            <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-[20px]">
+                <Text className="text-[#9D9D9D]">T</Text>
+                <TextInput
+                    placeholder="Title"
+                    className="font-lexend flex-1"
+                    value={title}
+                    onChangeText={setTitle}
+                />
+            </View>
+
+            {/* Notes Input */}
+            <View className="px-5 py-3 bg-bgBorder-2 rounded-xl mt-[20px] h-[120px] flex-row items-start gap-2">
+                <Paperclip color="#9D9D9D" size={16} style={{ marginTop: 8 }} />
+                <TextInput
+                    placeholder="Notes"
+                    className="font-lexend flex-1 text-base"
+                    multiline
+                    textAlignVertical="top"
+                    value={notes}
+                    onChangeText={setNotes}
+                    maxLength={130}
+                />
+            </View>
+
+            {/* Save Button */}
+            <TouchableOpacity
+                className="mt-10 bg-primary py-3 rounded-lg flex items-center"
+                onPress={saveTransaction}
+            >
+                <Text className="font-lexend text-white">Save Transaction</Text>
+            </TouchableOpacity>
         </View>
     );
 }
-
 function IncomeContent() {
     return (
         <View className="flex-grow mt-[20px]">
