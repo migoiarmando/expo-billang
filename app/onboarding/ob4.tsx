@@ -33,27 +33,31 @@ const currencies = [
 
 export default function OnboardingPage4() {
     const inputRef = useRef<TextInput>(null);
-    useEffect(() => {
-        // Automatically open the keyboard when the screen is mounted
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 500); // Adding delay for smooth transition
-    }, []);
-
-    // Save name and currency in database
     const [name, setName] = useState("");
     const [currency, setCurrency] = useState("Philippine Peso ($)");
-    async function OnUserContinue() {
-        if (!name) {
-            console.log("[debug] OnUserContinue: no user name value");
-            return;
+
+    useEffect(() => {
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 500);
+    }, []);
+
+    async function SaveUser() {
+        try {
+            if (!name) {
+                console.log("[debug] You need to fill up the required fields");
+                return;
+            }
+            await db.update(user_tb).set({
+                name: name,
+                currency: currency,
+            });
+            router.replace("/onboarding/ob5");
+
+            console.log("[debug] User updated successfully");
+        } catch (err) {
+            console.error("Error fetching or updating data:", err);
         }
-
-        await db.update(user_tb).set({
-            name: name,
-        });
-
-        router.replace("/onboarding/ob5");
     }
 
     return (
@@ -78,7 +82,7 @@ export default function OnboardingPage4() {
                             </Text>
                             <TextInput
                                 ref={inputRef}
-                                placeholder="Text"
+                                placeholder="Smith"
                                 placeholderTextColor="#999999"
                                 className="font-lexendBold text-[24px] text-primary"
                                 value={name}
@@ -104,7 +108,7 @@ export default function OnboardingPage4() {
                 </View>
 
                 <Pressable
-                    onPress={OnUserContinue}
+                    onPress={SaveUser}
                     className="py-3 px-[80px] bg-[#0075B2] rounded-full"
                 >
                     <Text className="text-white font-lexend">Continue</Text>

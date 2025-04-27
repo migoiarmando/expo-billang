@@ -22,6 +22,20 @@
       "when": 1741519219086,
       "tag": "0002_natural_shadowcat",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1745725506181,
+      "tag": "0003_military_switch",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1745727026260,
+      "tag": "0004_sloppy_ricochet",
+      "breakpoints": true
     }
   ]
 }

@@ -25,9 +25,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StructuredScreen() {
     const inputRef = useRef<TextInput>(null); // Create the ref
-
-    // Fetch the user for validation if new
+    const [title, setTitle] = useState("");
+    const [amount, setAmount] = useState("");
     const [onboarding, setOnboarding] = useState<boolean | null>(null);
+    
     useEffect(() => {
         async function fetchUser() {
             try {
@@ -40,22 +41,23 @@ export default function StructuredScreen() {
         fetchUser();
     }, []);
 
-    const [title, setTitle] = useState("");
-    const [amount, setAmount] = useState("");
     async function SaveBudget() {
         try {
             const numericAmount = parseFloat(amount);
+
             if (isNaN(numericAmount)) {
-                console.error("[error] Invalid amount entered:", amount);
+                console.log("[debug] Invalid amount entered:", amount);
+                return;
+            }
+            if (!title) {
+                console.log("[debug] You need to fill up the required fields (title)");
                 return;
             }
 
-            await db.insert(budget_tb).values([
-                {
-                    title: title.trim(),
-                    amount: numericAmount,
-                },
-            ]);
+            await db.insert(budget_tb).values({
+                title: title.trim(),
+                amount: numericAmount,
+            });
 
             if (!onboarding) {
                 await db.update(user_tb).set({ onboarding: true });
@@ -127,9 +129,7 @@ export default function StructuredScreen() {
                                 </Text>
                             </View>
                             <View className="flex justify-center">
-                                <Text className="font-lexend text-[12px]">
-                                    Needs
-                                </Text>
+                                <Text className="font-lexend text-[12px]">Needs</Text>
                                 <Text className="font-lexend text-[12px] text-gray-700">
                                     $50
                                 </Text>
@@ -142,9 +142,7 @@ export default function StructuredScreen() {
                                 </Text>
                             </View>
                             <View className="flex justify-center">
-                                <Text className="font-lexend text-[12px]">
-                                    Wants
-                                </Text>
+                                <Text className="font-lexend text-[12px]">Wants</Text>
                                 <Text className="font-lexend text-[12px] text-gray-700">
                                     $30
                                 </Text>
@@ -157,9 +155,7 @@ export default function StructuredScreen() {
                                 </Text>
                             </View>
                             <View className="flex justify-center">
-                                <Text className="font-lexend text-[12px]">
-                                    Savings
-                                </Text>
+                                <Text className="font-lexend text-[12px]">Savings</Text>
                                 <Text className="font-lexend text-[12px] text-gray-700">
                                     $20
                                 </Text>
@@ -172,21 +168,14 @@ export default function StructuredScreen() {
                 <View className="gap-[10px] mt-[20px]">
                     <View className="flex-row gap-[20px]">
                         <View className="flex-grow">
-                            <Text className="mb-[20px] font-lexend">
-                                Starting date
-                            </Text>
+                            <Text className="mb-[20px] font-lexend">Starting date</Text>
                             <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                                 <Calendar color="#9D9D9D" size={12} />
-                                <TextInput
-                                    placeholder="Today"
-                                    className="font-lexend"
-                                />
+                                <TextInput placeholder="Today" className="font-lexend" />
                             </View>
                         </View>
                         <View className="flex-grow">
-                            <Text className="mb-[20px] font-lexend">
-                                Duration
-                            </Text>
+                            <Text className="mb-[20px] font-lexend">Duration</Text>
                             <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                                 <RotateCw color="#9D9D9D" size={12} />
                                 <TextInput
@@ -232,9 +221,7 @@ export default function StructuredScreen() {
                         onPress={SaveBudget}
                         className="mt-3 bg-primary py-3 rounded-lg flex items-center"
                     >
-                        <Text className="font-lexend text-white">
-                            Save Budget
-                        </Text>
+                        <Text className="font-lexend text-white">Save Budget</Text>
                     </Pressable>
                     {!onboarding && (
                         <Pressable

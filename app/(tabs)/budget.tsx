@@ -16,16 +16,15 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
     View,
     Text,
     ScrollView,
-    TextInput,
     TouchableOpacity,
     Platform,
 } from "react-native";
-import { Search, Plus } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
@@ -36,17 +35,6 @@ import { db } from "@/database";
 import { budget_tb } from "@/database/schema";
 import { useFocusEffect } from "@react-navigation/native";
 import { SearchBar } from "@/components/SearchBar";
-
-// const SearchBar = () => (
-//     <View className="mt-5 rounded-full py-3 px-5 bg-[#F5F5F5] flex-row items-center gap-2">
-//         <Search size={16} color="#666" />
-//         <TextInput
-//             className="flex-1 font-lexend text-base text-[#666] font-normal"
-//             placeholder="Search budgets"
-//             placeholderTextColor="#666"
-//         />
-//     </View>
-// );
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -71,7 +59,7 @@ interface Budget {
     id: number;
     title: string;
     amount: number;
-    themeColor: string; // Added missing field
+    themeColor: string;
 }
 
 export default function BudgetScreen() {
@@ -94,7 +82,7 @@ export default function BudgetScreen() {
 
     const handleBudgetCardPress = (budgetName: string) => {
         router.push({
-            pathname: "/budget/editbudget/allbudgettransaction",
+            pathname: "/budget/transactions",
             params: { budgetName },
         });
     };

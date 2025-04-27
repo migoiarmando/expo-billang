@@ -19,41 +19,24 @@
     press a (switch to android emulator)
 -------------------------------------------------------------------------------------------------------------- */
 
-import {
-    StyleSheet,
-    Platform,
-    Pressable,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { StyleSheet, Platform, Text, TouchableOpacity, View } from "react-native";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
 import { user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-
-import React from "react";
 import { db } from "@/database";
-import { User, Bell, Search, Filter, History } from "lucide-react-native";
-
-// Reusable Components
 import BudgetCard from "@/components/BudgetCard";
 
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const { success, error } = useMigrations(db, migrations);
     const [transactions, setTransactions] = useState<any[]>([]);
-    const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(
-        null,
-    );
+    const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
 
-    const [user, setUser] = useState();
     useEffect(() => {
         // Simulate loading
         setTimeout(() => {
@@ -63,38 +46,42 @@ export default function HomeScreen() {
             ]);
         }, 1500);
     }, []);
+
     // Onboarding
     useEffect(() => {
-        if (!success) return;
+        if (!success) {
+            return;
+        }
 
-        (async () => {
-            // Notice: comment this if you want to see onboarding
-            //await db.delete(user_tb);
+        async function GetUser() {
+            try {
+                // await db.delete(budget_tb);
+                const users = await db.select().from(user_tb);
 
-            // Insert user
-            await db.insert(user_tb).values([
-                {
-                    name: "",
-                    onboarding: false,
-                },
-            ]);
+                if (!users.length) {
+                    await db.insert(user_tb).values({
+                        name: "",
+                    });
 
-            const users = await db.select().from(user_tb);
-            const user = users[0];
-            setItems(users);
+                    router.replace("/onboarding/ob");
+                    console.log("[debug] Created user data successfully");
+                    return;
+                }
+                if (!users[0].onboarding) {
+                    router.replace("/onboarding/ob");
+                    console.log("[debug] User required onboarding phase");
+                    return;
+                }
 
-            if (user.onboarding === false) {
-                router.replace("/onboarding/ob");
-                return;
+                setItems(users);
+            } catch (err) {
+                console.error("[GetUser] Error fetching or inserting data:", err);
             }
+        }
 
-            console.log(
-                `[debug] name: ${user.name} | onboarding: ${user.onboarding}`,
-            );
-        })();
+        GetUser();
     }, [success]);
 
-    // States
     if (error) {
         return (
             <View>
@@ -116,7 +103,6 @@ export default function HomeScreen() {
             </View>
         );
     }
-
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View style={{ marginHorizontal: 20, marginTop: 20 }}>

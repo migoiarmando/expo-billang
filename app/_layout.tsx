@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/expo/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useRouter } from "expo-router";
 
 import {
     useFonts,
@@ -121,7 +120,7 @@ function RootLayoutNav() {
                     }}
                 />
 
-                {/* Edit Budget */}
+                {/* Budget Routes */}
                 <Stack.Screen
                     name="budget/editbudget/tailored"
                     options={{
@@ -137,7 +136,7 @@ function RootLayoutNav() {
                     }}
                 />
                 <Stack.Screen
-                    name="budget/editbudget/allbudgettransaction"
+                    name="budget/transactions"
                     options={{
                         title: "All Budget Transactions",
                         headerShown: false,

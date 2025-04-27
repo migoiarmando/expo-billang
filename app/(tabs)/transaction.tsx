@@ -16,13 +16,12 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Image,
     StyleSheet,
     View,
     Text,
-    TextInput,
     ScrollView,
     TouchableOpacity,
 } from "react-native";

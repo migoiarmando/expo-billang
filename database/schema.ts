@@ -16,9 +16,15 @@ export const budget_tb = sqliteTable("budget", {
 });
 
 export const transactions_tb = sqliteTable("transactions", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    title: text("title").notNull(),
+    id: int().primaryKey({ autoIncrement: true }),
+    budgetId: int("budget_id")
+        .notNull()
+        .references(() => budget_tb.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
     amount: real("amount").notNull().default(0),
     category: text("category").notNull(),
-    notes: text("notes").notNull().default(""),
+    title: text("title"),
+    notes: text("notes"),
+    date: text("date").notNull(),
+    createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
