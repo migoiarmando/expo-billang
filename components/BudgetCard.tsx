@@ -15,15 +15,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React from "react";
-import {
-    View,
-    Image,
-    Text,
-    StyleSheet,
-    ViewStyle,
-    DimensionValue,
-} from "react-native";
-import { useFonts, Lexend_500Medium } from "@expo-google-fonts/lexend";
+import { View, Image, Text, StyleSheet, ViewStyle } from "react-native";
 import { History } from "lucide-react-native";
 import SpentPercentageIcon from "@/assets/images/spentpercentageicon.svg";
 
@@ -41,28 +33,12 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     name,
     amount,
     spent,
-    stripColor = "#107DB74D",
+    stripColor = "#FFFFFF",
     stripHeight = 12,
     stripStyle,
 }) => {
-    let [fontsLoaded] = useFonts({
-        Lexend_500Medium,
-    });
-
-    if (!fontsLoaded) {
-        return null;
-    }
-
     const spentNumber = parseFloat(spent.replace(/,/g, ""));
-
     const percentage = Math.min((spentNumber / amount) * 100, 100);
-
-    // const dynamicStripStyle: ViewStyle = {
-    //     height: stripHeight,
-    //     backgroundColor: stripColor,
-    //     width: "100%" as DimensionValue,
-    //     ...stripStyle,
-    // };
 
     return (
         <View style={styles.budgetCard}>
@@ -80,12 +56,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                     }}
                 />
                 <View style={styles.budgetHeader}>
-                    <Text
-                        style={[
-                            styles.budgetName,
-                            { fontFamily: "Lexend_500Medium" },
-                        ]}
-                    >
+                    <Text style={[styles.budgetName, { fontFamily: "Lexend_500Medium" }]}>
                         {name}
                     </Text>
                     <History
@@ -104,18 +75,11 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                     </Text>
                 </View>
                 <View style={styles.progressContainer}>
-                    <View
-                        style={[
-                            styles.progressBar,
-                            { width: `${percentage}%` },
-                        ]}
-                    />
+                    <View style={[styles.progressBar, { width: `${percentage}%` }]} />
                 </View>
                 <View style={styles.budgetFooter}>
                     <Text style={styles.spentText}>₱{spent} spent</Text>
-                    <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                    >
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Text style={styles.percentageText}>
                             {percentage.toFixed(1)}%
                         </Text>

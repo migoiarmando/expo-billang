@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
-import { user_tb } from "@/database/schema";
+import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
@@ -56,6 +56,8 @@ export default function HomeScreen() {
         async function GetUser() {
             try {
                 // await db.delete(budget_tb);
+                // await db.delete(transactions_tb);
+
                 const users = await db.select().from(user_tb);
 
                 if (!users.length) {

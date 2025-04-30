@@ -39,21 +39,6 @@ export default function AddTransaction() {
     const [selected, setSelected] = useState<"expense" | "income">("expense");
     const [title, setTitle] = useState("");
 
-    async function SaveBudget() {
-        // Set the onboarding to true
-        await db.update(user_tb).set({ onboarding: true });
-
-        // Save budget details
-        // -- Budget name
-        // -- Budget method type
-        // -- First transaction (Amount)
-        console.log(`[debug] amount: ${amount} | title: ${title}`);
-
-        // Route home page
-        router.replace("/");
-        return;
-    }
-
     return (
         <SafeAreaView style={{ backgroundColor: "#fff" }}>
             <View className="mx-[20px] h-screen flex">
@@ -157,56 +142,60 @@ function ExpenseContent({
     const [selectedCategory, setSelectedCategory] = useState(categoryIcons[0]);
     const [title, setTitle] = useState("");
     const [notes, setNotes] = useState("");
-    // const [date, setDate] = useState(new Date());
-    // const [showDatePicker, setShowDatePicker] = useState(false);
-    // const [showTimePicker, setShowTimePicker] = useState(false);
+    const [budgetId, setBudgetId] = useState<string>("");
 
-    // const handleDateChange = (_event: any, selected?: Date) => {
-    //     const current = selected || date;
-    //     setShowDatePicker(false);
-    //     setDate(current);
-    // };
-
-    // const handleTimeChange = (_event: any, selected?: Date) => {
-    //     const current = selected || date;
-    //     setShowTimePicker(false);
-    //     setDate(current);
-    // };
     async function saveTransaction() {
         try {
-            // Parse the amount and check if it's a valid number
             const numericAmount = parseFloat(amount);
             if (isNaN(numericAmount) || numericAmount <= 0) {
                 console.error("[error] Invalid amount:", amount);
                 return;
             }
-
-            // Ensure title and category are not empty
-            if (!title.trim()) {
-                console.error("[error] Title is required");
+            if (!budgetId) {
+                console.error("[error] No specific budget linked");
                 return;
             }
-
             if (!selectedCategory.name) {
                 console.error("[error] Category is required");
                 return;
             }
 
-            // Save to the database
+            await db.insert(transactions_tb).values({
+                budgetId: Number(budgetId),
+                type: "Expense",
+                amount: Number(amount),
+                category: "",
+                title: selectedCategory.name,
+                notes: notes,
+                date: new Date().toISOString(),
+            });
 
-            // Clear form after saving
+            console.log("[debug] Transaction created successfully");
+            router.replace("/transaction");
+
             setTitle("");
             setNotes("");
             setAmount("");
             setSelectedCategory(categoryIcons[0]);
-            console.log("[debug] Transaction saved successfully!");
         } catch (err) {
-            console.error("[error] Failed to save transaction:", err);
+            console.log("Error fetching or inserting data:", err);
         }
     }
 
     return (
         <View className="flex-grow mt-[20px]">
+            <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
+                <Folder color="#9D9D9D" size={12} />
+                <TextInput
+                    placeholder="Select Budget"
+                    className="font-lexend"
+                    value={String(budgetId)}
+                    onChangeText={(text) => {
+                        setBudgetId(text);
+                    }}
+                />
+            </View>
+
             {/* Category Dropdown */}
             <View style={{ maxHeight: 60 }}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -222,7 +211,6 @@ function ExpenseContent({
                                         isSelected ? "bg-[#FFDBDB]" : "bg-bgBorder-2"
                                     }`}
                                     style={{
-                                        borderWidth: isSelected ? 1.5 : 0,
                                         borderColor: isSelected
                                             ? "#9D9D9D"
                                             : "transparent",
@@ -245,49 +233,6 @@ function ExpenseContent({
                 </ScrollView>
             </View>
 
-            {/* Date and Time Row */}
-            {/* <View className="flex-row justify-between mt-4">
-                <Pressable
-                    className="flex-1 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mr-2"
-                    // onPress={() => setShowDatePicker(true)}
-                >
-                    <Calendar color="#9D9D9D" size={12} />
-                    <Text className="text-[#9D9D9D]">
-                        {date.toLocaleDateString()}
-                    </Text>
-                </Pressable>
-                <Pressable
-                    className="flex-1 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl ml-2"
-                    // onPress={() => setShowTimePicker(true)}
-                >
-                    <Clock color="#9D9D9D" size={12} />
-                    <Text className="text-[#9D9D9D]">
-                        {date.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                    </Text>
-                </Pressable>
-            </View> */}
-
-            {/* {showDatePicker && (
-                <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display={Platform.OS === "ios" ? "inline" : "default"}
-                    onChange={handleDateChange}
-                />
-            )}
-
-            {showTimePicker && (
-                <DateTimePicker
-                    value={date}
-                    mode="time"
-                    display={Platform.OS === "ios" ? "inline" : "default"}
-                    onChange={handleTimeChange}
-                />
-            )} */}
-
             {/* Title Input */}
             <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-[20px]">
                 <Text className="text-[#9D9D9D]">T</Text>
@@ -300,22 +245,26 @@ function ExpenseContent({
             </View>
 
             {/* Notes Input */}
-            <View className="px-5 py-3 bg-bgBorder-2 rounded-xl mt-[20px] h-[120px] flex-row items-start gap-2">
-                <Paperclip color="#9D9D9D" size={16} style={{ marginTop: 8 }} />
-                <TextInput
-                    placeholder="Notes"
-                    className="font-lexend flex-1 text-base"
-                    multiline
-                    textAlignVertical="top"
-                    value={notes}
-                    onChangeText={setNotes}
-                    maxLength={130}
-                />
+            <View className="mt-5 py-3 px-5 bg-bgBorder-2 rounded-xl h-[130px]">
+                <View className="flex-row gap-2 items-center">
+                    <Paperclip color="#9D9D9D" size={12} />
+                    <TextInput
+                        placeholder="Notes"
+                        className="font-lexend flex-1 text-base"
+                        multiline
+                        textAlignVertical="top"
+                        maxLength={130}
+                        value={notes}
+                        onChangeText={(text) => {
+                            setNotes(text);
+                        }}
+                    />
+                </View>
             </View>
 
             {/* Save Button */}
             <TouchableOpacity
-                className="mt-10 bg-primary py-3 rounded-lg flex items-center"
+                className="mt-5 bg-primary py-3 rounded-lg flex items-center"
                 onPress={saveTransaction}
             >
                 <Text className="font-lexend text-white">Save Transaction</Text>
@@ -413,7 +362,7 @@ function IncomeContent(props: IncomeProps) {
             </View>
 
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                <Clock color="#9D9D9D" size={12} />
+                <Text className="text-[#9D9D9D]">T</Text>
                 <TextInput
                     placeholder="Title"
                     className="font-lexend"

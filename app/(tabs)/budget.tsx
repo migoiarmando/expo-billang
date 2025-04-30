@@ -17,13 +17,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { useCallback, useState } from "react";
-import {
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-    Platform,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
@@ -114,7 +108,7 @@ export default function BudgetScreen() {
                         {budgets.map((budget) => (
                             <TouchableOpacity
                                 key={budget.id}
-                                onPress={() => handleBudgetCardPress("A")}
+                                onPress={() => handleBudgetCardPress("Aaweawe")}
                             >
                                 <BudgetCard
                                     name={budget.title}

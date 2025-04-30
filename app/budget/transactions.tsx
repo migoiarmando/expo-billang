@@ -1,8 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
-    
 
     Last edited: 
-        
+        John Bicierro [April 30, 2025]
         Miguel Armand B. Sta. Ana [March  18, 2025]
 
     Company: github.com/codekada
@@ -18,52 +17,31 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     View,
     Text,
     ScrollView,
-    TextInput,
     TouchableOpacity,
     Image,
     Platform,
+    Pressable,
 } from "react-native";
-import { Search, Plus } from "lucide-react-native";
+import { Plus, ChevronLeft } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import CashIcon from "@/assets/images/cash.svg";
 import ExpenseIcon from "@/assets/images/expense.svg";
 import IncomeIcon from "@/assets/images/income.svg";
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
-import EditLogo from "@/assets/images/editlogo.svg";
 import { SearchBar } from "@/components/SearchBar";
-
-const CustomStatusBar = () => (
-    <View className="flex-row justify-between items-center px-5 pt-2 mt-2">
-        <View className="flex-row gap-2">
-            <View className="w-8 h-8" />
-            <View className="w-8 h-8" />
-            <View className="w-8 h-8" />
-        </View>
-    </View>
-);
-
-const Header = () => {
-    return (
-        <View className="flex-row justify-between items-center ml-5 mt-1 mr-6 pb-1">
-            <Text className="text-[24px] text-[#2B3854] tracking-tight font-lexend ml-1">
-                My Budget
-            </Text>
-            <View className="flex-row gap-3.5">
-                <TouchableOpacity onPress={() => router.replace("/profile")}>
-                    <EditLogo width={36} height={36} />
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
-};
+import { SafeAreaView } from "react-native-safe-area-context";
+import { db } from "@/database";
+import { transactions_tb } from "@/database/schema";
+import { eq } from "drizzle-orm";
+import { Transaction } from "@/database/models";
 
 const TransactionFilters = ({
     selectedFilter,
@@ -73,7 +51,7 @@ const TransactionFilters = ({
     onFilterChange: (filter: string) => void;
 }) => {
     return (
-        <View className="flex-row justify-between items-center rounded-full gap-2.5 mb-5 px-5 mt-2">
+        <View className="flex-row justify-between items-center rounded-full gap-2.5">
             {/* All Button */}
             <TouchableOpacity
                 onPress={() => onFilterChange("all")}
@@ -174,12 +152,12 @@ const TransactionItem = ({
 }: {
     title: string;
     date: string;
-    amount: string;
+    amount: number;
     iconUrl: string | "cash";
     amountColor: string;
 }) => {
     return (
-        <View className="flex-row items-center justify-between px-5 py-3 border-b border-[#F8F8F8]">
+        <View className="flex-row items-center justify-between py-3 border-b border-[#F8F8F8]">
             <View className="flex-row items-center">
                 {iconUrl === "cash" ? (
                     <View className="mr-3 -ml-1">
@@ -203,21 +181,21 @@ const TransactionItem = ({
                 </View>
             </View>
             <View className="flex-row items-center gap-1">
-                {amountColor === "#FD7474" ? (
+                {amountColor === "Expense" ? (
                     <>
                         <ExpenseIcon width={10} height={10} className="mr-1" />
+                        <Text className="text-[16px] font-lexendMedium text-[#FD7474]">
+                            ₱{amount}
+                        </Text>
                     </>
                 ) : (
                     <>
                         <IncomeIcon width={10} height={10} className="mr-1" />
+                        <Text className="text-[16px] font-lexendMedium text-[#80B154]">
+                            ₱{amount}
+                        </Text>
                     </>
                 )}
-                <Text
-                    style={{ color: amountColor }}
-                    className="text-[16px] font-lexendMedium"
-                >
-                    {amount}
-                </Text>
             </View>
         </View>
     );
@@ -240,56 +218,54 @@ const AddTransactionButton = ({ onPress }: { onPress: () => void }) => (
 
 const EmptyState = () => (
     <View className="flex-1 items-center justify-center mt-10">
-        <AddTransactionButton
-            onPress={() => console.log("Add transaction pressed")}
-        />
+        <AddTransactionButton onPress={() => console.log("Add transaction pressed")} />
     </View>
 );
 
 const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
-    // Dummy transactions data
-    const transactions = [
-        {
-            id: 1,
-            title: "Electricity Bill",
-            date: "March 3, 2025",
-            amount: "₱7,700",
-            iconUrl: "cash",
-            amountColor: "#FD7474", // Red for expense
-        },
-        {
-            id: 2,
-            title: "Freelance Income",
-            date: "March 3, 2025",
-            amount: "₱7,700",
-            iconUrl: "cash",
-            amountColor: "#80B154", // Green for income
-        },
-    ];
+    const [transaction, setTransaction] = useState<Transaction[]>([]);
 
-    const filteredTransactions = transactions.filter((transaction) => {
+    const filteredTransactions = transaction.filter((transaction) => {
         if (selectedFilter === "all") return true;
-        if (selectedFilter === "expense")
-            return transaction.amountColor === "#FD7474";
-        if (selectedFilter === "income")
-            return transaction.amountColor === "#80B154";
+        if (selectedFilter === "expense") {
+            return transaction.type === "Expense";
+        }
+        if (selectedFilter === "income") {
+            return transaction.type === "Income";
+        }
         return true;
     });
 
+    useEffect(() => {
+        async function ShowTransactions() {
+            try {
+                const res = await db
+                    .select()
+                    .from(transactions_tb)
+                    .where(eq(transactions_tb.budgetId, 1)); // Need to change the selected budget id
+
+                setTransaction(res);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+            }
+        }
+        ShowTransactions();
+    }, []);
+
     return (
         <View className="flex-1">
-            <Text className="px-5 py-3 text-[16px] font-lexend text-[#676666]">
+            <Text className="mt-5 mb-3 text-[16px] font-lexend text-[#676666]">
                 Transactions
             </Text>
             <ScrollView>
                 {filteredTransactions.map((transaction) => (
                     <TransactionItem
                         key={transaction.id}
-                        title={transaction.title}
+                        title={transaction.title || "Details"}
                         date={transaction.date}
                         amount={transaction.amount}
-                        iconUrl={transaction.iconUrl}
-                        amountColor={transaction.amountColor}
+                        iconUrl="cash"
+                        amountColor={transaction.type}
                     />
                 ))}
             </ScrollView>
@@ -297,24 +273,39 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
     );
 };
 
-export const AllBudgetTransaction = () => {
+export default function BudgetTransactionScreen() {
     const [selectedFilter, setSelectedFilter] = useState("all");
 
     return (
-        <View className="flex-1 bg-white max-w-[440px] self-center w-full">
-            <ScrollView className="flex-1">
-                <CustomStatusBar />
-                <Header />
-                <SearchBar title="Search transaction" className="mt-3 mx-5" />
-                <TransactionFilters
-                    selectedFilter={selectedFilter}
-                    onFilterChange={setSelectedFilter}
-                />
-                <TransactionList selectedFilter={selectedFilter} />
-            </ScrollView>
-            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-        </View>
-    );
-};
+        <SafeAreaView>
+            <View className="mx-[20px] mt-[30px]">
+                <View className="">
+                    {/* Header */}
+                    <View className="flex-row items-center">
+                        <Link href=".." asChild>
+                            <Pressable>
+                                <ChevronLeft color={"black"} size={20} />
+                            </Pressable>
+                        </Link>
 
-export default AllBudgetTransaction;
+                        <View className="flex-1 items-center">
+                            <Text className="text-primary font-lexendSemiBold">
+                                Budget Transactions
+                            </Text>
+                        </View>
+                    </View>
+
+                    <ScrollView className="mt-8">
+                        <SearchBar title="Search transaction" />
+                        <TransactionFilters
+                            selectedFilter={selectedFilter}
+                            onFilterChange={setSelectedFilter}
+                        />
+                        <TransactionList selectedFilter={selectedFilter} />
+                    </ScrollView>
+                    <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+                </View>
+            </View>
+        </SafeAreaView>
+    );
+}
