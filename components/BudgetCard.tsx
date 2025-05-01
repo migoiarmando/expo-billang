@@ -24,26 +24,24 @@ export interface BudgetCardProps {
     amount: number;
     spent: string;
     percentage: number;
-    stripColor?: string;
-    stripHeight?: number;
-    stripStyle?: ViewStyle;
+    themeColor?: string;
+    contentColor?: string;
 }
 
 const BudgetCard: React.FC<BudgetCardProps> = ({
     name,
     amount,
     spent,
-    stripColor = "#FFFFFF",
-    stripHeight = 12,
-    stripStyle,
+    themeColor = "#E6E6E6",
+    contentColor = "#F6F6F6",
 }) => {
     const spentNumber = parseFloat(spent.replace(/,/g, ""));
     const percentage = Math.min((spentNumber / amount) * 100, 100);
 
     return (
-        <View style={styles.budgetCard}>
+        <View style={[styles.budgetCard, { backgroundColor: themeColor }]}>
             {/* <View style={dynamicStripStyle} /> */}
-            <View style={styles.contentContainer}>
+            <View style={[styles.contentContainer, { backgroundColor: contentColor }]}>
                 <Image
                     source={require("@/assets/budget-folders/default.png")}
                     style={{
@@ -98,7 +96,6 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 const styles = StyleSheet.create({
     budgetCard: {
         borderRadius: 14,
-        backgroundColor: "#EDEDED",
         overflow: "hidden",
         height: 150,
     },

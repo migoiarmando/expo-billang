@@ -54,6 +54,7 @@ interface Budget {
     title: string;
     amount: number;
     themeColor: string;
+    contentColor: string;
 }
 
 export default function BudgetScreen() {
@@ -115,6 +116,8 @@ export default function BudgetScreen() {
                                     amount={budget.amount}
                                     spent="0"
                                     percentage={1}
+                                    themeColor={budget.themeColor}
+                                    contentColor={budget.contentColor}
                                 />
                             </TouchableOpacity>
                         ))}

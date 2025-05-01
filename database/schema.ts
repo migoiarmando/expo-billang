@@ -13,6 +13,7 @@ export const budget_tb = sqliteTable("budget", {
     title: text("title").notNull(),
     amount: real("amount").notNull().default(0),
     themeColor: text("theme_color").notNull().default("#E6E6E6"),
+    contentColor: text("content_color").notNull().default("#F6F6F6"),
 });
 
 export const transactions_tb = sqliteTable("transactions", {
