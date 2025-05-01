@@ -23,6 +23,15 @@ import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// Add this type definition
+type ThemeColorKey =
+    | "#E6E6E6"
+    | "#FFE287"
+    | "#FEC794"
+    | "#FF8787"
+    | "#9FE0A9"
+    | "#FADDFF";
+
 export default function TailoredBudgetScreen() {
     const inputRef = useRef<TextInput>(null); // Create the ref
 
@@ -42,6 +51,22 @@ export default function TailoredBudgetScreen() {
 
     const [title, setTitle] = useState("");
     const [amount, setAmount] = useState("");
+
+    // Define theme colors with the type
+    const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
+        "#E6E6E6": { content: "#F6F6F6" }, // Gray
+        "#FFE287": { content: "#FFD44E" }, // Yellow
+        "#FEC794": { content: "#FFD44E" }, // Orange
+        "#FF8787": { content: "#FFD1D1" }, // Red
+        "#9FE0A9": { content: "#DEFDD3" }, // Green
+        "#FADDFF": { content: "#E4A8C5" }, // Pink
+    };
+
+    const THEME_COLOR_LIST = Object.keys(THEME_COLORS);
+
+    // Update state type
+    const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
+
     async function SaveBudget() {
         try {
             const numericAmount = parseFloat(amount);
@@ -54,6 +79,8 @@ export default function TailoredBudgetScreen() {
                 {
                     title: title.trim(),
                     amount: numericAmount,
+                    themeColor: selectedColor,
+                    contentColor: THEME_COLORS[selectedColor].content,
                 },
             ]);
 
@@ -121,21 +148,14 @@ export default function TailoredBudgetScreen() {
                 <View className="gap-[10px] mt-[50px]">
                     <View className="flex-row gap-[20px]">
                         <View className="flex-grow">
-                            <Text className="mb-[20px] font-lexend">
-                                Starting date
-                            </Text>
+                            <Text className="mb-[20px] font-lexend">Starting date</Text>
                             <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                                 <Calendar color="#9D9D9D" size={12} />
-                                <TextInput
-                                    placeholder="Today"
-                                    className="font-lexend"
-                                />
+                                <TextInput placeholder="Today" className="font-lexend" />
                             </View>
                         </View>
                         <View className="flex-grow">
-                            <Text className="mb-[20px] font-lexend">
-                                Duration
-                            </Text>
+                            <Text className="mb-[20px] font-lexend">Duration</Text>
                             <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                                 <RotateCw color="#9D9D9D" size={12} />
                                 <TextInput
@@ -166,13 +186,23 @@ export default function TailoredBudgetScreen() {
                 {/* Budget Color */}
                 <View className="mt-[20px] ">
                     <Text className="mb-[20px] font-lexend">Theme Color</Text>
-                    <View className="flex-row justify-between ">
-                        <View className="w-[50px] h-[50px] bg-[#E6E6E6] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FFE287] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FEC794] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FF8787] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#9FE0A9] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FADDFF] rounded-full"></View>
+                    <View className="flex-row justify-between">
+                        {THEME_COLOR_LIST.map((color) => (
+                            <Pressable
+                                key={color}
+                                onPress={() => setSelectedColor(color as ThemeColorKey)}
+                                className="relative"
+                            >
+                                <View
+                                    style={{ backgroundColor: color }}
+                                    className={`w-[50px] h-[50px] rounded-full ${
+                                        selectedColor === color
+                                            ? "border-4 border-primary"
+                                            : ""
+                                    }`}
+                                />
+                            </Pressable>
+                        ))}
                     </View>
                 </View>
 
@@ -181,9 +211,7 @@ export default function TailoredBudgetScreen() {
                         onPress={SaveBudget}
                         className="mt-3 bg-primary py-3 rounded-lg flex items-center"
                     >
-                        <Text className="font-lexend text-white">
-                            Save Budget
-                        </Text>
+                        <Text className="font-lexend text-white">Save Budget</Text>
                     </Pressable>
 
                     {!onboarding && (
