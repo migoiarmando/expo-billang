@@ -18,6 +18,12 @@ import React from "react";
 import { View, Image, Text, StyleSheet, ViewStyle } from "react-native";
 import { History } from "lucide-react-native";
 import SpentPercentageIcon from "@/assets/images/spentpercentageicon.svg";
+import DefaultFolderSVG from "@/assets/budget-folders/default.svg";
+import YellowFolderSVG from "@/assets/budget-folders/yellow.svg";
+import OrangeFolderSVG from "@/assets/budget-folders/orange.svg";
+import RedFolderSVG from "@/assets/budget-folders/red.svg";
+import GreenFolderSVG from "@/assets/budget-folders/green.svg";
+import PinkFolderSVG from "@/assets/budget-folders/pink.svg";
 
 export interface BudgetCardProps {
     name: string;
@@ -27,6 +33,16 @@ export interface BudgetCardProps {
     themeColor?: string;
     contentColor?: string;
 }
+
+// Map theme colors to their corresponding SVG components
+const folderSVGMap: Record<string, React.FC<any>> = {
+    "#E6E6E6": DefaultFolderSVG,
+    "#FFE287": YellowFolderSVG,
+    "#FEC794": OrangeFolderSVG,
+    "#FF8787": RedFolderSVG,
+    "#9FE0A9": GreenFolderSVG,
+    "#FADDFF": PinkFolderSVG,
+};
 
 const BudgetCard: React.FC<BudgetCardProps> = ({
     name,
@@ -38,62 +54,91 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     const spentNumber = parseFloat(spent.replace(/,/g, ""));
     const percentage = Math.min((spentNumber / amount) * 100, 100);
 
+    // Select the correct SVG based on the themeColor
+    const FolderSVG = folderSVGMap[themeColor] || DefaultFolderSVG;
+
     return (
         <View style={[styles.budgetCard, { backgroundColor: themeColor }]}>
-            <View style={[styles.contentContainer]}>
-                <Image
-                    source={require("@/assets/budget-folders/default.png")}
+            <View
+                style={[
+                    styles.contentContainer,
+                    { backgroundColor: contentColor, position: "relative" },
+                ]}
+            >
+                {/* Background Layer: Folder image and overlay SVG */}
+                <View
                     style={{
-                        width: 430,
-                        height: 330,
-                        zIndex: -1,
                         position: "absolute",
-                        bottom: -180,
-                        left: -50,
-                        tintColor: contentColor,
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 0,
                     }}
-                />
-                <View style={styles.budgetHeader}>
-                    <Text style={[styles.budgetName, { fontFamily: "Lexend_500Medium" }]}>
-                        {name}
-                    </Text>
-                    <History
-                        color="#2B3854"
-                        width={15}
+                >
+                    <Image
+                        source={require("@/assets/budget-folders/default.png")}
+                        style={{
+                            width: 320,
+                            height: 160,
+                            position: "absolute",
+                            top: -30,
+                            left: -20,
+                        }}
+                        resizeMode="cover"
+                    />
+                    {/* Use the selected SVG */}
+                    <FolderSVG
+                        width={400}
+                        height={190}
                         style={{
                             position: "absolute",
-                            top: 30,
-                            right: 3,
+                            top: -20,
+                            left: -20,
                         }}
                     />
                 </View>
-                <View style={styles.amountContainer}>
-                    <Text style={styles.amount} numberOfLines={1}>
-                        ₱{amount}
-                    </Text>
-                </View>
-                <View style={styles.progressContainer}>
-                    <View
-                        style={[
-                            styles.progressBar,
-                            {
-                                width: `${percentage}%`,
-                                backgroundColor: "#2B3854",
-                            },
-                        ]}
-                    />
-                </View>
-                <View style={styles.budgetFooter}>
-                    <Text style={styles.spentText}>₱{spent} spent</Text>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Text style={styles.percentageText}>
-                            {percentage.toFixed(1)}%
+                {/* Foreground Layer: All content */}
+                <View style={{ zIndex: 1 }}>
+                    <View style={styles.budgetHeader}>
+                        <Text
+                            style={[
+                                styles.budgetName,
+                                { fontFamily: "Lexend_500Medium" },
+                            ]}
+                        >
+                            {name}
                         </Text>
-                        <SpentPercentageIcon
-                            width={8}
-                            height={8}
-                            style={{ marginLeft: 5, marginRight: 7 }}
+                        <History
+                            color="#8D8F9A"
+                            width={15}
+                            style={{
+                                position: "absolute",
+                                top: 25,
+                                right: 5,
+                            }}
                         />
+                    </View>
+                    <View style={styles.amountContainer}>
+                        <Text style={styles.amount} numberOfLines={1}>
+                            ₱{amount}
+                        </Text>
+                    </View>
+                    <View style={styles.progressContainer}>
+                        <View style={[styles.progressBar, { width: `${percentage}%` }]} />
+                    </View>
+                    <View style={styles.budgetFooter}>
+                        <Text style={styles.spentText}>₱{spent} spent</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={styles.percentageText}>
+                                {percentage.toFixed(1)}%
+                            </Text>
+                            <SpentPercentageIcon
+                                width={8}
+                                height={8}
+                                style={{ marginLeft: 5, marginRight: 7 }}
+                            />
+                        </View>
                     </View>
                 </View>
             </View>
