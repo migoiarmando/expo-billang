@@ -207,20 +207,15 @@ function ExpenseContent({
                                 onPress={() => setSelectedCategory(item)}
                             >
                                 <View
-                                    className={`flex-row items-center gap-2 rounded-xl py-2 px-5 mr-2 ${
-                                        isSelected ? "bg-[#FFDBDB]" : "bg-bgBorder-2"
+                                    className={`flex-row items-center gap-2 rounded-xl py-2 px-5 mr-2 bg-bgBorder-2 ${
+                                        isSelected ? "opacity-100" : "opacity-50"
                                     }`}
-                                    style={{
-                                        borderColor: isSelected
-                                            ? "#9D9D9D"
-                                            : "transparent",
-                                    }}
                                 >
                                     {item.icon}
                                     <Text
-                                        className={`font-lexend ${
+                                        className={`font-lexend font-semibold ${
                                             isSelected
-                                                ? "text-[#FF5E5E] font-semibold"
+                                                ? "text-[#9D9D9D] "
                                                 : "text-[#9D9D9D]"
                                         }`}
                                     >

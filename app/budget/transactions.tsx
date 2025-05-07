@@ -23,18 +23,16 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Image,
     Platform,
     Pressable,
 } from "react-native";
 import { Plus, ChevronLeft } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link } from "expo-router";
 
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
-import { SearchBar } from "@/components/SearchBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { db } from "@/database";
 import { transactions_tb } from "@/database/schema";
@@ -306,7 +304,7 @@ export default function BudgetTransactionScreen() {
     return (
         <SafeAreaView>
             <View className="mx-[20px] mt-[30px]">
-                <View className="">
+                <View>
                     {/* Header */}
                     <View className="flex-row items-center">
                         <Link href=".." asChild>
@@ -323,7 +321,6 @@ export default function BudgetTransactionScreen() {
                     </View>
 
                     <ScrollView className="mt-8">
-                        <SearchBar title="Search transaction" />
                         <TransactionFilters
                             selectedFilter={selectedFilter}
                             onFilterChange={setSelectedFilter}

@@ -77,66 +77,39 @@ export default function TransactionScreen() {
         return true;
     });
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <View style={styles.innerContainer}>
-                    {/* Header row with left text and right icon */}
-                    <View style={styles.headerRow}>
-                        <Text style={styles.title} className="font-lexend text-[24px]">
-                            Transactions
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => console.log("Settings / Edit icon pressed")}
-                        >
-                            <Image
-                                source={require("../../assets/images/transaction-folders/editlogo.png")}
-                                style={styles.headerIcon}
-                            />
-                        </TouchableOpacity>
-                    </View>
+        <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
+            <View className="flex-1 mx-[20px] mt-[30px]">
+                <View style={styles.headerRow}>
+                    <Text style={styles.title} className="font-lexend text-[24px]">
+                        Transactions
+                    </Text>
+                </View>
 
-                    <SearchBar title="Search transactions" />
+                {/* Filter Bar (All, Expense, Income) */}
+                <TransactionFilter
+                    selectedFilter={selectedFilter}
+                    setSelectedFilter={setSelectedFilter}
+                />
 
-                    {/* Filter Bar (All, Expense, Income) */}
-                    <TransactionFilter
-                        selectedFilter={selectedFilter}
-                        setSelectedFilter={setSelectedFilter}
-                    />
-
-                    {/* ✅ Apply Filter to Each Transaction List */}
-
-                    <View className="mt-5">
+                <ScrollView className="flex-1">
+                    <View className="mb-2">
                         <Text className="mb-3 text-[16px] font-lexend text-[#676666]">
                             Transactions
                         </Text>
-                        <ScrollView>
-                            {filteredTransactions.map((transaction) => (
-                                <TransactionItem
-                                    key={transaction.id}
-                                    title={transaction.title || transaction.category}
-                                    date={transaction.date}
-                                    amount={transaction.amount}
-                                    iconUrl={transaction.category}
-                                    amountColor={transaction.type}
-                                />
-                            ))}
-                        </ScrollView>
-                    </View>
 
-                    {/* <TransactionSection
-                        title="March"
-                        transactions={filterTransactions(transactions.todayTransactions)}
-                    />
-                    <TransactionSection
-                        title="Febuary"
-                        transactions={filterTransactions(transactions.pastTransactions)}
-                    />
-                    <TransactionSection
-                        title="Overdue"
-                        transactions={filterTransactions(transactions.overDue)}
-                    /> */}
-                </View>
-            </ScrollView>
+                        {filteredTransactions.map((transaction) => (
+                            <TransactionItem
+                                key={transaction.id}
+                                title={transaction.title || transaction.category}
+                                date={transaction.date}
+                                amount={transaction.amount}
+                                iconUrl={transaction.category}
+                                amountColor={transaction.type}
+                            />
+                        ))}
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     );
 }
@@ -149,7 +122,7 @@ const TransactionFilter = ({
     setSelectedFilter: (filter: "all" | "expense" | "income") => void;
 }) => {
     return (
-        <View className="flex-row justify-between items-center rounded-full gap-2.5">
+        <View className="mb-5 flex-row justify-between items-center rounded-full gap-2.5">
             {/* All Button */}
             <TouchableOpacity
                 onPress={() => setSelectedFilter("all")}
@@ -324,7 +297,6 @@ const styles = StyleSheet.create({
         🔹 GLOBAL CONTAINER (Applies to All Elements)
     -------------------------------------------------------------------------------------------------------------- */
     container: {
-        flex: 1,
         backgroundColor: "#FFFFFF",
     },
 

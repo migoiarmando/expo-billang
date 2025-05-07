@@ -23,11 +23,6 @@ export function Header(props: HeaderArr) {
                 <Text className="font-lexend text-[24px] text-[#2B3854]">
                     {props.name}
                 </Text>
-                <View>
-                    <TouchableOpacity>
-                        <NotificationIcon width={32} height={32} />
-                    </TouchableOpacity>
-                </View>
             </View>
         </>
     );

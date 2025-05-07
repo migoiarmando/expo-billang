@@ -114,8 +114,8 @@ export default function BudgetScreen() {
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px] ">
                 <Header name="Budget" />
-                <SearchBar title="Search budget" className="mt-[20px]" />
-                <ScrollView className="flex-1">
+
+                <ScrollView className="flex-1 mt-5">
                     <View className="gap-3.5">
                         {budgets.map((budget) => (
                             <TouchableOpacity
@@ -123,7 +123,7 @@ export default function BudgetScreen() {
                                 onPress={() => handleBudgetCardPress("Aaweawe")}
                             >
                                 <BudgetCard
-                                    name={budget.title}
+                                    name={`(${budget.id}) ${budget.title}`}
                                     amount={budget.amount}
                                     spent={String(spentBudget)}
                                     percentage={0}
