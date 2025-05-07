@@ -28,379 +28,65 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import { SearchBar } from "@/components/SearchBar";
+import { transactions_tb } from "@/database/schema";
+import { db } from "@/database";
+import { Transaction } from "@/database/models";
 
-// -----------------------------------------------------------------------------
-// Interfaces & Utility Functions
-// -----------------------------------------------------------------------------
+import ExpenseIcon from "@/assets/images/expense.svg";
+import IncomeIcon from "@/assets/images/income.svg";
+import IncomeTrans from "@/assets/transaction-icons/income.svg";
+import CashIcon from "@/assets/images/cash.svg";
+import FoodIcon from "@/assets/transaction-icons/food.svg";
+import TransitIcon from "@/assets/transaction-icons/transit.svg";
+import GroceryIcon from "@/assets/transaction-icons/grocery.svg";
+import BillsIcon from "@/assets/transaction-icons/bills.svg";
+import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
+import WorkIcon from "@/assets/transaction-icons/work.svg";
+import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 
-interface Transaction {
-    icon: number | { uri: string }; // ✅ Supports require() and remote URLs
-    title: string;
-    amount: string;
-    timestamp: string;
-    type: "expense" | "income";
-}
-
-// Format timestamp to "March 1 at 1:25 AM"
-const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-
-    const options: Intl.DateTimeFormatOptions = {
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true, // AM/PM format
-    };
-
-    return date.toLocaleString("en-PH", options); // Output: "March 1 at 1:25 AM"
-};
-
-// function to format the date (e.g., "March 2")
-const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", { month: "long", day: "numeric" });
-};
-
-// Dynamically show "Today, Month" or fixed date
-const getTransactionTitle = (timestamp?: string) => {
-    if (!timestamp) return "";
-
-    const transactionDate = new Date(timestamp);
-    const today = new Date();
-
-    // If the transaction is today, label it as "Today, Month Day"
-    if (
-        transactionDate.getDate() === today.getDate() &&
-        transactionDate.getMonth() === today.getMonth() &&
-        transactionDate.getFullYear() === today.getFullYear()
-    ) {
-        return `Today, ${formatDate(transactionDate)}`;
-    }
-
-    // Otherwise, return just "Month Day"
-    return formatDate(transactionDate);
-};
-
-// -----------------------------------------------------------------------------
-// Components
-// -----------------------------------------------------------------------------
-
-// TransactionCard Component
-const TransactionCard = ({
-    icon,
-    title,
-    amount,
-    timestamp,
-    type,
-}: Transaction) => {
-    return (
-        <>
-            <View style={styles.transactionRow}>
-                <View style={styles.transactionDetails}>
-                    <Image
-                        source={typeof icon === "string" ? { uri: icon } : icon}
-                        style={styles.transactionIcon}
-                    />
-                    <View>
-                        <Text style={styles.transactionTitle}>{title}</Text>
-                        <Text style={styles.transactionTimestamp}>
-                            {formatTimestamp(timestamp)}
-                        </Text>
-                    </View>
-                </View>
-
-                {/* ✅ Amount with Icon */}
-                <View style={styles.transactionAmountWrapper}>
-                    <Image
-                        source={
-                            type === "expense"
-                                ? require("../../assets/images/expense.svg")
-                                : require("../../assets/images/income.svg")
-                        }
-                        style={styles.transactionTypeIcon}
-                    />
-                    <Text
-                        style={[
-                            styles.transactionAmount,
-                            type === "expense"
-                                ? styles.expenseAmount
-                                : styles.incomeAmount,
-                        ]}
-                    >
-                        {amount}
-                    </Text>
-                </View>
-            </View>
-
-            {/* ✅ Divider */}
-            <View style={styles.transactionDivider} />
-        </>
-    );
-};
-
-// TransactionFilter Component
-const TransactionFilter = ({
-    selectedFilter,
-    setSelectedFilter,
-}: {
-    selectedFilter: "all" | "expense" | "income";
-    setSelectedFilter: (filter: "all" | "expense" | "income") => void;
-}) => {
-    return (
-        <View style={styles.filterWrapper} className="mb-[20px]">
-            {/* ✅ ALL Button */}
-            <TouchableOpacity
-                style={[
-                    styles.filterButton,
-                    selectedFilter === "all"
-                        ? styles.activeFilterAll
-                        : styles.inactiveFilter,
-                ]}
-                onPress={() => setSelectedFilter("all")}
-            >
-                <Text
-                    style={
-                        selectedFilter === "all"
-                            ? styles.activeText
-                            : styles.inactiveText
-                    }
-                >
-                    All
-                </Text>
-            </TouchableOpacity>
-
-            {/* ✅ EXPENSE Button */}
-            <TouchableOpacity
-                style={[
-                    styles.filterButton,
-                    selectedFilter === "expense"
-                        ? styles.activeFilterExpense
-                        : styles.inactiveFilter,
-                ]}
-                onPress={() => setSelectedFilter("expense")}
-            >
-                <Image
-                    source={require("../../assets/images/transaction-folders/expense.png")}
-                    style={[
-                        styles.filterIcon,
-                        selectedFilter === "expense"
-                            ? styles.filterIconExpense
-                            : styles.filterIconInactive,
-                    ]}
-                />
-                <Text
-                    style={
-                        selectedFilter === "expense"
-                            ? styles.filterTextWhite
-                            : styles.filterTextInactive
-                    }
-                >
-                    Expense
-                </Text>
-            </TouchableOpacity>
-
-            {/* ✅ INCOME Button */}
-            <TouchableOpacity
-                style={[
-                    styles.filterButton,
-                    selectedFilter === "income"
-                        ? styles.activeFilterIncome
-                        : styles.inactiveFilter,
-                ]}
-                onPress={() => setSelectedFilter("income")}
-            >
-                <Image
-                    source={require("../../assets/images/transaction-folders/income.png")}
-                    style={[
-                        styles.filterIcon,
-                        selectedFilter === "income"
-                            ? styles.filterIconIncome
-                            : styles.filterIconInactive,
-                    ]}
-                />
-                <Text
-                    style={
-                        selectedFilter === "income"
-                            ? styles.filterTextWhite
-                            : styles.filterTextInactive
-                    }
-                >
-                    Income
-                </Text>
-            </TouchableOpacity>
-        </View>
-    );
-};
-
-// SearchBar Component
-// const SearchBar = () => {
-//     return (
-//         <View className="relative mb-[20px]">
-//             <Image
-//                 source={require("../../assets/images/transaction-folders/searchlogo.png")}
-//                 style={styles.searchlogo} // ✅ Correct
-//             />
-//             <TextInput
-//                 placeholder="Search transaction"
-//                 placeholderTextColor="D1D1D6"
-//                 style={styles.searchBar}
-//                 className="text-[16px] font-lexendRegular"
-//             />
-//         </View>
-//     );
-// };
-
-// TransactionSection Component
-const TransactionSection = ({
-    title,
-    transactions,
-}: {
-    title: string;
-    transactions: Transaction[];
-}) => {
-    if (!transactions || transactions.length === 0) return null;
-
-    return (
-        <View className="mb-[20px]">
-            <Text style={styles.transactionSection}>{title}</Text>
-            {transactions.map((transaction, index) => (
-                <TransactionCard key={index} {...transaction} />
-            ))}
-        </View>
-    );
-};
-
-// -----------------------------------------------------------------------------
-// Data & Service
-// -----------------------------------------------------------------------------
-
-const DEFAULT_TRANSACTION_DATA = {
-    upcoming: [
-        {
-            icon: require("../../assets/images/transaction-folders/category/billFees.png"),
-            title: "Freelance Income",
-            amount: "₱100,000",
-            timestamp: "2025-03-3T10:30:00Z", // Fixed timestamp
-            type: "income" as const,
-        },
-        {
-            icon: require("../../assets/images/transaction-folders/category/billFees.png"),
-            title: "Electricity Bill",
-            amount: "₱7,700",
-            timestamp: "2025-03-3T10:30:00Z", // Fixed timestamp
-            type: "expense" as const,
-        },
-    ],
-    todayTransactions: [
-        {
-            icon: require("../../assets/images/transaction-folders/category/entertainment.png"),
-            title: "Cinema Captain America 4",
-            amount: "₱333",
-            timestamp: "2025-03-09T15:45:00Z",
-            type: "expense" as const,
-        },
-        {
-            icon: require("../../assets/images/transaction-folders/category/food.png"),
-            title: "Lunch",
-            amount: "₱237",
-            timestamp: "2025-03-09T12:30:00Z",
-            type: "expense" as const,
-        },
-        {
-            icon: require("../../assets/images/transaction-folders/category/transit.png"),
-            title: "Bus Fare",
-            amount: "₱50",
-            timestamp: "2025-03-09T08:10:00Z",
-            type: "expense" as const,
-        },
-    ],
-    pastTransactions: [
-        {
-            icon: require("../../assets/images/transaction-folders/category/subscription.png"),
-            title: "Disney+ Subscription",
-            amount: "₱149",
-            timestamp: "2025-02-25T18:45:00Z",
-            type: "expense" as const,
-        },
-        {
-            icon: require("../../assets/images/transaction-folders/category/income.png"),
-            title: "Freelance Income",
-            amount: "₱18,000",
-            timestamp: "2025-02-25T18:45:00Z",
-            type: "income" as const,
-        },
-    ],
-    overDue: [
-        {
-            icon: require("../../assets/images/transaction-folders/category/billFees.png"),
-            title: "Water Bill",
-            amount: "₱50",
-            timestamp: "2025-02-10T09:00:00Z",
-            type: "expense" as const,
-        },
-    ],
-};
-
-// -----------------------------------------------------------------------------
-// Main Screen Component
-// -----------------------------------------------------------------------------
+import GrayArrow from "@/assets/images/grayarrow.svg";
+import ExpenseArrow from "@/assets/images/expensearrow.svg";
+import IncomeArrow from "@/assets/images/incomearrow.svg";
 
 export default function TransactionScreen() {
-    const navigation = useNavigation();
-    const [transactions, setTransactions] = useState(DEFAULT_TRANSACTION_DATA);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>("");
-    const [selectedFilter, setSelectedFilter] = useState<
-        "all" | "expense" | "income"
-    >("all");
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [selectedFilter, setSelectedFilter] = useState<"all" | "expense" | "income">(
+        "all",
+    );
 
     useEffect(() => {
-        const getTransactions = async () => {
+        async function GetTransactions() {
             try {
-                const response = await fetch(
-                    "https://your-backend.com/api/transactions",
-                );
-                const data = await response.json();
-                setTransactions(data.transactions);
+                const res = await db.select().from(transactions_tb);
+                setTransactions(res);
             } catch (err) {
-                setError("Error fetching transactions");
-            } finally {
-                setLoading(false);
+                console.error("[error] Failed to fetch transactions:", err);
             }
-        };
-        getTransactions();
+        }
+        GetTransactions();
     }, []);
 
-    if (loading) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <Text>Loading transactions...</Text>
-            </SafeAreaView>
-        );
-    }
-
-    // **Filter Transactions Based on Selected Filter**
-    const filterTransactions = (transactionsList: Transaction[]) => {
-        if (selectedFilter === "all") return transactionsList;
-        return transactionsList.filter((txn) => txn.type === selectedFilter);
-    };
-
+    const filteredTransactions = transactions.filter((transaction) => {
+        if (selectedFilter === "all") return true;
+        if (selectedFilter === "expense") {
+            return transaction.type === "Expense";
+        }
+        if (selectedFilter === "income") {
+            return transaction.type === "Income";
+        }
+        return true;
+    });
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.innerContainer}>
                     {/* Header row with left text and right icon */}
                     <View style={styles.headerRow}>
-                        <Text
-                            style={styles.title}
-                            className="font-lexend text-[24px]"
-                        >
+                        <Text style={styles.title} className="font-lexend text-[24px]">
                             Transactions
                         </Text>
                         <TouchableOpacity
-                            onPress={() =>
-                                console.log("Settings / Edit icon pressed")
-                            }
+                            onPress={() => console.log("Settings / Edit icon pressed")}
                         >
                             <Image
                                 source={require("../../assets/images/transaction-folders/editlogo.png")}
@@ -411,38 +97,223 @@ export default function TransactionScreen() {
 
                     <SearchBar title="Search transactions" />
 
-                    {/* ✅ Transaction Filter Component */}
+                    {/* Filter Bar (All, Expense, Income) */}
                     <TransactionFilter
                         selectedFilter={selectedFilter}
                         setSelectedFilter={setSelectedFilter}
                     />
 
                     {/* ✅ Apply Filter to Each Transaction List */}
-                    <TransactionSection
-                        title="Upcoming"
-                        transactions={filterTransactions(transactions.upcoming)}
-                    />
-                    <TransactionSection
+
+                    <View className="mt-5">
+                        <Text className="mb-3 text-[16px] font-lexend text-[#676666]">
+                            Transactions
+                        </Text>
+                        <ScrollView>
+                            {filteredTransactions.map((transaction) => (
+                                <TransactionItem
+                                    key={transaction.id}
+                                    title={transaction.title || transaction.category}
+                                    date={transaction.date}
+                                    amount={transaction.amount}
+                                    iconUrl={transaction.category}
+                                    amountColor={transaction.type}
+                                />
+                            ))}
+                        </ScrollView>
+                    </View>
+
+                    {/* <TransactionSection
                         title="March"
-                        transactions={filterTransactions(
-                            transactions.todayTransactions,
-                        )}
+                        transactions={filterTransactions(transactions.todayTransactions)}
                     />
                     <TransactionSection
                         title="Febuary"
-                        transactions={filterTransactions(
-                            transactions.pastTransactions,
-                        )}
+                        transactions={filterTransactions(transactions.pastTransactions)}
                     />
                     <TransactionSection
                         title="Overdue"
                         transactions={filterTransactions(transactions.overDue)}
-                    />
+                    /> */}
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
+
+const TransactionFilter = ({
+    selectedFilter,
+    setSelectedFilter,
+}: {
+    selectedFilter: "all" | "expense" | "income";
+    setSelectedFilter: (filter: "all" | "expense" | "income") => void;
+}) => {
+    return (
+        <View className="flex-row justify-between items-center rounded-full gap-2.5">
+            {/* All Button */}
+            <TouchableOpacity
+                onPress={() => setSelectedFilter("all")}
+                className={`
+                    flex-1 h-10 px-7 rounded-full border-1.5 items-center justify-center
+                    ${
+                        selectedFilter === "all"
+                            ? "bg-[#E5F7FF] border-[#E5F7FF]"
+                            : "bg-[#F5F5F5] border-[#F5F5F5]"
+                    }
+                `}
+            >
+                <Text
+                    className={`
+                    font-lexend text-base
+                    ${
+                        selectedFilter === "all"
+                            ? "text-[#5FA7C6] font-semibold"
+                            : "text-[#BABABA] font-medium"
+                    }
+                `}
+                >
+                    All
+                </Text>
+            </TouchableOpacity>
+
+            {/* Expense Button */}
+            <TouchableOpacity
+                onPress={() => setSelectedFilter("expense")}
+                className={`
+                    flex-1 h-10 px-7 rounded-full border-1.5 flex-row items-center justify-center gap-1
+                    ${
+                        selectedFilter === "expense"
+                            ? "bg-[#FD7474] border-[#FD7474]"
+                            : "bg-[#F5F5F5] border-[#F5F5F5]"
+                    }
+                `}
+            >
+                {selectedFilter === "expense" ? (
+                    <ExpenseArrow width={10} height={10} className="mr-1" />
+                ) : (
+                    <GrayArrow width={10} height={10} className="mr-1" />
+                )}
+                <Text
+                    className={`
+                    font-lexend text-base
+                    ${
+                        selectedFilter === "expense"
+                            ? "text-white font-semibold"
+                            : "text-[#6B7280] font-medium"
+                    }
+                `}
+                >
+                    Expense
+                </Text>
+            </TouchableOpacity>
+
+            {/* Income Button */}
+            <TouchableOpacity
+                onPress={() => setSelectedFilter("income")}
+                className={`
+                    flex-1 h-10 px-7 rounded-full border-1.5 flex-row items-center justify-center gap-1
+                    ${
+                        selectedFilter === "income"
+                            ? "bg-[#80B154] border-[#80B154]"
+                            : "bg-[#F5F5F5] border-[#F5F5F5]"
+                    }
+                `}
+            >
+                {selectedFilter === "income" ? (
+                    <IncomeArrow width={10} height={10} className="mr-1" />
+                ) : (
+                    <GrayArrow width={10} height={10} className="mr-1" />
+                )}
+                <Text
+                    className={`
+                    font-lexend text-base
+                    ${
+                        selectedFilter === "income"
+                            ? "text-white font-semibold"
+                            : "text-[#6B7280] font-medium"
+                    }
+                `}
+                >
+                    Income
+                </Text>
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const TransactionItem = ({
+    title,
+    date,
+    amount,
+    iconUrl,
+    amountColor,
+}: {
+    title: string;
+    date: string;
+    amount: number;
+    iconUrl: string;
+    amountColor: string;
+}) => {
+    const categoryIconMap: Record<string, JSX.Element> = {
+        Food: <FoodIcon width={40} height={40} />,
+        Transit: <TransitIcon width={40} height={40} />,
+        Grocery: <GroceryIcon width={40} height={40} />,
+        Bills: <BillsIcon width={40} height={40} />,
+        Entertainment: <EntertainmentIcon width={40} height={40} />,
+        Income: <IncomeTrans width={40} height={40} />,
+        Work: <WorkIcon width={40} height={40} />,
+        Subscription: <SubscriptionIcon width={40} height={40} />,
+        Cash: <CashIcon width={40} height={40} />,
+    };
+    const formattedDate = new Date(date).toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+    return (
+        <View className="flex-row items-center justify-between py-3 border-b border-[#F8F8F8]">
+            <View className="flex-row items-center">
+                {categoryIconMap[iconUrl] ? (
+                    <View className="mr-3 flex items-center justify-center">
+                        {categoryIconMap[iconUrl]}
+                    </View>
+                ) : (
+                    <Text>No Icon</Text>
+                )}
+                <View>
+                    <Text className="text-[16px] font-lexend text-[#2C2C2C]">
+                        {title}
+                    </Text>
+                    <View className="mt-1">
+                        <Text className="text-[12px] font-lexend text-[#9D9D9D]">
+                            {formattedDate}
+                        </Text>
+                    </View>
+                </View>
+            </View>
+            <View className="flex-row items-center gap-1">
+                {amountColor === "Expense" ? (
+                    <>
+                        <ExpenseIcon width={10} height={10} className="mr-1" />
+                        <Text className="text-[16px] font-lexendMedium text-[#FD7474]">
+                            ₱{amount}
+                        </Text>
+                    </>
+                ) : (
+                    <>
+                        <IncomeIcon width={10} height={10} className="mr-1" />
+                        <Text className="text-[16px] font-lexendMedium text-[#80B154]">
+                            ₱{amount}
+                        </Text>
+                    </>
+                )}
+            </View>
+        </View>
+    );
+};
 
 // -----------------------------------------------------------------------------
 // Styles

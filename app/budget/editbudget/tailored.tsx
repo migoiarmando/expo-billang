@@ -33,9 +33,22 @@ type ThemeColorKey =
     | "#FADDFF";
 
 export default function TailoredBudgetScreen() {
-    const inputRef = useRef<TextInput>(null); // Create the ref
+    const inputRef = useRef<TextInput>(null);
+    const [title, setTitle] = useState("");
+    const [amount, setAmount] = useState("");
+    const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
 
-    // Fetch the user for validation if new
+    const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
+        "#E6E6E6": { content: "#F6F6F6" }, // Gray
+        "#FFE287": { content: "#FFD44E" }, // Yellow
+        "#FEC794": { content: "#FFD44E" }, // Orange
+        "#FF8787": { content: "#FFD1D1" }, // Red
+        "#9FE0A9": { content: "#DEFDD3" }, // Green
+        "#FADDFF": { content: "#E4A8C5" }, // Pink
+    };
+
+    const THEME_COLOR_LIST = Object.keys(THEME_COLORS);
+
     const [onboarding, setOnboarding] = useState<boolean | null>(null);
     useEffect(() => {
         async function fetchUser() {
@@ -49,24 +62,6 @@ export default function TailoredBudgetScreen() {
         fetchUser();
     }, []);
 
-    const [title, setTitle] = useState("");
-    const [amount, setAmount] = useState("");
-
-    // Define theme colors with the type
-    const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
-        "#E6E6E6": { content: "#F6F6F6" }, // Gray
-        "#FFE287": { content: "#FFD44E" }, // Yellow
-        "#FEC794": { content: "#FFD44E" }, // Orange
-        "#FF8787": { content: "#FFD1D1" }, // Red
-        "#9FE0A9": { content: "#DEFDD3" }, // Green
-        "#FADDFF": { content: "#E4A8C5" }, // Pink
-    };
-
-    const THEME_COLOR_LIST = Object.keys(THEME_COLORS);
-
-    // Update state type
-    const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
-
     async function SaveBudget() {
         try {
             const numericAmount = parseFloat(amount);
@@ -77,7 +72,7 @@ export default function TailoredBudgetScreen() {
 
             await db.insert(budget_tb).values([
                 {
-                    title: title.trim(),
+                    title: title.trim() || "Budget",
                     amount: numericAmount,
                     themeColor: selectedColor,
                     contentColor: THEME_COLORS[selectedColor].content,
@@ -146,7 +141,7 @@ export default function TailoredBudgetScreen() {
 
                 {/* Input fields */}
                 <View className="gap-[10px] mt-[50px]">
-                    <View className="flex-row gap-[20px]">
+                    {/* <View className="flex-row gap-[20px]">
                         <View className="flex-grow">
                             <Text className="mb-[20px] font-lexend">Starting date</Text>
                             <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
@@ -164,7 +159,8 @@ export default function TailoredBudgetScreen() {
                                 />
                             </View>
                         </View>
-                    </View>
+                    </View> */}
+
                     <View className="py-3 px-5 flex-row justify-between items-center gap-2 bg-bgBorder-2 rounded-xl">
                         <Pressable
                             className="flex-1"
@@ -194,11 +190,13 @@ export default function TailoredBudgetScreen() {
                                 className="relative"
                             >
                                 <View
-                                    style={{ backgroundColor: color }}
+                                    style={{
+                                        backgroundColor: color,
+                                    }}
                                     className={`w-[50px] h-[50px] rounded-full ${
                                         selectedColor === color
-                                            ? "border-4 border-primary"
-                                            : ""
+                                            ? "opacity-100"
+                                            : "opacity-40"
                                     }`}
                                 />
                             </Pressable>

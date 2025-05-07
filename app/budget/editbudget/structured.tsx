@@ -23,12 +23,33 @@ import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+type ThemeColorKey =
+    | "#E6E6E6"
+    | "#FFE287"
+    | "#FEC794"
+    | "#FF8787"
+    | "#9FE0A9"
+    | "#FADDFF";
+
 export default function StructuredScreen() {
     const inputRef = useRef<TextInput>(null); // Create the ref
     const [title, setTitle] = useState("");
     const [amount, setAmount] = useState("");
     const [onboarding, setOnboarding] = useState<boolean | null>(null);
-    
+    const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
+
+    // Define theme colors with the type
+    const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
+        "#E6E6E6": { content: "#F6F6F6" }, // Gray
+        "#FFE287": { content: "#FFD44E" }, // Yellow
+        "#FEC794": { content: "#FFD44E" }, // Orange
+        "#FF8787": { content: "#FFD1D1" }, // Red
+        "#9FE0A9": { content: "#DEFDD3" }, // Green
+        "#FADDFF": { content: "#E4A8C5" }, // Pink
+    };
+
+    const THEME_COLOR_LIST = Object.keys(THEME_COLORS);
+
     useEffect(() => {
         async function fetchUser() {
             try {
@@ -55,8 +76,10 @@ export default function StructuredScreen() {
             }
 
             await db.insert(budget_tb).values({
-                title: title.trim(),
+                title: title.trim() || "Budget",
                 amount: numericAmount,
+                themeColor: selectedColor,
+                contentColor: THEME_COLORS[selectedColor].content,
             });
 
             if (!onboarding) {
@@ -166,26 +189,7 @@ export default function StructuredScreen() {
 
                 {/* Input fields */}
                 <View className="gap-[10px] mt-[20px]">
-                    <View className="flex-row gap-[20px]">
-                        <View className="flex-grow">
-                            <Text className="mb-[20px] font-lexend">Starting date</Text>
-                            <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                                <Calendar color="#9D9D9D" size={12} />
-                                <TextInput placeholder="Today" className="font-lexend" />
-                            </View>
-                        </View>
-                        <View className="flex-grow">
-                            <Text className="mb-[20px] font-lexend">Duration</Text>
-                            <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                                <RotateCw color="#9D9D9D" size={12} />
-                                <TextInput
-                                    placeholder="Monthly"
-                                    className="font-lexend"
-                                />
-                            </View>
-                        </View>
-                    </View>
-                    <View className="py-3 px-5 flex-row justify-between items-center gap-2 bg-bgBorder-2 rounded-xl">
+                    <View className="mt-2 py-3 px-5 flex-row justify-between items-center gap-2 bg-bgBorder-2 rounded-xl">
                         <Pressable
                             className="flex-1"
                             onPress={() => inputRef.current?.focus()}
@@ -203,16 +207,26 @@ export default function StructuredScreen() {
                     </View>
                 </View>
 
-                {/* Budget Color */}
+                {/* Theme Color */}
                 <View className="mt-[20px] ">
                     <Text className="mb-[20px] font-lexend">Theme Color</Text>
-                    <View className="flex-row justify-between ">
-                        <View className="w-[50px] h-[50px] bg-[#E6E6E6] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FFE287] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FEC794] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FF8787] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#9FE0A9] rounded-full"></View>
-                        <View className="w-[50px] h-[50px] bg-[#FADDFF] rounded-full"></View>
+                    <View className="flex-row justify-between">
+                        {THEME_COLOR_LIST.map((color) => (
+                            <Pressable
+                                key={color}
+                                onPress={() => setSelectedColor(color as ThemeColorKey)}
+                                className="relative"
+                            >
+                                <View
+                                    style={{ backgroundColor: color }}
+                                    className={`w-[50px] h-[50px] rounded-full ${
+                                        selectedColor === color
+                                            ? "opacity-100"
+                                            : "opacity-40"
+                                    }`}
+                                />
+                            </Pressable>
+                        ))}
                     </View>
                 </View>
 

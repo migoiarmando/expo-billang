@@ -40,8 +40,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
     return (
         <View style={[styles.budgetCard, { backgroundColor: themeColor }]}>
-            {/* <View style={dynamicStripStyle} /> */}
-            <View style={[styles.contentContainer, { backgroundColor: contentColor }]}>
+            <View style={[styles.contentContainer]}>
                 <Image
                     source={require("@/assets/budget-folders/default.png")}
                     style={{
@@ -51,6 +50,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                         position: "absolute",
                         bottom: -180,
                         left: -50,
+                        tintColor: contentColor,
                     }}
                 />
                 <View style={styles.budgetHeader}>
@@ -58,12 +58,12 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                         {name}
                     </Text>
                     <History
-                        color="#8D8F9A"
+                        color="#2B3854"
                         width={15}
                         style={{
                             position: "absolute",
-                            top: 25,
-                            right: 5,
+                            top: 30,
+                            right: 3,
                         }}
                     />
                 </View>
@@ -73,7 +73,15 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                     </Text>
                 </View>
                 <View style={styles.progressContainer}>
-                    <View style={[styles.progressBar, { width: `${percentage}%` }]} />
+                    <View
+                        style={[
+                            styles.progressBar,
+                            {
+                                width: `${percentage}%`,
+                                backgroundColor: "#2B3854",
+                            },
+                        ]}
+                    />
                 </View>
                 <View style={styles.budgetFooter}>
                     <Text style={styles.spentText}>₱{spent} spent</Text>
@@ -125,13 +133,13 @@ const styles = StyleSheet.create({
     currency: {
         fontSize: 22,
         color: "#2B3854",
-        fontFamily: "Lexend_300Light",
+        fontFamily: "Lexend_500Medium",
     },
     amount: {
         fontSize: 32,
         fontWeight: "300",
         color: "#2B3854",
-        fontFamily: "Lexend_400Regular",
+        fontFamily: "Lexend_500Medium",
     },
     progressContainer: {
         backgroundColor: "#eaeaea",
@@ -141,7 +149,6 @@ const styles = StyleSheet.create({
         marginBottom: 11,
     },
     progressBar: {
-        backgroundColor: "#5fa7c6",
         height: "100%",
     },
     budgetFooter: {
@@ -151,14 +158,14 @@ const styles = StyleSheet.create({
     spentText: {
         fontSize: 13,
         fontWeight: "300",
-        color: "#929292",
-        fontFamily: "Lexend_300Light",
+        color: "#2B3854",
+        fontFamily: "Lexend_500Medium",
     },
     percentageText: {
         fontSize: 13,
         fontWeight: "300",
         color: "#FE6B6B",
-        fontFamily: "Lexend_300Light",
+        fontFamily: "Lexend_500Medium",
     },
 });
 

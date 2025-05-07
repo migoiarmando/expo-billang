@@ -26,9 +26,10 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { db } from "@/database";
-import { budget_tb } from "@/database/schema";
+import { budget_tb, transactions_tb } from "@/database/schema";
 import { useFocusEffect } from "@react-navigation/native";
 import { SearchBar } from "@/components/SearchBar";
+import { and, eq, sum } from "drizzle-orm";
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -43,7 +44,7 @@ const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
         <View className="flex-row items-center gap-1">
             <Plus size={16} color="#828282" />
             <Text className="text-[#828282] font-lexend-regular text-base">
-                Add Budget!
+                Add Budget
             </Text>
         </View>
     </TouchableOpacity>
@@ -59,6 +60,7 @@ interface Budget {
 
 export default function BudgetScreen() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [spentBudget, setSpentBudget] = useState(500);
     useFocusEffect(
         useCallback(() => {
             async function fetchBudget() {
@@ -69,6 +71,15 @@ export default function BudgetScreen() {
                     console.error("[error] Failed to fetch budget.*:", err);
                 }
             }
+            async function fetchSpentBudget() {
+                try {
+                    const res = await db.select().from(transactions_tb);
+                } catch (err) {
+                    console.error("[error] Failed to fetch transaction.*:", err);
+                }
+            }
+
+            fetchSpentBudget();
             fetchBudget();
         }, []),
     );
@@ -114,8 +125,8 @@ export default function BudgetScreen() {
                                 <BudgetCard
                                     name={budget.title}
                                     amount={budget.amount}
-                                    spent="0"
-                                    percentage={1}
+                                    spent={String(spentBudget)}
+                                    percentage={0}
                                     themeColor={budget.themeColor}
                                     contentColor={budget.contentColor}
                                 />

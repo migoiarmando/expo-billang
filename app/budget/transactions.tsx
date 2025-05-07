@@ -30,9 +30,7 @@ import {
 import { Plus, ChevronLeft } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link, useLocalSearchParams } from "expo-router";
-import CashIcon from "@/assets/images/cash.svg";
-import ExpenseIcon from "@/assets/images/expense.svg";
-import IncomeIcon from "@/assets/images/income.svg";
+
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
@@ -42,6 +40,19 @@ import { db } from "@/database";
 import { transactions_tb } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import { Transaction } from "@/database/models";
+
+import ExpenseIcon from "@/assets/images/expense.svg";
+import IncomeIcon from "@/assets/images/income.svg";
+
+import IncomeTrans from "@/assets/transaction-icons/income.svg";
+import CashIcon from "@/assets/images/cash.svg";
+import FoodIcon from "@/assets/transaction-icons/food.svg";
+import TransitIcon from "@/assets/transaction-icons/transit.svg";
+import GroceryIcon from "@/assets/transaction-icons/grocery.svg";
+import BillsIcon from "@/assets/transaction-icons/bills.svg";
+import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
+import WorkIcon from "@/assets/transaction-icons/work.svg";
+import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 
 const TransactionFilters = ({
     selectedFilter,
@@ -153,21 +164,37 @@ const TransactionItem = ({
     title: string;
     date: string;
     amount: number;
-    iconUrl: string | "cash";
+    iconUrl: string;
     amountColor: string;
 }) => {
+    const categoryIconMap: Record<string, JSX.Element> = {
+        Food: <FoodIcon width={40} height={40} />,
+        Transit: <TransitIcon width={40} height={40} />,
+        Grocery: <GroceryIcon width={40} height={40} />,
+        Bills: <BillsIcon width={40} height={40} />,
+        Entertainment: <EntertainmentIcon width={40} height={40} />,
+        Income: <IncomeTrans width={40} height={40} />,
+        Work: <WorkIcon width={40} height={40} />,
+        Subscription: <SubscriptionIcon width={40} height={40} />,
+        Cash: <CashIcon width={40} height={40} />,
+    };
+    const formattedDate = new Date(date).toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
     return (
         <View className="flex-row items-center justify-between py-3 border-b border-[#F8F8F8]">
             <View className="flex-row items-center">
-                {iconUrl === "cash" ? (
-                    <View className="mr-3 -ml-1">
-                        <CashIcon width={40} height={40} />
+                {categoryIconMap[iconUrl] ? (
+                    <View className="mr-3 flex items-center justify-center">
+                        {categoryIconMap[iconUrl]}
                     </View>
                 ) : (
-                    <Image
-                        source={{ uri: iconUrl }}
-                        className="w-10 h-10 rounded-full mr-3"
-                    />
+                    <Text>No Icon</Text>
                 )}
                 <View>
                     <Text className="text-[16px] font-lexend text-[#2C2C2C]">
@@ -175,7 +202,7 @@ const TransactionItem = ({
                     </Text>
                     <View className="mt-1">
                         <Text className="text-[12px] font-lexend text-[#9D9D9D]">
-                            {date}
+                            {formattedDate}
                         </Text>
                     </View>
                 </View>
@@ -264,7 +291,7 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
                         title={transaction.title || "Details"}
                         date={transaction.date}
                         amount={transaction.amount}
-                        iconUrl="cash"
+                        iconUrl={transaction.category}
                         amountColor={transaction.type}
                     />
                 ))}

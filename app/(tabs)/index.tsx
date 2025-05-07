@@ -55,8 +55,8 @@ export default function HomeScreen() {
 
         async function GetUser() {
             try {
-                // await db.delete(budget_tb);
-                // await db.delete(transactions_tb);
+                //await db.delete(budget_tb);
+                //await db.delete(transactions_tb);
 
                 const users = await db.select().from(user_tb);
 

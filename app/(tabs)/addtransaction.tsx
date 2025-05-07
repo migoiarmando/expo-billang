@@ -164,8 +164,8 @@ function ExpenseContent({
                 budgetId: Number(budgetId),
                 type: "Expense",
                 amount: Number(amount),
-                category: "",
-                title: selectedCategory.name,
+                category: selectedCategory.name,
+                title: title || selectedCategory.name,
                 notes: notes,
                 date: new Date().toISOString(),
             });
@@ -301,7 +301,7 @@ function IncomeContent(props: IncomeProps) {
                 budgetId: Number(budgetId),
                 type: "Income",
                 amount: Number(props.amount),
-                category: "",
+                category: "Cash",
                 title: title,
                 notes: notes,
                 date: new Date().toISOString(),
@@ -342,23 +342,6 @@ function IncomeContent(props: IncomeProps) {
                         setBudgetId(text);
                     }}
                 />
-            </View>
-
-            <View className="flex-row gap-[15px] mb-5">
-                <View className="flex-1 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                    <Calendar color="#9D9D9D" size={12} />
-                    <TextInput
-                        placeholder="Today"
-                        className="font-lexend flex-shrink-0 w-full"
-                    />
-                </View>
-                <View className="flex-1 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                    <Clock color="#9D9D9D" size={12} />
-                    <TextInput
-                        placeholder="0:00 AM"
-                        className="font-lexend flex-shrink-0 w-full"
-                    />
-                </View>
             </View>
 
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
