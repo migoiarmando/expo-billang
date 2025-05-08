@@ -282,16 +282,25 @@ export default function HomeScreen() {
                 </View>
 
                 {/* Streaks */}
-                <View className="mt-5 flex-row gap-10 w-full h-[50px] rounded-[20px] justify-around">
-                    {days.map((day, index) => (
-                        <View key={index} className="items-center">
-                            <NoFlame width={16} height={16} />
-                            <Text className="font-lexend text-[12px] text-[#CACACA]">
-                                {day}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
+                {/* 
+                  Make the whole streaks row tappable.
+                  On press, navigate to the Badges screen.
+                */}
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/badges")}
+                >
+                    <View className="mt-5 flex-row gap-10 w-full h-[50px] rounded-[20px] justify-around">
+                        {days.map((day, index) => (
+                            <View key={index} className="items-center">
+                                <NoFlame width={16} height={16} />
+                                <Text className="font-lexend text-[12px] text-[#CACACA]">
+                                    {day}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                </TouchableOpacity>
 
                 {/* Recent Transactions */}
                 <View>
