@@ -4,6 +4,8 @@ import SearchLogo from "@/assets/images/transaction-folders/searchlogo.svg";
 interface Search {
     title: string;
     className?: string;
+    value?: string;
+    onChangeText?: (text: string) => void;
 }
 
 export function SearchBar(props: Search) {
@@ -17,6 +19,8 @@ export function SearchBar(props: Search) {
                 placeholderTextColor="D1D1D6"
                 style={styles.searchBar}
                 className="text-[16px] font-lexendRegular pl-10"
+                value={props.value}
+                onChangeText={props.onChangeText}
             />
         </View>
     );

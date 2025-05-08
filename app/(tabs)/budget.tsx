@@ -61,6 +61,8 @@ interface Budget {
 export default function BudgetScreen() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
     const [spentBudget, setSpentBudget] = useState(500);
+    const [search, setSearch] = useState("");
+
     useFocusEffect(
         useCallback(() => {
             async function fetchBudget() {
@@ -110,14 +112,25 @@ export default function BudgetScreen() {
         }
     };
 
+    // Filter budgets based on search input (case-insensitive)
+    const filteredBudgets = budgets.filter((budget) =>
+        budget.title.toLowerCase().includes(search.toLowerCase()),
+    );
+
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px] ">
                 <Header name="Budget" />
+                <SearchBar
+                    title="Search budgets..."
+                    className="mb-1 mt-4"
+                    value={search}
+                    onChangeText={setSearch}
+                />
 
                 <ScrollView className="flex-1 mt-5">
                     <View className="gap-3.5">
-                        {budgets.map((budget) => (
+                        {filteredBudgets.map((budget) => (
                             <TouchableOpacity
                                 key={budget.id}
                                 onPress={() => handleBudgetCardPress("Aaweawe")}
