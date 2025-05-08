@@ -83,10 +83,16 @@ const Badges: React.FC = () => {
                     {streakCount}
                 </Text>
             </View>
-            <Text className="font-lexendSemiBold text-[#303030] text-2xl tracking-[0.48px] mt-2 mb-[7px]">
+            <Text
+                className="font-lexendSemiBold text-[#30] tracking-[0.48px] mt-2 mb-[7px]"
+                style={{ fontSize: 24 }}
+            >
                 Days Streak
             </Text>
-            <Text className="font-lexend text-[#606060] text-base font-normal tracking-[0.32px]">
+            <Text
+                className="font-lexend text-[#606060] text-base font-normal tracking-[0.32px]"
+                style={{ fontSize: 16 }}
+            >
                 Keep the flame burning, {userName}!
             </Text>
         </View>
@@ -102,6 +108,7 @@ const Badges: React.FC = () => {
                 )}
                 <Text
                     className={`font-lexend ${isActive ? "text-[#FF8F1F]" : "text-[#CACACA]"} text-xs font-normal mt-1`}
+                    style={{ fontSize: 12 }}
                 >
                     {day}
                 </Text>
@@ -117,13 +124,18 @@ const Badges: React.FC = () => {
         </View>
     );
 
-
     const StatItem = ({ label, value }: { label: string; value: string | number }) => (
         <View className="bg-[#F6F6F6] p-[15px] rounded-[9px]">
-            <Text className="font-lexend text-[#727272] text-xs font-normal tracking-[0.24px] mb-[5px]">
+            <Text
+                className="font-lexend text-[#727272] text-xs font-normal tracking-[0.24px] mb-[5px]"
+                style={{ fontSize: 12 }}
+            >
                 {label}
             </Text>
-            <Text className="font-lexendSemiBold text-[#413B35] text-base tracking-[0.32px]">
+            <Text
+                className="font-lexendSemiBold text-[#413B35] text-base tracking-[0.32px]"
+                style={{ fontSize: 16 }}
+            >
                 {value}
             </Text>
         </View>
@@ -164,10 +176,16 @@ const Badges: React.FC = () => {
                 <View className="flex flex-row items-start gap-5 flex-1">
                     <Icon width={55} height={61} />
                     <View className="flex flex-col flex-1 flex-shrink">
-                        <Text className="font-lexendMedium text-[#616161] text-sm font-normal tracking-[-0.28px] flex-shrink">
+                        <Text
+                            className="font-lexendMedium text-[#616161] text-sm font-normal tracking-[-0.28px] flex-shrink"
+                            style={{ fontSize: 14 }}
+                        >
                             {title}
                         </Text>
-                        <Text className="font-lexendLight text-[#616161] text-xs font-normal tracking-[-0.24px] flex-shrink">
+                        <Text
+                            className="font-lexendLight text-[#616161] text-xs font-normal tracking-[-0.24px] flex-shrink"
+                            style={{ fontSize: 12 }}
+                        >
                             {description}
                         </Text>
                     </View>
@@ -192,7 +210,10 @@ const Badges: React.FC = () => {
                 <StreakCalendar />
                 <StatsGrid />
                 <View>
-                    <Text className="font-lexend text-[#2B3854] text-2xl font-normal tracking-[-0.48px] mb-[25px]">
+                    <Text
+                        className="font-lexend text-[#2B3854] text-2xl font-normal tracking-[-0.48px] mb-[25px]"
+                        style={{ fontSize: 24 }}
+                    >
                         Badges
                     </Text>
                     {badges.map((badge, idx) => (
