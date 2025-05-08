@@ -1,3 +1,16 @@
+/* --------------------------------------------------------------------------------------------------------------
+    Route -> "index.tsx" ->"badges.tsx"
+
+    Last edited: 
+        Miguel Armand B. Sta. Ana [May 8, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+    Feature Title: Badges and Streaks Screen
+    Description: Badges and streaks screen for users to track their badges and streaks.
+
+-------------------------------------------------------------------------------------------------------------- */
 import React from "react";
 import { View, Text, Image, ScrollView } from "react-native";
 import StreakFire from "../assets/streaksandbadges/streakfire.svg";
