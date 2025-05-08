@@ -33,7 +33,7 @@ import BudgetCard from "@/components/BudgetCard";
 import NoFlame from "@/assets/home/no-flame.svg";
 import { useFocusEffect } from "@react-navigation/native";
 import { desc, eq, sql } from "drizzle-orm";
-
+import StreakFire from "../../assets/streaksandbadges/streakfire.svg";
 import ExpenseIcon from "@/assets/images/expense.svg";
 import IncomeIcon from "@/assets/images/income.svg";
 import IncomeTrans from "@/assets/transaction-icons/income.svg";
@@ -282,10 +282,6 @@ export default function HomeScreen() {
                 </View>
 
                 {/* Streaks */}
-                {/* 
-                  Make the whole streaks row tappable.
-                  On press, navigate to the Badges screen.
-                */}
                 <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => router.push("/badges")}
@@ -293,8 +289,18 @@ export default function HomeScreen() {
                     <View className="mt-5 flex-row gap-10 w-full h-[50px] rounded-[20px] justify-around">
                         {days.map((day, index) => (
                             <View key={index} className="items-center">
-                                <NoFlame width={16} height={16} />
-                                <Text className="font-lexend text-[12px] text-[#CACACA]">
+                                {index === 0 || index === 1 ? (
+                                    <StreakFire width={16} height={16} />
+                                ) : (
+                                    <NoFlame width={16} height={16} />
+                                )}
+                                <Text
+                                    className={`font-lexend text-[12px] ${
+                                        index === 0 || index === 1
+                                            ? "text-[#FF8F1F]"
+                                            : "text-[#CACACA]"
+                                    }`}
+                                >
                                     {day}
                                 </Text>
                             </View>
