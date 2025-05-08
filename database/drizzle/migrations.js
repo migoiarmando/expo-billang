@@ -6,7 +6,7 @@ import m0001 from './0001_serious_invaders.sql';
 import m0002 from './0002_natural_shadowcat.sql';
 import m0003 from './0003_military_switch.sql';
 import m0004 from './0004_sloppy_ricochet.sql';
-import m0005 from './0005_silent_captain_marvel.sql';
+
 
   export default {
     journal,
@@ -15,8 +15,7 @@ import m0005 from './0005_silent_captain_marvel.sql';
 m0001,
 m0002,
 m0003,
-m0004,
-m0005
+m0004
     }
   }
   
