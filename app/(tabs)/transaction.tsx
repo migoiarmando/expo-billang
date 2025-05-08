@@ -2,7 +2,7 @@
     Route -> "transaction.tsx"
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [Mar 18, 2025]
+        Miguel Armand B. Sta. Ana [May 8, 2025]
         John Bicierro [Mar 17, 2025]
         Peter Joshua O. Jornales [March  4, 2025]
 
@@ -56,6 +56,7 @@ export default function TransactionScreen() {
     const [selectedFilter, setSelectedFilter] = useState<"all" | "expense" | "income">(
         "all",
     );
+    const [search, setSearch] = useState("");
 
     useFocusEffect(
         useCallback(() => {
@@ -65,7 +66,6 @@ export default function TransactionScreen() {
                         .select()
                         .from(transactions_tb)
                         .orderBy(desc(transactions_tb.date));
-
                     setTransactions(res);
                 } catch (err) {
                     console.error("[error] Failed to fetch transactions:", err);
@@ -75,16 +75,25 @@ export default function TransactionScreen() {
         }, []),
     );
 
-    const filteredTransactions = transactions.filter((transaction) => {
-        if (selectedFilter === "all") return true;
-        if (selectedFilter === "expense") {
-            return transaction.type === "Expense";
-        }
-        if (selectedFilter === "income") {
-            return transaction.type === "Income";
-        }
-        return true;
-    });
+    const filteredTransactions = transactions
+        .filter((transaction) => {
+            if (selectedFilter === "all") return true;
+            if (selectedFilter === "expense") {
+                return transaction.type === "Expense";
+            }
+            if (selectedFilter === "income") {
+                return transaction.type === "Income";
+            }
+            return true;
+        })
+        .filter((transaction) => {
+            const searchLower = search.toLowerCase();
+            return (
+                transaction.title?.toLowerCase().includes(searchLower) ||
+                transaction.category?.toLowerCase().includes(searchLower)
+            );
+        });
+
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View className="flex-1 mx-[20px] mt-[30px]">
@@ -93,6 +102,14 @@ export default function TransactionScreen() {
                         Transactions
                     </Text>
                 </View>
+
+                {/* Search Bar */}
+                <SearchBar
+                    title="Search Transactions"
+                    className="mb-5"
+                    value={search}
+                    onChangeText={setSearch}
+                />
 
                 {/* Filter Bar (All, Expense, Income) */}
                 <TransactionFilter
