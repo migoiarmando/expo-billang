@@ -7,7 +7,7 @@ an expense and bills management tracker application
 - [android studio](https://developer.android.com/)
 - [node.js](https://nodejs.org/en)
 
-## core features
+## codekada boilerplate
 
 - [react native](https://reactnative.dev/)
 - [expo](https://expo.dev/)
@@ -18,7 +18,7 @@ an expense and bills management tracker application
 
 ## added features
 
-- drizzle orm + sqlite
+- [drizzle orm + sqlite](https://orm.drizzle.team/docs/get-started/expo-new)
 
 ## for developers
 
@@ -62,7 +62,7 @@ npx expo lint
 npx expo-doctor
 ```
 
-### references
+## references
 
-[setup environment](https://docs.expo.dev/get-started/set-up-your-environment/)
-[expo-icons](https://icons.expo.fyi/)
+- [setup environment](https://docs.expo.dev/get-started/set-up-your-environment/)
+- [expo-icons](https://icons.expo.fyi/)
