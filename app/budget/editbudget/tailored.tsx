@@ -26,7 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Add this type definition
 type ThemeColorKey =
     | "#E6E6E6"
-    | "#FFE287"
+    | "#87CDFF"
     | "#FEC794"
     | "#FF8787"
     | "#9FE0A9"
@@ -40,7 +40,7 @@ export default function TailoredBudgetScreen() {
 
     const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
         "#E6E6E6": { content: "#F6F6F6" }, // Gray
-        "#FFE287": { content: "#FFD44E" }, // Yellow
+        "#87CDFF": { content: "#FFD44E" }, // Blue
         "#FEC794": { content: "#FFD44E" }, // Orange
         "#FF8787": { content: "#FFD1D1" }, // Red
         "#9FE0A9": { content: "#DEFDD3" }, // Green

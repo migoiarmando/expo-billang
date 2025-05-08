@@ -19,7 +19,7 @@ import { View, Image, Text, StyleSheet, ViewStyle } from "react-native";
 import { History } from "lucide-react-native";
 import SpentPercentageIcon from "@/assets/images/spentpercentageicon.svg";
 import DefaultFolderSVG from "@/assets/budget-folders/default.svg";
-import YellowFolderSVG from "@/assets/budget-folders/yellow.svg";
+import BlueFolderSVG from "@/assets/budget-folders/blue.svg";
 import OrangeFolderSVG from "@/assets/budget-folders/orange.svg";
 import RedFolderSVG from "@/assets/budget-folders/red.svg";
 import GreenFolderSVG from "@/assets/budget-folders/green.svg";
@@ -37,7 +37,7 @@ export interface BudgetCardProps {
 // Map theme colors to their corresponding SVG components
 const folderSVGMap: Record<string, React.FC<any>> = {
     "#E6E6E6": DefaultFolderSVG,
-    "#FFE287": YellowFolderSVG,
+    "#FFE287": BlueFolderSVG,
     "#FEC794": OrangeFolderSVG,
     "#FF8787": RedFolderSVG,
     "#9FE0A9": GreenFolderSVG,
