@@ -55,6 +55,7 @@ export default function HomeScreen() {
             try {
                 //await db.delete(budget_tb);
                 //await db.delete(transactions_tb);
+                //await db.delete(user_tb);
 
                 const users = await db.select().from(user_tb);
 
@@ -339,7 +340,7 @@ export default function HomeScreen() {
                     )}
                 </View>
             </View>
-            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+            <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );
 }

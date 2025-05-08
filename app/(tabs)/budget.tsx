@@ -142,7 +142,7 @@ export default function BudgetScreen() {
                 </ScrollView>
             </View>
 
-            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+            <StatusBar style="dark" backgroundColor="white" />
 
             <BudgetTypeSelectorModal
                 isVisible={isModalVisible}

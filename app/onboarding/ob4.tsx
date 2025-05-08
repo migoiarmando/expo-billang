@@ -76,7 +76,7 @@ export default function OnboardingPage4() {
 
                     {/* Form */}
                     <View className="mt-10 mb-5 flex gap-3 items-center">
-                        <View className="flex flex-row gap-2 justify-center">
+                        <View className="flex flex-row gap-2 items-center">
                             <Text className="font-lexendBold text-[24px] text-center flex items-center justify-center">
                                 I'm
                             </Text>

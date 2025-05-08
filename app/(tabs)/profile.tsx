@@ -285,7 +285,7 @@ export default function ProfileScreen() {
                 onSelect={handleSelectBudgetType}
             />
 
-            <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+            <StatusBar style="dark" backgroundColor="white" />
         </>
     );
 }

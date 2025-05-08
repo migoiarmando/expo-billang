@@ -21,7 +21,8 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+                tabBarActiveTintColor: Colors.light.tint,
+
                 // Disable the static render of the header on web
                 // to prevent a hydration error in React Navigation v6.
                 headerShown: useClientOnlyValue(false, true),
@@ -32,14 +33,9 @@ export default function TabLayout() {
                 options={{
                     title: "Home",
                     headerShown: false,
-                    tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+                    tabBarActiveTintColor: Colors.light.tint,
                     tabBarIcon: () => (
-                        <Home
-                            color={
-                                Colors[colorScheme ?? "light"].tabIconDefault
-                            }
-                            size={20}
-                        />
+                        <Home color={Colors.light.tabIconDefault} size={20} />
                     ),
                 }}
             />
@@ -49,12 +45,7 @@ export default function TabLayout() {
                     title: "Transaction",
                     headerShown: false,
                     tabBarIcon: () => (
-                        <Search
-                            color={
-                                Colors[colorScheme ?? "light"].tabIconDefault
-                            }
-                            size={20}
-                        />
+                        <Search color={Colors.light.tabIconDefault} size={20} />
                     ),
                 }}
             />
@@ -84,12 +75,7 @@ export default function TabLayout() {
                     title: "Budget",
                     headerShown: false,
                     tabBarIcon: () => (
-                        <WalletCards
-                            color={
-                                Colors[colorScheme ?? "light"].tabIconDefault
-                            }
-                            size={20}
-                        />
+                        <WalletCards color={Colors.light.tabIconDefault} size={20} />
                     ),
                 }}
             />
@@ -99,12 +85,7 @@ export default function TabLayout() {
                     title: "Profile",
                     headerShown: false,
                     tabBarIcon: () => (
-                        <User
-                            color={
-                                Colors[colorScheme ?? "light"].tabIconDefault
-                            }
-                            size={20}
-                        />
+                        <User color={Colors.light.tabIconDefault} size={20} />
                     ),
                 }}
             />

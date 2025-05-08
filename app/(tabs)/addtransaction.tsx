@@ -107,7 +107,7 @@ export default function AddTransaction() {
                 )}
             </View>
 
-            <StatusBar style="dark" />
+            <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );
 }

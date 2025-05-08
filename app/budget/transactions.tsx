@@ -90,7 +90,7 @@ export default function BudgetTransactionScreen() {
                         budgetID={numericBudgetID}
                     />
                 </ScrollView>
-                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+                <StatusBar style="dark" backgroundColor="white" />
             </View>
         </SafeAreaView>
     );

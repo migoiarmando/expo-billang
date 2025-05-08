@@ -250,7 +250,7 @@ export default function StructuredScreen() {
                 </View>
             </View>
 
-            <StatusBar style="dark" />
+            <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );
 }

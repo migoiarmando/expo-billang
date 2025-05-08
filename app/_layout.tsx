@@ -95,10 +95,9 @@ function RootLayoutNav() {
             <Stack
                 screenOptions={{
                     contentStyle: {
-                        backgroundColor: Colors[colorScheme ?? "light"].background,
+                        backgroundColor: Colors.light.background,
                     },
-                    navigationBarColor:
-                        colorScheme === "dark" ? "rgb(0, 0, 0)" : "rgb(255, 255, 255)",
+                    navigationBarColor: "rgb(255, 255, 255)",
                 }}
             >
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

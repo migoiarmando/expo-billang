@@ -49,6 +49,7 @@ import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
 import { useFocusEffect } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 
 export default function TransactionScreen() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -118,6 +119,7 @@ export default function TransactionScreen() {
                     </View>
                 </ScrollView>
             </View>
+            <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );
 }

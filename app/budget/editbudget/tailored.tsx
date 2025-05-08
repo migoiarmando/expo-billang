@@ -225,7 +225,7 @@ export default function TailoredBudgetScreen() {
                 </View>
             </View>
 
-            <StatusBar style="dark" />
+            <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );
 }
