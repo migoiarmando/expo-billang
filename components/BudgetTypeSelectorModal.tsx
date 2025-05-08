@@ -31,11 +31,7 @@ import Animated, {
     withTiming,
     runOnJS,
 } from "react-native-reanimated";
-import {
-    Gesture,
-    GestureDetector,
-    /*GestureHandlerRootView,*/
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
@@ -59,9 +55,9 @@ const BudgetTypeSelectorModal: React.FC<BudgetTypeSelectorModalProps> = ({
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const context = useSharedValue({ y: 0 });
     const active = useSharedValue(false);
-    const [selectedType, setSelectedType] = useState<
-        "default" | "structured" | null
-    >(null);
+    const [selectedType, setSelectedType] = useState<"default" | "structured" | null>(
+        null,
+    );
 
     const scrollTo = useCallback(
         (destination: number) => {
@@ -97,10 +93,7 @@ const BudgetTypeSelectorModal: React.FC<BudgetTypeSelectorModalProps> = ({
             );
         })
         .onEnd((event) => {
-            if (
-                event.velocityY > 500 ||
-                event.translationY > MODAL_HEIGHT / 3
-            ) {
+            if (event.velocityY > 500 || event.translationY > MODAL_HEIGHT / 3) {
                 runOnJS(handleClose)();
             } else {
                 scrollTo(SCREEN_HEIGHT - MODAL_HEIGHT);
@@ -159,22 +152,15 @@ const BudgetTypeSelectorModal: React.FC<BudgetTypeSelectorModalProps> = ({
     return (
         <>
             <Animated.View style={[styles.backdrop, rBackdropStyle]}>
-                <Pressable
-                    style={styles.backdropButton}
-                    onPress={handleClose}
-                />
+                <Pressable style={styles.backdropButton} onPress={handleClose} />
             </Animated.View>
             <GestureDetector gesture={gesture}>
-                <Animated.View
-                    style={[styles.modalContainer, rBottomSheetStyle]}
-                >
+                <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
                     <View style={styles.modalContent}>
                         <View style={styles.handle} />
 
                         <View style={styles.header}>
-                            <Text style={styles.headerText}>
-                                Select Budget Type
-                            </Text>
+                            <Text style={styles.headerText}>Select Budget Type</Text>
                             <Image
                                 source={require("@/assets/images/information.png")}
                                 style={styles.headerIcon}

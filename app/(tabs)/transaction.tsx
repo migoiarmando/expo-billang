@@ -16,7 +16,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Image,
     StyleSheet,
@@ -31,6 +31,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { transactions_tb } from "@/database/schema";
 import { db } from "@/database";
 import { Transaction } from "@/database/models";
+import { desc } from "drizzle-orm";
 
 import ExpenseIcon from "@/assets/images/expense.svg";
 import IncomeIcon from "@/assets/images/income.svg";
@@ -47,6 +48,7 @@ import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function TransactionScreen() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -54,17 +56,23 @@ export default function TransactionScreen() {
         "all",
     );
 
-    useEffect(() => {
-        async function GetTransactions() {
-            try {
-                const res = await db.select().from(transactions_tb);
-                setTransactions(res);
-            } catch (err) {
-                console.error("[error] Failed to fetch transactions:", err);
+    useFocusEffect(
+        useCallback(() => {
+            async function GetTransactions() {
+                try {
+                    const res = await db
+                        .select()
+                        .from(transactions_tb)
+                        .orderBy(desc(transactions_tb.date));
+
+                    setTransactions(res);
+                } catch (err) {
+                    console.error("[error] Failed to fetch transactions:", err);
+                }
             }
-        }
-        GetTransactions();
-    }, []);
+            GetTransactions();
+        }, []),
+    );
 
     const filteredTransactions = transactions.filter((transaction) => {
         if (selectedFilter === "all") return true;

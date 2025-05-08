@@ -187,7 +187,7 @@ function ExpenseContent({
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                 <Folder color="#9D9D9D" size={12} />
                 <TextInput
-                    placeholder="Select Budget"
+                    placeholder="Select Budget ID"
                     className="font-lexend"
                     value={String(budgetId)}
                     onChangeText={(text) => {
@@ -330,7 +330,7 @@ function IncomeContent(props: IncomeProps) {
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                 <Folder color="#9D9D9D" size={12} />
                 <TextInput
-                    placeholder="Select Budget"
+                    placeholder="Select Budget ID"
                     className="font-lexend"
                     value={String(budgetId)}
                     onChangeText={(text) => {

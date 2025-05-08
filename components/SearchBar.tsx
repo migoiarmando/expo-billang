@@ -10,7 +10,7 @@ interface Search {
 
 export function SearchBar(props: Search) {
     return (
-        <View className={`relative mb-[20px] ${props.className}`}>
+        <View className={`relative ${props.className}`}>
             <View className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
                 <SearchLogo width={20} height={20} />
             </View>

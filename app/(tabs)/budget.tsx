@@ -16,10 +16,10 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { Plus } from "lucide-react-native";
-import BudgetCard from "@/components/BudgetCard";
+import BudgetCard, { BudgetCardProps } from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
@@ -29,7 +29,7 @@ import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { useFocusEffect } from "@react-navigation/native";
 import { SearchBar } from "@/components/SearchBar";
-import { and, eq, sum } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -60,7 +60,7 @@ interface Budget {
 
 export default function BudgetScreen() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
-    const [spentBudget, setSpentBudget] = useState(500);
+
     const [search, setSearch] = useState("");
 
     useFocusEffect(
@@ -73,27 +73,19 @@ export default function BudgetScreen() {
                     console.error("[error] Failed to fetch budget.*:", err);
                 }
             }
-            async function fetchSpentBudget() {
-                try {
-                    const res = await db.select().from(transactions_tb);
-                } catch (err) {
-                    console.error("[error] Failed to fetch transaction.*:", err);
-                }
-            }
 
-            fetchSpentBudget();
             fetchBudget();
         }, []),
     );
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const handleBudgetCardPress = (budgetName: string) => {
+    function handleBudgetCardPress(budgetID: number) {
         router.push({
             pathname: "/budget/transactions",
-            params: { budgetName },
+            params: { budgetID },
         });
-    };
+    }
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -122,26 +114,25 @@ export default function BudgetScreen() {
             <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px] ">
                 <Header name="Budget" />
                 <SearchBar
-                    title="Search budgets..."
-                    className="mb-1 mt-4"
+                    title="Search Budget"
+                    className="mt-5"
                     value={search}
                     onChangeText={setSearch}
                 />
 
-                <ScrollView className="flex-1 mt-5">
+                <ScrollView className="flex-1 mt-5 mb-5">
                     <View className="gap-3.5">
                         {filteredBudgets.map((budget) => (
                             <TouchableOpacity
                                 key={budget.id}
-                                onPress={() => handleBudgetCardPress("Aaweawe")}
+                                onPress={() => handleBudgetCardPress(budget.id)}
                             >
-                                <BudgetCard
-                                    name={`(${budget.id}) ${budget.title}`}
+                                <BudgetCardSpent
+                                    id={budget.id}
+                                    title={budget.title}
                                     amount={budget.amount}
-                                    spent={String(spentBudget)}
-                                    percentage={0}
-                                    themeColor={budget.themeColor}
                                     contentColor={budget.contentColor}
+                                    themeColor={budget.themeColor}
                                 />
                             </TouchableOpacity>
                         ))}
@@ -159,5 +150,47 @@ export default function BudgetScreen() {
                 onSelect={handleSelectBudgetType}
             />
         </SafeAreaView>
+    );
+}
+
+function BudgetCardSpent(budget: Budget) {
+    const [spentBudget, setSpentBudget] = useState(0);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchSpentBudget() {
+                try {
+                    const result = await db
+                        .select({
+                            totalAmount: sql<number>`SUM(${transactions_tb.amount})`,
+                        })
+                        .from(transactions_tb)
+                        .where(
+                            and(
+                                eq(transactions_tb.budgetId, budget.id),
+                                eq(transactions_tb.type, "Expense"),
+                            ),
+                        );
+
+                    const total = result[0]?.totalAmount ?? 0;
+                    setSpentBudget(total);
+                } catch (err) {
+                    console.error("[error] Failed to fetch transaction.*:", err);
+                }
+            }
+
+            fetchSpentBudget();
+        }, [budget.id]),
+    );
+
+    return (
+        <BudgetCard
+            name={`(${budget.id}) ${budget.title}`}
+            amount={budget.amount}
+            spent={String(spentBudget)}
+            percentage={0}
+            themeColor={budget.themeColor}
+            contentColor={budget.contentColor}
+        />
     );
 }

@@ -28,7 +28,7 @@ import {
 } from "react-native";
 import { Plus, ChevronLeft } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
@@ -36,7 +36,7 @@ import IncomeArrow from "@/assets/images/incomearrow.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { db } from "@/database";
 import { transactions_tb } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { Transaction } from "@/database/models";
 
 import ExpenseIcon from "@/assets/images/expense.svg";
@@ -51,6 +51,50 @@ import BillsIcon from "@/assets/transaction-icons/bills.svg";
 import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
+
+export default function BudgetTransactionScreen() {
+    const [selectedFilter, setSelectedFilter] = useState("all");
+
+    const { budgetID } = useLocalSearchParams();
+    const numericBudgetID = Number(budgetID);
+
+    useEffect(() => {
+        console.log("Budget ID from params:", numericBudgetID);
+    }, [numericBudgetID]);
+
+    return (
+        <SafeAreaView>
+            <View className="mx-[20px] mt-[30px]">
+                {/* Header */}
+                <View className="flex-row items-center">
+                    <Link href=".." asChild>
+                        <Pressable>
+                            <ChevronLeft color={"black"} size={20} />
+                        </Pressable>
+                    </Link>
+
+                    <View className="flex-1 items-center">
+                        <Text className="text-primary font-lexendSemiBold">
+                            Budget Transactions
+                        </Text>
+                    </View>
+                </View>
+
+                <ScrollView className="mt-8">
+                    <TransactionFilters
+                        selectedFilter={selectedFilter}
+                        onFilterChange={setSelectedFilter}
+                    />
+                    <TransactionList
+                        selectedFilter={selectedFilter}
+                        budgetID={numericBudgetID}
+                    />
+                </ScrollView>
+                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+            </View>
+        </SafeAreaView>
+    );
+}
 
 const TransactionFilters = ({
     selectedFilter,
@@ -247,7 +291,13 @@ const EmptyState = () => (
     </View>
 );
 
-const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
+const TransactionList = ({
+    selectedFilter,
+    budgetID,
+}: {
+    selectedFilter: string;
+    budgetID: number;
+}) => {
     const [transaction, setTransaction] = useState<Transaction[]>([]);
 
     const filteredTransactions = transaction.filter((transaction) => {
@@ -267,7 +317,8 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
                 const res = await db
                     .select()
                     .from(transactions_tb)
-                    .where(eq(transactions_tb.budgetId, 1)); // Need to change the selected budget id
+                    .where(eq(transactions_tb.budgetId, budgetID))
+                    .orderBy(desc(transactions_tb.date));
 
                 setTransaction(res);
             } catch (err) {
@@ -275,7 +326,7 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
             }
         }
         ShowTransactions();
-    }, []);
+    }, [budgetID]);
 
     return (
         <View className="flex-1">
@@ -286,7 +337,7 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
                 {filteredTransactions.map((transaction) => (
                     <TransactionItem
                         key={transaction.id}
-                        title={transaction.title || "Details"}
+                        title={transaction.title || "Cash"}
                         date={transaction.date}
                         amount={transaction.amount}
                         iconUrl={transaction.category}
@@ -297,39 +348,3 @@ const TransactionList = ({ selectedFilter }: { selectedFilter: string }) => {
         </View>
     );
 };
-
-export default function BudgetTransactionScreen() {
-    const [selectedFilter, setSelectedFilter] = useState("all");
-
-    return (
-        <SafeAreaView>
-            <View className="mx-[20px] mt-[30px]">
-                <View>
-                    {/* Header */}
-                    <View className="flex-row items-center">
-                        <Link href=".." asChild>
-                            <Pressable>
-                                <ChevronLeft color={"black"} size={20} />
-                            </Pressable>
-                        </Link>
-
-                        <View className="flex-1 items-center">
-                            <Text className="text-primary font-lexendSemiBold">
-                                Budget Transactions
-                            </Text>
-                        </View>
-                    </View>
-
-                    <ScrollView className="mt-8">
-                        <TransactionFilters
-                            selectedFilter={selectedFilter}
-                            onFilterChange={setSelectedFilter}
-                        />
-                        <TransactionList selectedFilter={selectedFilter} />
-                    </ScrollView>
-                    <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-                </View>
-            </View>
-        </SafeAreaView>
-    );
-}
