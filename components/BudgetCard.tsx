@@ -37,7 +37,7 @@ export interface BudgetCardProps {
 // Map theme colors to their corresponding SVG components
 const folderSVGMap: Record<string, React.FC<any>> = {
     "#E6E6E6": DefaultFolderSVG,
-    "#FFE287": BlueFolderSVG,
+    "#87CDFF": BlueFolderSVG,
     "#FEC794": OrangeFolderSVG,
     "#FF8787": RedFolderSVG,
     "#9FE0A9": GreenFolderSVG,
@@ -125,7 +125,16 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                         </Text>
                     </View>
                     <View style={styles.progressContainer}>
-                        <View style={[styles.progressBar, { width: `${percentage}%` }]} />
+                        <View
+                            style={[
+                                styles.progressBar,
+                                {
+                                    width: `${percentage}%`,
+                                    backgroundColor:
+                                        themeColor === "#E6E6E6" ? "#5FA7C6" : themeColor,
+                                },
+                            ]}
+                        />
                     </View>
                     <View style={styles.budgetFooter}>
                         <Text style={styles.spentText}>₱{spent} spent</Text>

@@ -41,8 +41,8 @@ export default function StructuredScreen() {
     // Define theme colors with the type
     const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
         "#E6E6E6": { content: "#F6F6F6" }, // Gray
-        "#87CDFF": { content: "#FFD44E" }, // Blue
-        "#FEC794": { content: "#FFD44E" }, // Orange
+        "#87CDFF": { content: "#BAE4FC" }, // Blue
+        "#FEC794": { content: "#FFEDDD" }, // Orange
         "#FF8787": { content: "#FFD1D1" }, // Red
         "#9FE0A9": { content: "#DEFDD3" }, // Green
         "#FADDFF": { content: "#E4A8C5" }, // Pink
