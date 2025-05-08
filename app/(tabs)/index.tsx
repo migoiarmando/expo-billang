@@ -48,13 +48,9 @@ import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
-    const { success, error } = useMigrations(db, migrations);
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
 
     useEffect(() => {
-        if (!success) {
-            return;
-        }
         async function GetUser() {
             try {
                 //await db.delete(budget_tb);
@@ -84,7 +80,7 @@ export default function HomeScreen() {
         }
 
         GetUser();
-    }, [success]);
+    }, []);
 
     const [totalExpense, setTotalExpense] = useState(0);
     const [totalIncome, setTotalIncome] = useState(0);
@@ -214,26 +210,8 @@ export default function HomeScreen() {
         }, []),
     );
 
-    if (error) {
-        return (
-            <View>
-                <Text>Migration error: {error.message}</Text>
-            </View>
-        );
-    }
-    if (!success) {
-        return (
-            <View>
-                <Text>Migration is in progress...</Text>
-            </View>
-        );
-    }
     if (items === null || items.length === 0) {
-        return (
-            <View>
-                <Text>Empty</Text>
-            </View>
-        );
+        return <View></View>;
     }
 
     function formatAmount(amount: number): string {

@@ -31,6 +31,9 @@ import {
 // Nativewind
 import "../global.css";
 import Colors from "@/constants/Colors";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import migrations from "@/database/drizzle/migrations";
+import { db } from "@/database";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -46,6 +49,24 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+    const { success, error } = useMigrations(db, migrations);
+
+    useEffect(() => {
+        if (!success) {
+            return;
+        }
+        if (error) {
+            console.error("Error running migrations:", error);
+            return;
+        }
+    }, [success, error]);
+
+    return <RootLayoutNav />;
+}
+
+function RootLayoutNav() {
+    const colorScheme = useColorScheme();
+
     const [loaded, error] = useFonts({
         Lexend_100Thin,
         Lexend_200ExtraLight,
@@ -57,61 +78,36 @@ export default function RootLayout() {
         Lexend_800ExtraBold,
         Lexend_900Black,
     });
-
-    // Expo Router uses Error Boundaries to catch errors in the navigation tree.
     useEffect(() => {
         if (error) throw error;
     }, [error]);
-
     useEffect(() => {
         if (loaded) {
             SplashScreen.hideAsync();
         }
     }, [loaded]);
-
     if (!loaded) {
         return null;
     }
-
-    return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-    const colorScheme = useColorScheme();
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <Stack
                 screenOptions={{
                     contentStyle: {
-                        backgroundColor:
-                            Colors[colorScheme ?? "light"].background,
+                        backgroundColor: Colors[colorScheme ?? "light"].background,
                     },
                     navigationBarColor:
-                        colorScheme === "dark"
-                            ? "rgb(0, 0, 0)"
-                            : "rgb(255, 255, 255)",
+                        colorScheme === "dark" ? "rgb(0, 0, 0)" : "rgb(255, 255, 255)",
                 }}
             >
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
                 {/* Onboarding */}
-                <Stack.Screen
-                    name="onboarding/ob"
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                    name="onboarding/ob2"
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                    name="onboarding/ob3"
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                    name="onboarding/ob4"
-                    options={{ headerShown: false }}
-                />
+                <Stack.Screen name="onboarding/ob" options={{ headerShown: false }} />
+                <Stack.Screen name="onboarding/ob2" options={{ headerShown: false }} />
+                <Stack.Screen name="onboarding/ob3" options={{ headerShown: false }} />
+                <Stack.Screen name="onboarding/ob4" options={{ headerShown: false }} />
                 <Stack.Screen
                     name="onboarding/ob5"
                     options={{
