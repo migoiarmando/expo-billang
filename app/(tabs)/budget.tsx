@@ -16,10 +16,10 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { Plus } from "lucide-react-native";
-import BudgetCard, { BudgetCardProps } from "@/components/BudgetCard";
+import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";

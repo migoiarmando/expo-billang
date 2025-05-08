@@ -15,11 +15,11 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { db } from "@/database";
-import { transactions_tb, user_tb } from "@/database/schema";
+import { transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, Clock, Folder, Paperclip } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
+import { Folder, Paperclip } from "lucide-react-native";
+import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -33,11 +33,8 @@ import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 
 export default function AddTransaction() {
-    const inputRef = useRef<TextInput>(null);
     const [amount, setAmount] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("");
     const [selected, setSelected] = useState<"expense" | "income">("expense");
-    const [title, setTitle] = useState("");
 
     return (
         <SafeAreaView style={{ backgroundColor: "#fff" }}>

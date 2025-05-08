@@ -15,7 +15,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React from "react";
-import { View, Image, Text, StyleSheet, ViewStyle } from "react-native";
+import { View, Image, Text, StyleSheet } from "react-native";
 import { History } from "lucide-react-native";
 import SpentPercentageIcon from "@/assets/images/spentpercentageicon.svg";
 import DefaultFolderSVG from "@/assets/budget-folders/default.svg";

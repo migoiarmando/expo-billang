@@ -8,8 +8,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { View, Text, TouchableOpacity } from "react-native";
-import NotificationIcon from "@/assets/images/notification.svg";
+import { View, Text } from "react-native";
 
 interface HeaderArr {
     name: string;

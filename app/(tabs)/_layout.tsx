@@ -8,9 +8,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useState } from "react";
 import { Tabs } from "expo-router";
-
 import Colors from "../../constants/Colors";
 import { useColorScheme } from "../../components/expo/useColorScheme";
 import { useClientOnlyValue } from "../../components/expo/useClientOnlyValue";
@@ -19,7 +17,7 @@ import { View } from "react-native";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
-    const [modalVisible, setModalVisible] = useState(false);
+
     return (
         <Tabs
             screenOptions={{

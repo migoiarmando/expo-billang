@@ -18,7 +18,6 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-    ArrowLeft,
     ChevronLeft,
     ChevronRight,
     Info,

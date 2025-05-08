@@ -28,7 +28,6 @@ import migrations from "@/database/drizzle/migrations";
 import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
 import { db } from "@/database";
 import BudgetCard from "@/components/BudgetCard";
 import NoFlame from "@/assets/home/no-flame.svg";

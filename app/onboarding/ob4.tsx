@@ -34,7 +34,7 @@ const currencies = [
 export default function OnboardingPage4() {
     const inputRef = useRef<TextInput>(null);
     const [name, setName] = useState("");
-    const [currency, setCurrency] = useState("Philippine Peso ($)");
+    const [currency] = useState("Philippine Peso ($)");
 
     useEffect(() => {
         setTimeout(() => {
