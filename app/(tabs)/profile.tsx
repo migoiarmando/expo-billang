@@ -16,7 +16,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
     View,
     Text,
@@ -46,6 +46,10 @@ import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
+import { useFocusEffect } from "@react-navigation/native";
+import { db } from "@/database";
+import { eq, sql } from "drizzle-orm";
+import { budget_tb, transactions_tb } from "@/database/schema";
 
 // Get screen width
 const { width } = Dimensions.get("window");
@@ -100,11 +104,7 @@ interface SettingsMenuItemProps {
     onPress: () => void;
 }
 
-const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
-    icon,
-    label,
-    onPress,
-}) => {
+const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPress }) => {
     const iconComponents = {
         chart: SpendingSummary,
         badge: StreaksBadges,
@@ -125,11 +125,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
                 activeOpacity={0.7}
             >
                 <View className="flex-row items-center pl-5">
-                    <IconComponent
-                        width={16}
-                        height={16}
-                        className="w-4 h-4 mr-2"
-                    />
+                    <IconComponent width={16} height={16} className="w-4 h-4 mr-2" />
                     <Text className="text-base text-[#2B3854] font-lexend ml-3">
                         {label}
                     </Text>
@@ -175,48 +171,60 @@ export default function ProfileScreen() {
         }
     };
 
+    const [budgetAmount, setBudgetAmount] = useState(0);
+    const [budgetSpent, setBudgetSpent] = useState(0);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function GetBudgetAmountAll() {
+                try {
+                    const result = await db
+                        .select({
+                            total: sql<number>`SUM(${budget_tb.amount})`,
+                        })
+                        .from(budget_tb);
+
+                    const totalBudget = result[0]?.total ?? 0;
+                    setBudgetAmount(totalBudget);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            async function GetBudgetSpendAll() {
+                try {
+                    const result = await db
+                        .select({
+                            total: sql<number>`SUM(${transactions_tb.amount})`,
+                        })
+                        .from(transactions_tb)
+                        .where(eq(transactions_tb.type, "Expense"));
+
+                    const totalSpent = result[0]?.total ?? 0;
+                    setBudgetSpent(totalSpent);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            GetBudgetSpendAll();
+            GetBudgetAmountAll();
+        }, []),
+    );
+
     return (
         <>
-            <SafeAreaView
-                className="h-full"
-                style={{ backgroundColor: "#fff" }}
-            >
+            <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
                 <View style={{ marginHorizontal: 20, marginTop: 20 }}>
                     <Header name="Profile" />
 
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection />
 
-                        {/* <View className="my-[20px]">
-                            <ScrollView
-                                ref={horizontalScrollViewRef}
-                                horizontal
-                                pagingEnabled
-                                showsHorizontalScrollIndicator={false}
-                                onScroll={handleScroll}
-                                scrollEventThrottle={16}
-                            >
-                                <View className="w-screen px-5 justify-center">
-                                    <BudgetCard
-                                        name="Monthly Budget"
-                                        amount={5000}
-                                        spent="2500"
-                                        percentage={50}
-                                    />
-                                </View>
-                                <View className="w-screen justify-center">
-                                    <AddBudgetButton
-                                        onPress={handleAddBudget}
-                                    />
-                                </View>
-                            </ScrollView>
-                        </View> */}
-
                         <BudgetCard
-                            name="Monthly Budget"
-                            amount={5000}
-                            spent="2500"
-                            percentage={50}
+                            name="Budget"
+                            amount={budgetAmount}
+                            spent={String(budgetSpent)}
+                            percentage={1}
                         />
 
                         <View className="py-2 mt-[20px]">

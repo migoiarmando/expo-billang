@@ -3,6 +3,7 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
+        John Bicierro [May 8, 2025]
         Romar Castro [Mar 9, 2025]
 
     Company: github.com/codekada
@@ -13,14 +14,14 @@
     Feature Title: Home Screen v2
     Description: Home screen for the app providing the user an overview of all the details
 
-
     npm run start
     press s (switch to expo go)
     press a (switch to android emulator)
+
 -------------------------------------------------------------------------------------------------------------- */
 
-import { StyleSheet, Platform, Text, TouchableOpacity, View } from "react-native";
-import { useEffect, useState } from "react";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
@@ -30,29 +31,31 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { db } from "@/database";
 import BudgetCard from "@/components/BudgetCard";
+import NoFlame from "@/assets/home/no-flame.svg";
+import { useFocusEffect } from "@react-navigation/native";
+import { desc, eq, sql } from "drizzle-orm";
+
+import ExpenseIcon from "@/assets/images/expense.svg";
+import IncomeIcon from "@/assets/images/income.svg";
+import IncomeTrans from "@/assets/transaction-icons/income.svg";
+import CashIcon from "@/assets/images/cash.svg";
+import FoodIcon from "@/assets/transaction-icons/food.svg";
+import TransitIcon from "@/assets/transaction-icons/transit.svg";
+import GroceryIcon from "@/assets/transaction-icons/grocery.svg";
+import BillsIcon from "@/assets/transaction-icons/bills.svg";
+import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
+import WorkIcon from "@/assets/transaction-icons/work.svg";
+import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const { success, error } = useMigrations(db, migrations);
-    const [transactions, setTransactions] = useState<any[]>([]);
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
 
-    useEffect(() => {
-        // Simulate loading
-        setTimeout(() => {
-            setTransactions([
-                { title: "Grocery", amount: 500 },
-                { title: "Salary", amount: 5000 },
-            ]);
-        }, 1500);
-    }, []);
-
-    // Onboarding
     useEffect(() => {
         if (!success) {
             return;
         }
-
         async function GetUser() {
             try {
                 //await db.delete(budget_tb);
@@ -84,6 +87,134 @@ export default function HomeScreen() {
         GetUser();
     }, [success]);
 
+    const [totalExpense, setTotalExpense] = useState(0);
+    const [totalIncome, setTotalIncome] = useState(0);
+    const [countExpense, setCountExpense] = useState(0);
+    const [countIncome, setCountIncome] = useState(0);
+    const [budgetAmount, setBudgetAmount] = useState(0);
+    const [budgetSpent, setBudgetSpent] = useState(0);
+    const [transactions, setTransactions] = useState<any[]>([]);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function GetRecentTransaction() {
+                try {
+                    const result = await db
+                        .select()
+                        .from(transactions_tb)
+                        .orderBy(desc(transactions_tb.date))
+                        .limit(3);
+
+                    setTransactions(result);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            async function GetExpenseAmountAll() {
+                try {
+                    const result = await db
+                        .select({
+                            total: sql<number>`SUM(${transactions_tb.amount})`,
+                        })
+                        .from(transactions_tb)
+                        .where(eq(transactions_tb.type, "Expense"));
+
+                    const totalAmount = result[0]?.total ?? 0;
+
+                    setTotalExpense(totalAmount);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            async function GetIncomeAmountAll() {
+                try {
+                    const result = await db
+                        .select({
+                            total: sql<number>`SUM(${transactions_tb.amount})`,
+                        })
+                        .from(transactions_tb)
+                        .where(eq(transactions_tb.type, "Income"));
+
+                    const totalAmount = result[0]?.total ?? 0;
+
+                    setTotalIncome(totalAmount);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            async function CountExpenseTransaction() {
+                try {
+                    const result = await db
+                        .select({
+                            count: sql<number>`COUNT(*)`,
+                        })
+                        .from(transactions_tb)
+                        .where(eq(transactions_tb.type, "Expense"));
+
+                    const count = result[0]?.count ?? 0;
+
+                    setCountExpense(count);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            async function CountIncomeTransaction() {
+                try {
+                    const result = await db
+                        .select({
+                            count: sql<number>`COUNT(*)`,
+                        })
+                        .from(transactions_tb)
+                        .where(eq(transactions_tb.type, "Income"));
+
+                    const count = result[0]?.count ?? 0;
+
+                    setCountIncome(count);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            async function GetBudgetAmountAll() {
+                try {
+                    const result = await db
+                        .select({
+                            total: sql<number>`SUM(${budget_tb.amount})`,
+                        })
+                        .from(budget_tb);
+
+                    const totalBudget = result[0]?.total ?? 0;
+                    setBudgetAmount(totalBudget);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            async function GetBudgetSpendAll() {
+                try {
+                    const result = await db
+                        .select({
+                            total: sql<number>`SUM(${transactions_tb.amount})`,
+                        })
+                        .from(transactions_tb)
+                        .where(eq(transactions_tb.type, "Expense"));
+
+                    const totalSpent = result[0]?.total ?? 0;
+                    setBudgetSpent(totalSpent);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            GetRecentTransaction();
+            GetBudgetSpendAll();
+            GetBudgetAmountAll();
+            CountIncomeTransaction();
+            CountExpenseTransaction();
+            GetExpenseAmountAll();
+            GetIncomeAmountAll();
+        }, []),
+    );
+
     if (error) {
         return (
             <View>
@@ -105,172 +236,79 @@ export default function HomeScreen() {
             </View>
         );
     }
+
+    function formatAmount(amount: number): string {
+        if (amount >= 1_000_000) {
+            return `${(amount / 1_000_000).toFixed(1)}M`;
+        } else if (amount >= 1_000) {
+            return `${(amount / 1_000).toFixed(1)}K`;
+        }
+        return amount.toString();
+    }
+
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
-            <View style={{ marginHorizontal: 20, marginTop: 20 }}>
-                {/* Top Navigation */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
+            <View className="mx-[20px] mt-[20px]">
+                {/* Header */}
+                <View>
                     <Text className="font-lexend text-[24px] text-[#2B3854]">
                         Good Day, {items[0].name}!
                     </Text>
-                    <View style={styles.headerIcons}>
-                        <TouchableOpacity>
-                            <Image
-                                source={require("@/assets/images/usericon.png")}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image
-                                source={require("@/assets/images/notification.png")}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                    </View>
                 </View>
 
-                {/* Home Content */}
-
                 {/* Budget Card */}
-                <View
-                    style={{
-                        marginVertical: 15,
-                    }}
-                >
-                    <BudgetCard
-                        name="Budget Name"
-                        amount={2000}
-                        spent="0"
-                        percentage={1}
-                    />
+                <View className="mt-5">
+                    <TouchableOpacity
+                        onPress={() => {
+                            router.push("/budget");
+                        }}
+                    >
+                        <BudgetCard
+                            name="Budget"
+                            amount={budgetAmount}
+                            spent={String(budgetSpent)}
+                            percentage={1}
+                        />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Expenses and Income  */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <View
-                        className="flex-row justify-between gap-2 "
-                        style={{
-                            backgroundColor: "#FFE9E9",
-                            width: "48%",
-                            height: 65,
-                            borderRadius: 12,
-                            padding: 12,
-                            alignContent: "center",
-                        }}
-                    >
+                <View className="mt-5 flex-row justify-between gap-5">
+                    <View className="p-[12px] flex-1 flex-row justify-between bg-[#FFE9E9] rounded-[12px]">
                         <View>
-                            <Text
-                                className="font-lexendSemiBold text-[#FE6B6B]"
-                                style={{
-                                    color: "#FD7474",
-                                }}
-                            >
+                            <Text className="font-lexendSemiBold text-[#FE6B6B]">
                                 Expenses
                             </Text>
-                            <Text
-                                className="font-lexend text-gray-700"
-                                style={{ fontSize: 12, color: "#929292" }}
-                            >
-                                0 Transactions
+                            <Text className="mt-1 font-lexend text-gray-700 text-[12px]">
+                                {countExpense} Transactions
                             </Text>
                         </View>
-                        <Text
-                            className="font-lexend"
-                            style={{
-                                color: "#FD7474",
-                                fontSize: 14,
-                                flexShrink: 1,
-                                textAlign: "right",
-                            }}
-                            numberOfLines={1}
-                        >
-                            ₱0
+                        <Text className="font-lexend text-[14px] text-[#FD7474]">
+                            ₱{formatAmount(totalExpense)}
                         </Text>
                     </View>
-                    <View
-                        className="flex-row justify-between gap-2"
-                        style={{
-                            backgroundColor: "#E8FFE8",
-
-                            width: "48%",
-                            height: 65,
-                            borderRadius: 12,
-                            padding: 12,
-                        }}
-                    >
+                    <View className="p-[12px] flex-1 flex-row justify-between bg-[#E8FFE8] rounded-[12px]">
                         <View>
-                            <Text
-                                className="font-lexendSemiBold"
-                                style={{
-                                    color: "#67AC69",
-                                }}
-                            >
+                            <Text className="font-lexendSemiBold text-[#67AC69]">
                                 Income
                             </Text>
-                            <Text
-                                className="font-lexend"
-                                style={{ fontSize: 12, color: "#929292" }}
-                            >
-                                0 Transactions
+                            <Text className="mt-1 font-lexend text-[12px] text-[#929292]">
+                                {countIncome} Transactions
                             </Text>
                         </View>
-                        <Text
-                            className="font-lexend"
-                            style={{
-                                color: "#67AC69",
-                                fontSize: 14,
-                                flexShrink: 1,
-                                textAlign: "right",
-                            }}
-                            numberOfLines={1}
-                        >
-                            ₱0
+
+                        <Text className="font-lexend text-[14px] text-[#67AC69]">
+                            ₱{formatAmount(totalIncome)}
                         </Text>
                     </View>
                 </View>
+
                 {/* Streaks */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        gap: 10,
-                        width: "100%",
-                        height: 50,
-                        borderRadius: 20,
-                        marginTop: 20,
-                        justifyContent: "space-around",
-                    }}
-                >
+                <View className="mt-5 flex-row gap-10 w-full h-[50px] rounded-[20px] justify-around">
                     {days.map((day, index) => (
-                        <View
-                            key={index}
-                            style={{
-                                alignItems: "center",
-                            }}
-                        >
-                            <Image
-                                source={require("@/assets/home/no-flame.svg")}
-                                style={{
-                                    width: 16,
-                                    height: 16,
-                                }}
-                            />
-                            <Text
-                                className="font-lexend text-[12px]"
-                                style={{
-                                    color: "#CACACA",
-                                }}
-                            >
+                        <View key={index} className="items-center">
+                            <NoFlame width={16} height={16} />
+                            <Text className="font-lexend text-[12px] text-[#CACACA]">
                                 {day}
                             </Text>
                         </View>
@@ -278,121 +316,45 @@ export default function HomeScreen() {
                 </View>
 
                 {/* Recent Transactions */}
-                <View style={{ marginTop: 30 }}>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                    >
+                <View>
+                    <View>
                         <Text className="font-lexend text-[16px]">
                             Recent Transactions
                         </Text>
-                        <TouchableOpacity
-                            style={{
-                                backgroundColor: "#F8F8F8",
-                                borderRadius: 99,
-                                paddingVertical: 8,
-                                paddingHorizontal: 8,
-                            }}
-                        >
-                            <Image
-                                source={require("@/assets/home/filter.svg")}
-                                style={{
-                                    width: 12,
-                                    height: 12,
-                                    resizeMode: "contain",
-                                }}
-                            />
-                        </TouchableOpacity>
                     </View>
 
-                    {transactions.length === 0 ? (
-                        <View
-                            style={{
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginVertical: 20,
-                                height: 280,
-                                borderColor: "#D9D9D9",
-                                borderWidth: 2,
-                                borderRadius: 10,
-                                borderStyle: "dashed",
+                    {!transactions.length ? (
+                        <TouchableOpacity
+                            onPress={() => {
+                                router.replace("/addtransaction");
                             }}
+                            className="mt-5 justify-center items-center h-[280px] border-2 border-dashed border-[#D9D9D9] rounded-[10px]"
                         >
                             <Text className="font-lexend text-[14px] text-gray-700">
-                                + Add Transaction!
+                                + Add Transaction
                             </Text>
-                        </View>
+                        </TouchableOpacity>
                     ) : (
-                        <View style={{ marginTop: 15 }}>
-                            {transactions.map((tx, index) => (
-                                <View
-                                    key={index}
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        paddingVertical: 12,
-                                        borderBottomColor: "#EFEFEF",
-                                        borderBottomWidth: 1,
-                                    }}
-                                >
-                                    {/* Icon */}
-                                    <View
-                                        style={{
-                                            width: 40,
-                                            height: 40,
-                                            marginRight: 12,
-                                        }}
-                                    >
-                                        <Image
-                                            source={tx.icon}
-                                            style={{
-                                                width: 40,
-                                                height: 40,
-                                                resizeMode: "contain",
-                                            }}
-                                        />
-                                    </View>
-
-                                    {/* Text Section */}
-                                    <View style={{ flex: 1 }}>
-                                        <Text className="font-lexend text-[15px] text-black">
-                                            {tx.title}
-                                        </Text>
-                                        <Text className="font-lexend text-[12px] text-gray-500">
-                                            {tx.date}
-                                        </Text>
-                                    </View>
-
-                                    {/* Amount */}
-                                    <View
-                                        style={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <Image
-                                            source={require("@/assets/icons/downArrow.svg")}
-                                            style={{
-                                                width: 12,
-                                                height: 12,
-                                                marginRight: 4,
-                                            }}
-                                        />
-                                        <Text className="font-lexend text-[14px] text-[#FF4D4F]">
-                                            ₱{tx.amount}
-                                        </Text>
-                                    </View>
-                                </View>
+                        <View className="mt-2">
+                            {transactions.map((tx) => (
+                                <TransactionItem
+                                    key={tx.id}
+                                    title={tx.title || tx.category}
+                                    date={tx.date}
+                                    amount={tx.amount}
+                                    iconUrl={tx.category}
+                                    amountColor={tx.type}
+                                />
                             ))}
 
                             {/* View More */}
                             <TouchableOpacity
-                                style={{ marginTop: 10, alignItems: "center" }}
+                                onPress={() => {
+                                    router.replace("/transaction");
+                                }}
+                                className="mt-5 items-center"
                             >
-                                <Text className="font-lexend text-[13px] text-gray-500 underline">
+                                <Text className="font-lexend text-[13px] text-[#9D9D9D]">
                                     View more
                                 </Text>
                             </TouchableOpacity>
@@ -404,14 +366,77 @@ export default function HomeScreen() {
         </SafeAreaView>
     );
 }
-const styles = StyleSheet.create({
-    icon: {
-        width: 32,
-        height: 32,
-        resizeMode: "contain",
-    },
-    headerIcons: {
-        flexDirection: "row",
-        gap: 12,
-    },
-});
+
+const TransactionItem = ({
+    title,
+    date,
+    amount,
+    iconUrl,
+    amountColor,
+}: {
+    title: string;
+    date: string;
+    amount: number;
+    iconUrl: string;
+    amountColor: string;
+}) => {
+    const categoryIconMap: Record<string, JSX.Element> = {
+        Food: <FoodIcon width={40} height={40} />,
+        Transit: <TransitIcon width={40} height={40} />,
+        Grocery: <GroceryIcon width={40} height={40} />,
+        Bills: <BillsIcon width={40} height={40} />,
+        Entertainment: <EntertainmentIcon width={40} height={40} />,
+        Income: <IncomeTrans width={40} height={40} />,
+        Work: <WorkIcon width={40} height={40} />,
+        Subscription: <SubscriptionIcon width={40} height={40} />,
+        Cash: <CashIcon width={40} height={40} />,
+    };
+    const formattedDate = new Date(date).toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+    return (
+        <View className="flex-row items-center justify-between py-3 border-b border-[#F8F8F8]">
+            <View className="flex-row items-center">
+                {categoryIconMap[iconUrl] ? (
+                    <View className="mr-3 flex items-center justify-center">
+                        {categoryIconMap[iconUrl]}
+                    </View>
+                ) : (
+                    <Text>No Icon</Text>
+                )}
+                <View>
+                    <Text className="text-[16px] font-lexend text-[#2C2C2C]">
+                        {title}
+                    </Text>
+                    <View className="mt-1">
+                        <Text className="text-[12px] font-lexend text-[#9D9D9D]">
+                            {formattedDate}
+                        </Text>
+                    </View>
+                </View>
+            </View>
+            <View className="flex-row items-center gap-1">
+                {amountColor === "Expense" ? (
+                    <>
+                        <ExpenseIcon width={10} height={10} className="mr-1" />
+                        <Text className="text-[16px] font-lexendMedium text-[#FD7474]">
+                            ₱{amount}
+                        </Text>
+                    </>
+                ) : (
+                    <>
+                        <IncomeIcon width={10} height={10} className="mr-1" />
+                        <Text className="text-[16px] font-lexendMedium text-[#80B154]">
+                            ₱{amount}
+                        </Text>
+                    </>
+                )}
+            </View>
+        </View>
+    );
+};
