@@ -2,7 +2,7 @@
     Route -> "index.tsx" ->"badges.tsx"
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 8, 2025]
+        Miguel Armand B. Sta. Ana [May 9, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -11,8 +11,8 @@
     Description: Badges and streaks screen for users to track their badges and streaks.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React from "react";
-import { View, Text, Image, ScrollView } from "react-native";
+import React, { useLayoutEffect } from "react";
+import { View, Text, ScrollView } from "react-native";
 import StreakFire from "../assets/streaksandbadges/streakfire.svg";
 import GrayFire from "../assets/streaksandbadges/grayfire.svg";
 import EarnedPiggyPioneer from "../assets/streaksandbadges/earned/earned_piggy_pioneer.svg";
@@ -21,6 +21,7 @@ import IncompleteDebtSlayer from "../assets/streaksandbadges/incomplete/incomple
 import IncompleteSovereignSavior from "../assets/streaksandbadges/incomplete/incomplete_sovereign_slayer.svg";
 import IncompleteGOG from "../assets/streaksandbadges/incomplete/incomplete_gog.svg";
 import BigFireStreak from "../assets/streaksandbadges/bigfirestreak.svg";
+import { useNavigation } from "expo-router";
 
 const Badges: React.FC = () => {
     // Data
@@ -71,6 +72,18 @@ const Badges: React.FC = () => {
         },
     ];
 
+    const navigation = useNavigation();
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: "Streaks",
+            headerTitleStyle: {
+                fontFamily: "Lexend_400Regular",
+                fontSize: 24,
+                color: "#2B3854",
+            },
+        });
+    }, [navigation]);
+
     // Streak Counter Component
     const StreakCounter = () => (
         <View className="flex flex-col justify-center items-center mb-6">
@@ -117,7 +130,7 @@ const Badges: React.FC = () => {
     };
 
     const StreakCalendar = () => (
-        <View className="flex flex-row justify-between items-center mb-[30px]">
+        <View className="flex flex-row justify-between items-center mb-4">
             {days.map((day, index) => (
                 <CalendarDay key={index} day={day.day} isActive={day.isActive} />
             ))}
@@ -142,7 +155,7 @@ const Badges: React.FC = () => {
     );
 
     const StatsGrid = () => (
-        <View className="flex flex-row justify-between mb-6 gap-2">
+        <View className="flex flex-row justify-between mb-1 gap-2">
             <View className="flex-1 mr-2">
                 <StatItem label="No. of Weeks" value={statsData.weeks} />
             </View>
@@ -172,10 +185,10 @@ const Badges: React.FC = () => {
         };
 
         return (
-            <View className="flex flex-row items-start justify-between p-2.5 mb-2">
-                <View className="flex flex-row items-start gap-5 flex-1">
+            <View className="flex flex-row items-start justify-between p-2 mb-1 border-b border-[#F8F8F8]">
+                <View className="flex flex-row items-start gap-4 flex-1">
                     <Icon width={55} height={61} />
-                    <View className="flex flex-col flex-1 flex-shrink">
+                    <View className="flex flex-col flex-1 flex-shrink mt-3">
                         <Text
                             className="font-lexendMedium text-[#616161] text-sm font-normal tracking-[-0.28px] flex-shrink"
                             style={{ fontSize: 14 }}
@@ -211,7 +224,7 @@ const Badges: React.FC = () => {
                 <StatsGrid />
                 <View>
                     <Text
-                        className="font-lexend text-[#2B3854] text-2xl font-normal tracking-[-0.48px] mb-[25px]"
+                        className="font-lexend text-[#2B3854] text-2xl font-normal tracking-[-0.48px] mb-2"
                         style={{ fontSize: 24 }}
                     >
                         Badges
