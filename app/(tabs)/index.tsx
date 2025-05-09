@@ -3,6 +3,7 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
+        Miguel Sta. Ana [May 9, 2025]
         John Bicierro [May 8, 2025]
         Romar Castro [Mar 9, 2025]
 
@@ -45,10 +46,12 @@ import BillsIcon from "@/assets/transaction-icons/bills.svg";
 import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
+import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
 
 export default function HomeScreen() {
     const days = ["S", "M", "T", "W", "Th", "F", "S"];
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
+    const [streakCount, setStreakCount] = useState(0);
 
     useEffect(() => {
         async function GetUser() {
@@ -208,6 +211,7 @@ export default function HomeScreen() {
             CountExpenseTransaction();
             GetExpenseAmountAll();
             GetIncomeAmountAll();
+            updateStreakOnAppOpen().then(setStreakCount);
         }, []),
     );
 
@@ -223,6 +227,17 @@ export default function HomeScreen() {
         }
         return amount.toString();
     }
+
+    // Use the same logic as in Badges Screen
+    const weekDays = ["S", "M", "T", "W", "Th", "F", "S"];
+    const todayIndex = new Date().getDay();
+    const streakDays = weekDays.map((day, idx) => {
+        const daysAgo = (todayIndex - idx + 7) % 7;
+        return {
+            day,
+            isActive: streakCount > 0 && daysAgo < streakCount,
+        };
+    });
 
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
@@ -287,21 +302,19 @@ export default function HomeScreen() {
                     onPress={() => router.push("/badges")}
                 >
                     <View className="mt-5 flex-row gap-10 w-full h-[50px] rounded-[20px] justify-around">
-                        {days.map((day, index) => (
+                        {streakDays.map((day, index) => (
                             <View key={index} className="items-center">
-                                {index === 0 || index === 1 ? (
+                                {day.isActive ? (
                                     <StreakFire width={16} height={16} />
                                 ) : (
                                     <NoFlame width={16} height={16} />
                                 )}
                                 <Text
                                     className={`font-lexend text-[12px] ${
-                                        index === 0 || index === 1
-                                            ? "text-[#FF8F1F]"
-                                            : "text-[#CACACA]"
+                                        day.isActive ? "text-[#FF8F1F]" : "text-[#CACACA]"
                                     }`}
                                 >
-                                    {day}
+                                    {day.day}
                                 </Text>
                             </View>
                         ))}

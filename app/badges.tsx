@@ -11,7 +11,7 @@
     Description: Badges and streaks screen for users to track their badges and streaks.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import StreakFire from "../assets/streaksandbadges/streakfire.svg";
 import GrayFire from "../assets/streaksandbadges/grayfire.svg";
@@ -22,21 +22,31 @@ import IncompleteSovereignSavior from "../assets/streaksandbadges/incomplete/inc
 import IncompleteGOG from "../assets/streaksandbadges/incomplete/incomplete_gog.svg";
 import BigFireStreak from "../assets/streaksandbadges/bigfirestreak.svg";
 import { useNavigation } from "expo-router";
+import { getStreak } from "../utils/streak";
 
 const Badges: React.FC = () => {
     // Data
-    const streakCount = 2;
+    const [streakCount, setStreakCount] = useState(0);
     const userName = "Doe";
-    const statsData = { weeks: 0, days: 2, avgSpent: "₱1,000" };
-    const days = [
-        { day: "S", isActive: true },
-        { day: "M", isActive: true },
-        { day: "T", isActive: false },
-        { day: "W", isActive: false },
-        { day: "Th", isActive: false },
-        { day: "F", isActive: false },
-        { day: "S", isActive: false },
-    ];
+    const statsData = {
+        weeks: Math.floor(streakCount / 7),
+        days: streakCount,
+        avgSpent: "₱1,000",
+    };
+    const weekDays = ["S", "M", "T", "W", "Th", "F", "S"];
+    const todayIndex = new Date().getDay();
+
+    // Calculate which days should be active based on streakCount
+    const days = weekDays.map((day, idx) => {
+        // How many days back from today does this index represent?
+        // E.g. if today is Friday (5), and streakCount is 1, only Friday is active.
+        // If streakCount is 3, then Wednesday, Thursday, Friday are active.
+        const daysAgo = (todayIndex - idx + 7) % 7;
+        return {
+            day,
+            isActive: streakCount > 0 && daysAgo < streakCount,
+        };
+    });
     const badges = [
         {
             title: "Piggy Pioneer",
@@ -83,6 +93,10 @@ const Badges: React.FC = () => {
             },
         });
     }, [navigation]);
+
+    useEffect(() => {
+        getStreak().then(setStreakCount);
+    }, []);
 
     // Streak Counter Component
     const StreakCounter = () => (
