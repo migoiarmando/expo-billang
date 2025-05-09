@@ -1,6 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
+         Miguel Armand B. Sta. Ana [May 9, 2025]
         John Bicierro [Mar 17, 2025]
         Miguel Armand B. Sta. Ana [Mar 10, 2025]
 
@@ -118,21 +119,17 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPres
     const IconComponent = iconComponents[icon];
 
     return (
-        <Link href="/+not-found" asChild>
-            <TouchableOpacity
-                className="flex-row items-center justify-between py-2.5 pr-3.5"
-                onPress={onPress}
-                activeOpacity={0.7}
-            >
-                <View className="flex-row items-center pl-5">
-                    <IconComponent width={16} height={16} className="w-4 h-4 mr-2" />
-                    <Text className="text-base text-[#2B3854] font-lexend ml-3">
-                        {label}
-                    </Text>
-                </View>
-                <ChevronRight size={20} color="#666" />
-            </TouchableOpacity>
-        </Link>
+        <TouchableOpacity
+            className="flex-row items-center justify-between py-2.5 pr-3.5"
+            onPress={onPress}
+            activeOpacity={0.7}
+        >
+            <View className="flex-row items-center pl-5">
+                <IconComponent width={16} height={16} className="w-4 h-4 mr-2" />
+                <Text className="text-base text-[#2B3854] font-lexend ml-3">{label}</Text>
+            </View>
+            <ChevronRight size={20} color="#666" />
+        </TouchableOpacity>
     );
 };
 
@@ -241,7 +238,7 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="badge"
                             label="Streaks & Badges"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => router.push("/badges")}
                         />
                         <SettingsMenuItem
                             icon="history"

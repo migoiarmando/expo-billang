@@ -1,3 +1,18 @@
+/* --------------------------------------------------------------------------------------------------------------
+
+    Last edited: 
+
+        Miguel Armand B. Sta. Ana [May 9, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+    <Ticket Info>
+    
+    Feature Title: Guardian of Gold Badge Screen
+    Description: This is the Guardian of Gold Badge Screen
+
+-------------------------------------------------------------------------------------------------------------- */
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
