@@ -12,7 +12,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 import React, { useLayoutEffect, useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import StreakFire from "../assets/streaksandbadges/streakfire.svg";
 import GrayFire from "../assets/streaksandbadges/grayfire.svg";
 import EarnedPiggyPioneer from "../assets/streaksandbadges/earned/earned_piggy_pioneer.svg";
@@ -21,8 +21,16 @@ import IncompleteDebtSlayer from "../assets/streaksandbadges/incomplete/incomple
 import IncompleteSovereignSavior from "../assets/streaksandbadges/incomplete/incomplete_sovereign_slayer.svg";
 import IncompleteGOG from "../assets/streaksandbadges/incomplete/incomplete_gog.svg";
 import BigFireStreak from "../assets/streaksandbadges/bigfirestreak.svg";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { getStreak } from "../utils/streak";
+
+const badgeRoutes: Record<string, string> = {
+    "Piggy Pioneer": "/badgescreen/piggypioneer",
+    "Expense Explorer": "/badgescreen/expense_explorer",
+    "Debt Slayer": "/badgescreen/debt_slayer",
+    "Sovereign Saver": "/badgescreen/sovereign_saver",
+    "Guardian of Gold": "/badgescreen/gog",
+};
 
 const Badges: React.FC = () => {
     // Data
@@ -83,6 +91,7 @@ const Badges: React.FC = () => {
     ];
 
     const navigation = useNavigation();
+    const router = useRouter();
     useLayoutEffect(() => {
         navigation.setOptions({
             title: "Streaks",
@@ -244,7 +253,16 @@ const Badges: React.FC = () => {
                         Badges
                     </Text>
                     {badges.map((badge, idx) => (
-                        <BadgeCard key={idx} {...badge} />
+                        <TouchableOpacity
+                            key={idx}
+                            onPress={() => {
+                                const route = badgeRoutes[badge.title];
+                                if (route) router.push(route as any);
+                            }}
+                            activeOpacity={0.7}
+                        >
+                            <BadgeCard {...badge} />
+                        </TouchableOpacity>
                     ))}
                 </View>
             </View>
