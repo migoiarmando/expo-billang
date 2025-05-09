@@ -121,7 +121,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                     </View>
                     <View style={styles.amountContainer}>
                         <Text style={styles.amount} numberOfLines={1}>
-                            ₱{amount}
+                            ₱{amount.toLocaleString()}
                         </Text>
                     </View>
                     <View style={styles.progressContainer}>

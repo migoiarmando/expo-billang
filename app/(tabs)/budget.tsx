@@ -120,7 +120,10 @@ export default function BudgetScreen() {
                     onChangeText={setSearch}
                 />
 
-                <ScrollView className="flex-1 mt-5 mb-5">
+                <ScrollView
+                    className="flex-1 mt-5 mb-5"
+                    showsVerticalScrollIndicator={false}
+                >
                     <View className="gap-3.5">
                         {filteredBudgets.map((budget) => (
                             <TouchableOpacity

@@ -23,6 +23,9 @@ import IncompleteGOG from "../assets/streaksandbadges/incomplete/incomplete_gog.
 import BigFireStreak from "../assets/streaksandbadges/bigfirestreak.svg";
 import { useNavigation, useRouter } from "expo-router";
 import { getStreak } from "../utils/streak";
+import { db } from "@/database";
+import { transactions_tb } from "@/database/schema";
+import { sql, eq } from "drizzle-orm";
 
 const badgeRoutes: Record<string, string> = {
     "Piggy Pioneer": "/badgescreen/piggypioneer",
@@ -36,10 +39,11 @@ const Badges: React.FC = () => {
     // Data
     const [streakCount, setStreakCount] = useState(0);
     const userName = "Doe";
+    const [avgSpent, setAvgSpent] = useState<string>("₱1,000");
     const statsData = {
         weeks: Math.floor(streakCount / 7),
         days: streakCount,
-        avgSpent: "₱1,000",
+        avgSpent,
     };
     const weekDays = ["S", "M", "T", "W", "Th", "F", "S"];
     const todayIndex = new Date().getDay();
@@ -105,6 +109,39 @@ const Badges: React.FC = () => {
 
     useEffect(() => {
         getStreak().then(setStreakCount);
+    }, []);
+
+    useEffect(() => {
+        async function calculateAvgWeeklySpent() {
+            try {
+                
+                const expenses = await db
+                    .select({
+                        amount: transactions_tb.amount,
+                    })
+                    .from(transactions_tb)
+                    .where(eq(transactions_tb.type, "Expense"));
+
+                
+                const totalSpent = expenses.reduce(
+                    (sum, tx) => sum + (tx.amount || 0),
+                    0,
+                );
+
+                
+                const avg = totalSpent / 7;
+
+                
+                setAvgSpent(
+                    `₱${avg.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
+                );
+            } catch (err) {
+                console.error("Failed to calculate avg weekly spent:", err);
+                setAvgSpent("₱0");
+            }
+        }
+
+        calculateAvgWeeklySpent();
     }, []);
 
     // Streak Counter Component
@@ -178,7 +215,7 @@ const Badges: React.FC = () => {
     );
 
     const StatsGrid = () => (
-        <View className="flex flex-row justify-between mb-1 gap-2">
+        <View className="flex flex-row justify-between mb-3 gap-2">
             <View className="flex-1 mr-2">
                 <StatItem label="No. of Weeks" value={statsData.weeks} />
             </View>
@@ -186,7 +223,7 @@ const Badges: React.FC = () => {
                 <StatItem label="No. of Days" value={statsData.days} />
             </View>
             <View className="flex-1 ml-2">
-                <StatItem label="Avg. Daily Spent" value={statsData.avgSpent} />
+                <StatItem label="Avg. Spent" value={statsData.avgSpent} />
             </View>
         </View>
     );
