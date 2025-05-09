@@ -1,6 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
+        Miguel Armand B. Sta. Ana [May 9, 2025]
         John Bicierro [Feb 22, 2025]
 
     Company: github.com/codekada
@@ -101,6 +102,8 @@ function RootLayoutNav() {
                 }}
             >
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="badges" options={{ headerShown: true }} />
+                <Stack.Screen name="badgescreen" options={{ headerShown: false }} />
 
                 {/* Onboarding */}
                 <Stack.Screen name="onboarding/ob" options={{ headerShown: false }} />

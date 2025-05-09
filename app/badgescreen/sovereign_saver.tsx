@@ -1,8 +1,23 @@
+/* --------------------------------------------------------------------------------------------------------------
+
+    Last edited: 
+
+        Miguel Armand B. Sta. Ana [May 9, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+    <Ticket Info>
+    
+    Feature Title: Sovereign Saver Badge Screen
+    Description: This is the Sovereign Saver Badge Screen
+
+-------------------------------------------------------------------------------------------------------------- */
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-const SovereignSaver  = () => {
+const SovereignSaver = () => {
     return (
         <LinearGradient
             colors={["#E975A5", "#FBFBFB"]}
