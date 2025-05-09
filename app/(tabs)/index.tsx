@@ -49,7 +49,7 @@ import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
 
 export default function HomeScreen() {
-    const days = ["S", "M", "T", "W", "Th", "F", "S"];
+    const days = ["Sun", "M", "T", "W", "Th", "F", "Sat"];
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
     const [streakCount, setStreakCount] = useState(0);
 
@@ -229,7 +229,7 @@ export default function HomeScreen() {
     }
 
     // Use the same logic as in Badges Screen
-    const weekDays = ["S", "M", "T", "W", "Th", "F", "S"];
+    const weekDays = ["Sun", "M", "T", "W", "Th", "F", "Sat"];
     const todayIndex = new Date().getDay();
     const streakDays = weekDays.map((day, idx) => {
         const daysAgo = (todayIndex - idx + 7) % 7;

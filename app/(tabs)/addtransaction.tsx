@@ -2,7 +2,8 @@
 
     Route -> "onboarding/ob.tsx"
 
-    Last edited: 
+    Last edited:
+        Miguel Armand B. Sta. Ana [May 10, 2025]
         John Bicierro [Feb 22, 2025]
 
     Company: github.com/codekada
@@ -22,6 +23,8 @@ import { Folder, Paperclip } from "lucide-react-native";
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { eq } from "drizzle-orm";
 
 import FoodIcon from "@/assets/transaction-icons/food.svg";
 import TransitIcon from "@/assets/transaction-icons/transit.svg";
@@ -174,6 +177,16 @@ function ExpenseContent({
             setNotes("");
             setAmount("");
             setSelectedCategory(categoryIcons[0]);
+
+            const expenses = await db
+                .select()
+                .from(transactions_tb)
+                .where(eq(transactions_tb.type, "Expense"));
+
+            if (expenses.length === 1) {
+                await AsyncStorage.setItem("piggyPioneerEarned", "true");
+                router.push("/badgescreen/earned_piggy_pioneer");
+            }
         } catch (err) {
             console.log("Error fetching or inserting data:", err);
         }
