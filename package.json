@@ -1,7 +1,7 @@
 {
     "name": "billang",
     "main": "expo-router/entry",
-    "version": "0.4.67",
+    "version": "0.4.68",
     "private": true,
     "scripts": {
         "start": "expo start",
