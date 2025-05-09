@@ -16,6 +16,7 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import StreakFire from "../assets/streaksandbadges/streakfire.svg";
 import GrayFire from "../assets/streaksandbadges/grayfire.svg";
 import EarnedPiggyPioneer from "../assets/streaksandbadges/earned/earned_piggy_pioneer.svg";
+import IncompletePiggyPioneer from "../assets/streaksandbadges/incomplete/incomplete_piggy_pioneer.svg";
 import IncompleteExpenseExplorer from "../assets/streaksandbadges/incomplete/incomplete_expense_explorer.svg";
 import IncompleteDebtSlayer from "../assets/streaksandbadges/incomplete/incomplete_debt_slayer.svg";
 import IncompleteSovereignSavior from "../assets/streaksandbadges/incomplete/incomplete_sovereign_slayer.svg";
@@ -26,6 +27,7 @@ import { getStreak } from "../utils/streak";
 import { db } from "@/database";
 import { transactions_tb } from "@/database/schema";
 import { sql, eq } from "drizzle-orm";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const badgeRoutes: Record<string, string> = {
     "Piggy Pioneer": "/badgescreen/piggypioneer",
@@ -45,52 +47,64 @@ const Badges: React.FC = () => {
         days: streakCount,
         avgSpent,
     };
-    const weekDays = ["S", "M", "T", "W", "Th", "F", "S"];
+    const weekDays = ["Sun", "M", "T", "W", "Th", "F", "Sat"];
     const todayIndex = new Date().getDay();
 
     // Calculate which days should be active based on streakCount
     const days = weekDays.map((day, idx) => {
-        // How many days back from today does this index represent?
-        // E.g. if today is Friday (5), and streakCount is 1, only Friday is active.
-        // If streakCount is 3, then Wednesday, Thursday, Friday are active.
         const daysAgo = (todayIndex - idx + 7) % 7;
         return {
             day,
             isActive: streakCount > 0 && daysAgo < streakCount,
         };
     });
-    const badges = [
+    const [piggyPioneerEarned, setPiggyPioneerEarned] = useState(false);
+
+    const badges: {
+        title: string;
+        description: string;
+        icon: React.FC<any>;
+        status: "earned" | "incomplete";
+        route: string;
+    }[] = [
         {
             title: "Piggy Pioneer",
             description: "User has spent money for the first time.",
-            icon: EarnedPiggyPioneer,
-            status: "earned" as const,
+            icon: piggyPioneerEarned ? EarnedPiggyPioneer : IncompletePiggyPioneer,
+            status: piggyPioneerEarned ? "earned" : "incomplete",
+            route: piggyPioneerEarned
+                ? "/badgescreen/earned_piggy_pioneer"
+                : "/badgescreen/piggypioneer",
         },
         {
             title: "Expense Explorer",
             description: "User logs their first 10 expenses",
             icon: IncompleteExpenseExplorer,
-            status: "incomplete" as const,
+            status: "incomplete",
+            route: "/badgescreen/expense_explorer",
         },
         {
             title: "Debt Slayer",
             description:
                 "User makes on-time debt payments for a full month without missing a due date.",
             icon: IncompleteDebtSlayer,
-            status: "incomplete" as const,
+            status: "incomplete",
+            route: "/badgescreen/debt_slayer",
         },
         {
             title: "Sovereign Saver",
             description: "User successfully follows their budget for one full month",
             icon: IncompleteSovereignSavior,
-            status: "incomplete" as const,
+            status: "incomplete",
+            route: "/badgescreen/sovereign_saver",
         },
         {
             title: "Guardian of Gold",
             description:
                 "User consistently saves at least 20% of their income for three consecutive months.",
             icon: IncompleteGOG,
-            status: "incomplete" as const,
+            status: "incomplete",
+            route: "/badgescreen/gog",
         },
     ];
 
@@ -114,7 +128,6 @@ const Badges: React.FC = () => {
     useEffect(() => {
         async function calculateAvgWeeklySpent() {
             try {
-                
                 const expenses = await db
                     .select({
                         amount: transactions_tb.amount,
@@ -122,16 +135,13 @@ const Badges: React.FC = () => {
                     .from(transactions_tb)
                     .where(eq(transactions_tb.type, "Expense"));
 
-                
                 const totalSpent = expenses.reduce(
                     (sum, tx) => sum + (tx.amount || 0),
                     0,
                 );
 
-                
                 const avg = totalSpent / 7;
 
-                
                 setAvgSpent(
                     `₱${avg.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
                 );
@@ -142,6 +152,12 @@ const Badges: React.FC = () => {
         }
 
         calculateAvgWeeklySpent();
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.getItem("piggyPioneerEarned").then((val) => {
+            setPiggyPioneerEarned(val === "true");
+        });
     }, []);
 
     // Streak Counter Component
@@ -233,11 +249,13 @@ const Badges: React.FC = () => {
         description,
         icon: Icon,
         status,
+        route,
     }: {
         title: string;
         description: string;
         icon: React.FC<any>;
         status: "earned" | "incomplete";
+        route: string;
     }) => {
         const statusStyles = {
             earned: "text-[#80B154] bg-[#E9FFD4]",
@@ -293,7 +311,7 @@ const Badges: React.FC = () => {
                         <TouchableOpacity
                             key={idx}
                             onPress={() => {
-                                const route = badgeRoutes[badge.title];
+                                const route = badge.route;
                                 if (route) router.push(route as any);
                             }}
                             activeOpacity={0.7}

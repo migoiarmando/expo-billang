@@ -51,7 +51,8 @@ const PiggyPioneer: React.FC<PiggyPioneerProps> = ({ userName = "User", onExit }
                     style={styles.container}
                 >
                     <Trophy />
-                    <Text style={styles.incomplete}>Incomplete</Text>
+                    <Text style={styles.congrats}>{`Congrats, ${userName}!`}</Text>
+                    <Text style={styles.unlocked}>You've Unlocked a Badge!</Text>
 
                     <PiggyPioneerSVG />
 
@@ -81,11 +82,17 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         paddingTop: 80,
     },
-    incomplete: {
+    congrats: {
+        fontFamily: "Lexend_600SemiBold",
+        fontSize: 16,
+        color: "#fff",
+        marginBottom: 2,
+        textAlign: "center",
+    },
+    unlocked: {
         fontFamily: "Lexend_400Regular",
         fontSize: 16,
         color: "#fff",
-        marginTop: 10,
         marginBottom: 18,
         textAlign: "center",
     },
