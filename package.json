@@ -1,7 +1,7 @@
 {
   "name": "billang",
   "main": "expo-router/entry",
-  "version": "0.4.76",
+  "version": "0.4.77",
   "private": true,
   "scripts": {
     "start": "expo start",
@@ -48,7 +48,8 @@
     "react-native-web": "~0.19.13",
     "tailwindcss": "^3.4.17",
     "expo-linear-gradient": "~14.0.2",
-    "expo-image-picker": "~16.0.6"
+    "expo-image-picker": "~16.0.6",
+    "expo-constants": "~17.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
