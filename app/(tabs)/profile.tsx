@@ -17,7 +17,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
     View,
     Text,
@@ -35,7 +35,9 @@ import { StatusBar } from "expo-status-bar";
 import BudgetCard from "@/components/BudgetCard";
 import ProfilePic from "@/assets/images/profilepic.svg";
 import { Link, useRouter } from "expo-router";
-import StreakIcon from "@/assets/images/streak.svg";
+import StreakIcon from "@/assets/streaksandbadges/streakfire.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getStreak } from "@/utils/streak";
 
 // Import SVG files directly
 import SpendingSummary from "@/assets/images/spendingsummary.svg";
@@ -51,7 +53,7 @@ import { Header } from "@/components/Header";
 import { useFocusEffect } from "@react-navigation/native";
 import { db } from "@/database";
 import { eq, sql } from "drizzle-orm";
-import { budget_tb, transactions_tb } from "@/database/schema";
+import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import * as ImagePicker from "expo-image-picker";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import AboutModal from "@/components/AboutModal";
@@ -62,7 +64,9 @@ const { width } = Dimensions.get("window");
 const ProfileSection: React.FC<{
     profileImageUri: string | null;
     onPressProfilePic: () => void;
-}> = ({ profileImageUri, onPressProfilePic }) => {
+    userName: string;
+    streakCount: number;
+}> = ({ profileImageUri, onPressProfilePic, userName, streakCount }) => {
     return (
         <View className="flex-row items-center mt-5 mb-5">
             <TouchableOpacity onPress={onPressProfilePic} className="mr-4">
@@ -70,22 +74,33 @@ const ProfileSection: React.FC<{
                     <Image
                         source={{ uri: profileImageUri }}
                         style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 30,
+                            width: 100,
+                            height: 100,
+                            borderRadius: 50,
                         }}
                     />
                 ) : (
-                    <ProfilePic width={60} height={60} className="rounded-[35px]" />
+                    <ProfilePic width={100} height={100} className="rounded-[50px]" />
                 )}
             </TouchableOpacity>
             <View className="flex-1">
                 <View className="flex-row items-center">
-                    <Text className="text-[16px] text-[#2B3854] font-lexend">
-                        John Doe
+                    <Text className="text-[26px] text-[#2B3854] font-lexend">
+                        {userName || "Your Name"}
                     </Text>
                     <View className="flex-row items-center ml-2">
-                        <StreakIcon width={35} height={35} />
+                        <StreakIcon width={25} height={25} style={{ marginTop: 4 }} />
+                        <Text
+                            style={{
+                                fontFamily: "Lexend_400Regular",
+                                fontSize: 20,
+                                color: "#FFB636",
+                                marginLeft: 6,
+                                marginTop: 3,
+                            }}
+                        >
+                            {streakCount}
+                        </Text>
                     </View>
                 </View>
             </View>
@@ -158,8 +173,10 @@ export default function ProfileScreen() {
     const [showAddBudget, setShowAddBudget] = useState(false);
     const router = useRouter();
     const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string>("");
     const [privacyVisible, setPrivacyVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
+    const [streakCount, setStreakCount] = useState(0);
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -229,15 +246,41 @@ export default function ProfileScreen() {
         }, []),
     );
 
+    useEffect(() => {
+        async function loadProfileImage() {
+            const uri = await AsyncStorage.getItem("profileImageUri");
+            if (uri) setProfileImageUri(uri);
+        }
+        async function loadUserName() {
+            try {
+                const users = await db.select().from(user_tb);
+                if (users.length > 0) {
+                    setUserName(users[0].name || "Your Name");
+                }
+            } catch (err) {
+                console.error("Error loading user name:", err);
+            }
+        }
+        async function loadStreakCount() {
+            try {
+                const streak = await getStreak();
+                setStreakCount(streak);
+            } catch (err) {
+                console.error("Error loading streak count:", err);
+            }
+        }
+        loadProfileImage();
+        loadUserName();
+        loadStreakCount();
+    }, []);
+
     // Function to handle profile picture tap
     const handleProfilePicPress = async () => {
-        // Request permission
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
             alert("Permission to access gallery is required!");
             return;
         }
-        // Launch image picker
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -245,7 +288,9 @@ export default function ProfileScreen() {
             quality: 1,
         });
         if (!result.canceled && result.assets && result.assets.length > 0) {
-            setProfileImageUri(result.assets[0].uri);
+            const uri = result.assets[0].uri;
+            setProfileImageUri(uri);
+            await AsyncStorage.setItem("profileImageUri", uri);
         }
     };
 
@@ -259,6 +304,8 @@ export default function ProfileScreen() {
                         <ProfileSection
                             profileImageUri={profileImageUri}
                             onPressProfilePic={handleProfilePicPress}
+                            userName={userName}
+                            streakCount={streakCount}
                         />
 
                         <BudgetCard
