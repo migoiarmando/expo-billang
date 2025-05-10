@@ -186,6 +186,13 @@ function ExpenseContent({
             if (expenses.length === 1) {
                 await AsyncStorage.setItem("piggyPioneerEarned", "true");
                 router.push("/badgescreen/earned_piggy_pioneer");
+                return;
+            }
+
+            if (expenses.length === 10) {
+                await AsyncStorage.setItem("expenseExplorerEarned", "true");
+                router.push("/badgescreen/earned_expense_explorer");
+                return;
             }
         } catch (err) {
             console.log("Error fetching or inserting data:", err);
