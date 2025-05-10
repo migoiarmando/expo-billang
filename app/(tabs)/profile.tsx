@@ -27,6 +27,7 @@ import {
     Dimensions,
     NativeSyntheticEvent,
     NativeScrollEvent,
+    Image,
 } from "react-native";
 import { Plus, ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
@@ -51,16 +52,31 @@ import { useFocusEffect } from "@react-navigation/native";
 import { db } from "@/database";
 import { eq, sql } from "drizzle-orm";
 import { budget_tb, transactions_tb } from "@/database/schema";
+import * as ImagePicker from "expo-image-picker";
 
 // Get screen width
 const { width } = Dimensions.get("window");
 
-const ProfileSection: React.FC = () => {
+const ProfileSection: React.FC<{
+    profileImageUri: string | null;
+    onPressProfilePic: () => void;
+}> = ({ profileImageUri, onPressProfilePic }) => {
     return (
         <View className="flex-row items-center mt-5 mb-5">
-            <View className="mr-4">
-                <ProfilePic width={60} height={60} className="rounded-[35px]" />
-            </View>
+            <TouchableOpacity onPress={onPressProfilePic} className="mr-4">
+                {profileImageUri ? (
+                    <Image
+                        source={{ uri: profileImageUri }}
+                        style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 30,
+                        }}
+                    />
+                ) : (
+                    <ProfilePic width={60} height={60} className="rounded-[35px]" />
+                )}
+            </TouchableOpacity>
             <View className="flex-1">
                 <View className="flex-row items-center">
                     <Text className="text-[16px] text-[#2B3854] font-lexend">
@@ -139,6 +155,7 @@ export default function ProfileScreen() {
     const horizontalScrollViewRef = useRef<ScrollView>(null);
     const [showAddBudget, setShowAddBudget] = useState(false);
     const router = useRouter();
+    const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -208,6 +225,26 @@ export default function ProfileScreen() {
         }, []),
     );
 
+    // Function to handle profile picture tap
+    const handleProfilePicPress = async () => {
+        // Request permission
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            alert("Permission to access gallery is required!");
+            return;
+        }
+        // Launch image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setProfileImageUri(result.assets[0].uri);
+        }
+    };
+
     return (
         <>
             <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
@@ -215,7 +252,10 @@ export default function ProfileScreen() {
                     <Header name="Profile" />
 
                     <ScrollView showsVerticalScrollIndicator={false}>
-                        <ProfileSection />
+                        <ProfileSection
+                            profileImageUri={profileImageUri}
+                            onPressProfilePic={handleProfilePicPress}
+                        />
 
                         <BudgetCard
                             name="Budget"

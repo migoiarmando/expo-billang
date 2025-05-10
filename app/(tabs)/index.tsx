@@ -48,6 +48,11 @@ import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
 
+function formatWithCommas(value: number | string): string {
+    const str = String(value).replace(/,/g, "");
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export default function HomeScreen() {
     const days = ["Sun", "M", "T", "W", "Th", "F", "Sat"];
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
@@ -431,14 +436,14 @@ const TransactionItem = ({
                     <>
                         <ExpenseIcon width={10} height={10} className="mr-1" />
                         <Text className="text-[16px] font-lexendMedium text-[#FD7474]">
-                            ₱{amount}
+                            ₱{formatWithCommas(amount)}
                         </Text>
                     </>
                 ) : (
                     <>
                         <IncomeIcon width={10} height={10} className="mr-1" />
                         <Text className="text-[16px] font-lexendMedium text-[#80B154]">
-                            ₱{amount}
+                            ₱{formatWithCommas(amount)}
                         </Text>
                     </>
                 )}

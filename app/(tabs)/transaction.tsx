@@ -117,7 +117,7 @@ export default function TransactionScreen() {
                     setSelectedFilter={setSelectedFilter}
                 />
 
-                <ScrollView className="flex-1">
+                <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                     <View className="mb-2">
                         <Text className="mb-3 text-[16px] font-lexend text-[#676666]">
                             Transactions
@@ -273,6 +273,12 @@ const TransactionItem = ({
         day: "numeric",
         year: "numeric",
     });
+
+    function formatWithCommas(value: number | string): string {
+        const str = String(value).replace(/,/g, "");
+        return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     return (
         <View className="flex-row items-center justify-between py-3 border-b border-[#F8F8F8]">
             <View className="flex-row items-center">
@@ -299,14 +305,14 @@ const TransactionItem = ({
                     <>
                         <ExpenseIcon width={10} height={10} className="mr-1" />
                         <Text className="text-[16px] font-lexendMedium text-[#FD7474]">
-                            ₱{amount}
+                            ₱{formatWithCommas(amount)}
                         </Text>
                     </>
                 ) : (
                     <>
                         <IncomeIcon width={10} height={10} className="mr-1" />
                         <Text className="text-[16px] font-lexendMedium text-[#80B154]">
-                            ₱{amount}
+                            ₱{formatWithCommas(amount)}
                         </Text>
                     </>
                 )}
