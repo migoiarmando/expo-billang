@@ -47,6 +47,8 @@ import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import StreakModal from "@/components/StreakModal";
 
 function formatWithCommas(value: number | string): string {
     const str = String(value).replace(/,/g, "");
@@ -57,6 +59,7 @@ export default function HomeScreen() {
     const days = ["Sun", "M", "T", "W", "Th", "F", "Sat"];
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
     const [streakCount, setStreakCount] = useState(0);
+    const [showStreakModal, setShowStreakModal] = useState(false);
 
     useEffect(() => {
         async function GetUser() {
@@ -220,6 +223,20 @@ export default function HomeScreen() {
         }, []),
     );
 
+    useFocusEffect(
+        useCallback(() => {
+            async function checkStreakModal() {
+                const today = new Date().toISOString().slice(0, 10);
+                const lastShown = await AsyncStorage.getItem("lastStreakModalDate");
+                if (lastShown !== today) {
+                    setShowStreakModal(true);
+                    await AsyncStorage.setItem("lastStreakModalDate", today);
+                }
+            }
+            checkStreakModal();
+        }, []),
+    );
+
     if (items === null || items.length === 0) {
         return <View></View>;
     }
@@ -307,8 +324,8 @@ export default function HomeScreen() {
                     onPress={() => router.push("/badges")}
                 >
                     <View className="mt-5 flex-row gap-10 w-full h-[50px] rounded-[20px] justify-around">
-                        {streakDays.map((day, index) => (
-                            <View key={index} className="items-center">
+                        {streakDays.map((day, idx) => (
+                            <View key={idx} className="items-center">
                                 {day.isActive ? (
                                     <StreakFire width={16} height={16} />
                                 ) : (
@@ -373,6 +390,15 @@ export default function HomeScreen() {
                     )}
                 </View>
             </View>
+            <StreakModal
+                isVisible={showStreakModal}
+                onClose={() => setShowStreakModal(false)}
+                streakCount={streakCount}
+                userName={items?.[0]?.name || "Doe"}
+                avgMonthly={10000}
+                avgDaily={1000}
+                weekStreak={streakDays.map((day) => day.isActive)}
+            />
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );

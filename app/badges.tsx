@@ -2,7 +2,7 @@
     Route -> "index.tsx" ->"badges.tsx"
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 10, 2025]
+        Miguel Armand B. Sta. Ana [May 10 , 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang

@@ -13,7 +13,7 @@
     Description: This is the Expense Explorer Badge Screen
 
 -------------------------------------------------------------------------------------------------------------- */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import ExpenseExplorerSVG from "../../assets/bigbadges/big_expense_explorer.svg";
@@ -22,6 +22,8 @@ import Trophy from "../../assets/bigbadges/trophy.svg";
 import Save from "../../assets/bigbadges/save.svg";
 import Continue from "../../assets/bigbadges/continue.svg";
 import { useNavigation } from "@react-navigation/native";
+import { db } from "@/database";
+import { user_tb } from "@/database/schema";
 
 type ExpenseExplorerProps = {
     userName?: string;
@@ -72,6 +74,26 @@ const ExpenseExplorer: React.FC<ExpenseExplorerProps> = ({
             </View>
         </>
     );
+};
+
+const EarnedExpenseExplorerScreen = (props: ExpenseExplorerProps) => {
+    const [userName, setUserName] = useState("User");
+
+    useEffect(() => {
+        async function fetchUserName() {
+            try {
+                const users = await db.select().from(user_tb);
+                if (users.length > 0) {
+                    setUserName(users[0].name || "User");
+                }
+            } catch (err) {
+                console.error("Error fetching user name:", err);
+            }
+        }
+        fetchUserName();
+    }, []);
+
+    return <ExpenseExplorer userName={userName} {...props} />;
 };
 
 const styles = StyleSheet.create({
@@ -129,4 +151,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ExpenseExplorer;
+export default EarnedExpenseExplorerScreen;
