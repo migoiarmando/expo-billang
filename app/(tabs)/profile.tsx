@@ -53,6 +53,8 @@ import { db } from "@/database";
 import { eq, sql } from "drizzle-orm";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import * as ImagePicker from "expo-image-picker";
+import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
+import AboutModal from "@/components/AboutModal";
 
 // Get screen width
 const { width } = Dimensions.get("window");
@@ -156,6 +158,8 @@ export default function ProfileScreen() {
     const [showAddBudget, setShowAddBudget] = useState(false);
     const router = useRouter();
     const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
+    const [privacyVisible, setPrivacyVisible] = useState(false);
+    const [aboutVisible, setAboutVisible] = useState(false);
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -305,12 +309,12 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="about"
                             label="About"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => setAboutVisible(true)}
                         />
                         <SettingsMenuItem
                             icon="privacy policy & terms"
                             label="Privacy Policy & Terms"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => setPrivacyVisible(true)}
                         />
                     </ScrollView>
                 </View>
@@ -321,6 +325,13 @@ export default function ProfileScreen() {
                 onClose={handleCloseModal}
                 onSelect={handleSelectBudgetType}
             />
+
+            <PrivacyPolicyModal
+                isVisible={privacyVisible}
+                onClose={() => setPrivacyVisible(false)}
+            />
+
+            <AboutModal isVisible={aboutVisible} onClose={() => setAboutVisible(false)} />
 
             <StatusBar style="dark" backgroundColor="white" />
         </>
