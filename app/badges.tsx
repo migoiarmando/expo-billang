@@ -2,7 +2,7 @@
     Route -> "index.tsx" ->"badges.tsx"
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 9, 2025]
+        Miguel Armand B. Sta. Ana [May 10, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -16,6 +16,7 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import StreakFire from "../assets/streaksandbadges/streakfire.svg";
 import GrayFire from "../assets/streaksandbadges/grayfire.svg";
 import EarnedPiggyPioneer from "../assets/streaksandbadges/earned/earned_piggy_pioneer.svg";
+import EarnedExpenseExplorer from "../assets/streaksandbadges/earned/earned_expense_explorer.svg";
 import IncompletePiggyPioneer from "../assets/streaksandbadges/incomplete/incomplete_piggy_pioneer.svg";
 import IncompleteExpenseExplorer from "../assets/streaksandbadges/incomplete/incomplete_expense_explorer.svg";
 import IncompleteDebtSlayer from "../assets/streaksandbadges/incomplete/incomplete_debt_slayer.svg";
@@ -59,6 +60,7 @@ const Badges: React.FC = () => {
         };
     });
     const [piggyPioneerEarned, setPiggyPioneerEarned] = useState(false);
+    const [expenseExplorerEarned, setExpenseExplorerEarned] = useState(false);
 
     const badges: {
         title: string;
@@ -79,9 +81,13 @@ const Badges: React.FC = () => {
         {
             title: "Expense Explorer",
             description: "User logs their first 10 expenses",
-            icon: IncompleteExpenseExplorer,
-            status: "incomplete",
-            route: "/badgescreen/expense_explorer",
+            icon: expenseExplorerEarned
+                ? EarnedExpenseExplorer
+                : IncompleteExpenseExplorer,
+            status: expenseExplorerEarned ? "earned" : "incomplete",
+            route: expenseExplorerEarned
+                ? "/badgescreen/earned_expense_explorer"
+                : "/badgescreen/expense_explorer",
         },
         {
             title: "Debt Slayer",
@@ -157,6 +163,12 @@ const Badges: React.FC = () => {
     useEffect(() => {
         AsyncStorage.getItem("piggyPioneerEarned").then((val) => {
             setPiggyPioneerEarned(val === "true");
+        });
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.getItem("expenseExplorerEarned").then((val) => {
+            setExpenseExplorerEarned(val === "true");
         });
     }, []);
 
