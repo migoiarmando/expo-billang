@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 10, 2025]
+        Miguel Armand B. Sta. Ana [May 11, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "white",
         position: "absolute",
-        top: 0,
+        top: -15,
         left: 0,
         right: 0,
         borderTopLeftRadius: 51,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         justifyContent: "flex-start",
         paddingHorizontal: 30,
-        paddingTop: 30,
+        paddingTop: 20,
         width: "100%",
     },
     title: {

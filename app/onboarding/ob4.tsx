@@ -3,6 +3,7 @@
     Route -> "onboarding/ob.tsx"
 
     Last edited: 
+        Miguel Armand B. Sta. Ana [May 11, 2025]
         John Bicierro [Feb 22, 2025]
 
     Company: github.com/codekada
@@ -18,10 +19,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown, User } from "lucide-react-native";
-import { View, Text, Button, TextInput, Pressable } from "react-native";
+import { View, Text, Button, TextInput, Pressable, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { user_tb } from "@/database/schema";
 import { db } from "@/database";
+import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProfilePic from "@/assets/images/profilepic.svg"; // Use your SVG or fallback
+import { Image } from "react-native";
 
 const currencies = [
     { id: "PHP", name: "Philippine Peso (₱)" },
@@ -35,12 +40,37 @@ export default function OnboardingPage4() {
     const inputRef = useRef<TextInput>(null);
     const [name, setName] = useState("");
     const [currency] = useState("Philippine Peso ($)");
+    const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
 
     useEffect(() => {
         setTimeout(() => {
             inputRef.current?.focus();
         }, 500);
+
+        // Load profile image if already set
+        AsyncStorage.getItem("profileImageUri").then((uri) => {
+            if (uri) setProfileImageUri(uri);
+        });
     }, []);
+
+    const handleProfilePicPress = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            alert("Permission to access gallery is required!");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            const uri = result.assets[0].uri;
+            setProfileImageUri(uri);
+            await AsyncStorage.setItem("profileImageUri", uri);
+        }
+    };
 
     async function SaveUser() {
         try {
@@ -68,11 +98,20 @@ export default function OnboardingPage4() {
                 </Text>
 
                 <View className="mb-5 mt-[100px] flex items-center justify-center">
-                    <View className="w-[120px] h-[120px] bg-bgBorder-1 rounded-full flex items-center justify-center">
-                        <View className="bg-bgBorder-2 rounded-full p-8">
-                            <User color="#C9C9C9" size={50} />
-                        </View>
-                    </View>
+                    <TouchableOpacity
+                        onPress={handleProfilePicPress}
+                        activeOpacity={0.7}
+                        className="w-[120px] h-[120px] bg-bgBorder-1 rounded-full flex items-center justify-center"
+                    >
+                        {profileImageUri ? (
+                            <Image
+                                source={{ uri: profileImageUri }}
+                                style={{ width: 120, height: 120, borderRadius: 60 }}
+                            />
+                        ) : (
+                            <ProfilePic width={120} height={120} />
+                        )}
+                    </TouchableOpacity>
 
                     {/* Form */}
                     <View className="mt-10 mb-5 flex gap-3 items-center">

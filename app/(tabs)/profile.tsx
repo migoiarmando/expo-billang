@@ -1,9 +1,9 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-         Miguel Armand B. Sta. Ana [May 9, 2025]
+         Miguel Armand B. Sta. Ana [May 11, 2025]
         John Bicierro [Mar 17, 2025]
-        Miguel Armand B. Sta. Ana [Mar 10, 2025]
+
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -90,7 +90,7 @@ const ProfileSection: React.FC<{
             <View className="flex-1">
                 <View className="flex-row items-center">
                     <Text className="text-[26px] text-[#2B3854] font-lexend">
-                        {userName || "Your Name"}
+                        {userName?.split(" ")[0] || "Your Name"}
                     </Text>
                     <View className="flex-row items-center ml-2">
                         <StreakIcon width={25} height={25} style={{ marginTop: 4 }} />
@@ -159,13 +159,18 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPres
 
     return (
         <TouchableOpacity
-            className="flex-row items-center justify-between py-2.5 pr-3.5"
+            className="flex-row items-center justify-between py-2 pr-3 mb-1"
             onPress={onPress}
             activeOpacity={0.7}
         >
-            <View className="flex-row items-center pl-5">
-                <IconComponent width={16} height={16} className="w-4 h-4 mr-2" />
-                <Text className="text-base text-[#2B3854] font-lexend ml-3">{label}</Text>
+            <View className="flex-row items-center pl-3">
+                <IconComponent width={20} height={20} className="w-4 h-4 mr-2" />
+                <Text
+                    className="text-base text-[#2B3854] font-lexend ml-2"
+                    style={{ fontSize: 18, lineHeight: 24 }}
+                >
+                    {label}
+                </Text>
             </View>
             <ChevronRight size={20} color="#666" />
         </TouchableOpacity>
