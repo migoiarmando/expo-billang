@@ -111,7 +111,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
                             <SvgBillangLogo width={70} height={70} />
                         </View>
                         <Text style={styles.title}>Billang</Text>
-                        <Text style={styles.version}>Version: 0.4.81</Text>
+                        <Text style={styles.version}>Version: 0.4.82</Text>
                         <Text style={styles.description}>
                             An expense management tracking system built for mobile devices
                             to efficiently track, manage, and allocate monetary expenses
