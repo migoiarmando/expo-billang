@@ -334,7 +334,7 @@ export default function ProfileScreen() {
                         <Header name="Profile" />
                         <TouchableOpacity
                             onPress={() => {
-                                // TODO: Add notification navigat ion or modal here
+                                router.push("/notifications");
                             }}
                             style={{ marginLeft: 0 }}
                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -403,7 +403,7 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="notification"
                             label="Notifications"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => router.push("/notifications")}
                         />
                         <SettingsMenuItem
                             icon="about"

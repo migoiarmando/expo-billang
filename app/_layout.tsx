@@ -104,6 +104,7 @@ function RootLayoutNav() {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="badges" options={{ headerShown: true }} />
                 <Stack.Screen name="badgescreen" options={{ headerShown: false }} />
+                <Stack.Screen name="notifications" options={{ headerShown: true }} />
 
                 {/* Onboarding */}
                 <Stack.Screen name="onboarding/ob" options={{ headerShown: false }} />
