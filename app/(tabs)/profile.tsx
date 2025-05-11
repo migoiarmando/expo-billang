@@ -259,6 +259,22 @@ export default function ProfileScreen() {
         }, []),
     );
 
+    useFocusEffect(
+        useCallback(() => {
+            async function loadBadges() {
+                try {
+                    const piggy = await AsyncStorage.getItem("piggyPioneerEarned");
+                    setPiggyPioneerEarned(piggy === "true");
+                    const expense = await AsyncStorage.getItem("expenseExplorerEarned");
+                    setExpenseExplorerEarned(expense === "true");
+                } catch (err) {
+                    console.error("Error loading badges:", err);
+                }
+            }
+            loadBadges();
+        }, []),
+    );
+
     useEffect(() => {
         async function loadProfileImage() {
             const uri = await AsyncStorage.getItem("profileImageUri");
@@ -282,27 +298,9 @@ export default function ProfileScreen() {
                 console.error("Error loading streak count:", err);
             }
         }
-        async function loadPiggyPioneerEarned() {
-            try {
-                const val = await AsyncStorage.getItem("piggyPioneerEarned");
-                setPiggyPioneerEarned(val === "true");
-            } catch (err) {
-                console.error("Error loading piggy pioneer earned:", err);
-            }
-        }
-        async function loadExpenseExplorerEarned() {
-            try {
-                const val = await AsyncStorage.getItem("expenseExplorerEarned");
-                setExpenseExplorerEarned(val === "true");
-            } catch (err) {
-                console.error("Error loading expense explorer earned:", err);
-            }
-        }
         loadProfileImage();
         loadUserName();
         loadStreakCount();
-        loadPiggyPioneerEarned();
-        loadExpenseExplorerEarned();
     }, []);
 
     // Function to handle profile picture tap
