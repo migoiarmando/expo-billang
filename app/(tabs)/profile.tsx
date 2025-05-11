@@ -47,6 +47,9 @@ import SettingsCustomization from "@/assets/images/settingscustomization.svg";
 import Notifications from "@/assets/images/notifications.svg";
 import About from "@/assets/images/about.svg";
 import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
+import NotificationIcon from "@/assets/images/notification.svg";
+import MiniPiggyPioneer from "@/assets/minibadges/mini_piggy_pioneer.svg";
+import MiniExpenseExplorer from "@/assets/minibadges/mini_expense_explorer.svg";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
@@ -66,7 +69,8 @@ const ProfileSection: React.FC<{
     onPressProfilePic: () => void;
     userName: string;
     streakCount: number;
-}> = ({ profileImageUri, onPressProfilePic, userName, streakCount }) => {
+    miniBadges?: React.ReactNode;
+}> = ({ profileImageUri, onPressProfilePic, userName, streakCount, miniBadges }) => {
     return (
         <View className="flex-row items-center mt-5 mb-5">
             <TouchableOpacity onPress={onPressProfilePic} className="mr-4">
@@ -103,6 +107,8 @@ const ProfileSection: React.FC<{
                         </Text>
                     </View>
                 </View>
+                {/* Mini badges row */}
+                {miniBadges && <View className="flex-row mt-2 gap-2">{miniBadges}</View>}
             </View>
         </View>
     );
@@ -177,6 +183,8 @@ export default function ProfileScreen() {
     const [privacyVisible, setPrivacyVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
     const [streakCount, setStreakCount] = useState(0);
+    const [piggyPioneerEarned, setPiggyPioneerEarned] = useState(false);
+    const [expenseExplorerEarned, setExpenseExplorerEarned] = useState(false);
 
     const handleAddBudget = () => {
         setIsModalVisible(true);
@@ -269,9 +277,27 @@ export default function ProfileScreen() {
                 console.error("Error loading streak count:", err);
             }
         }
+        async function loadPiggyPioneerEarned() {
+            try {
+                const val = await AsyncStorage.getItem("piggyPioneerEarned");
+                setPiggyPioneerEarned(val === "true");
+            } catch (err) {
+                console.error("Error loading piggy pioneer earned:", err);
+            }
+        }
+        async function loadExpenseExplorerEarned() {
+            try {
+                const val = await AsyncStorage.getItem("expenseExplorerEarned");
+                setExpenseExplorerEarned(val === "true");
+            } catch (err) {
+                console.error("Error loading expense explorer earned:", err);
+            }
+        }
         loadProfileImage();
         loadUserName();
         loadStreakCount();
+        loadPiggyPioneerEarned();
+        loadExpenseExplorerEarned();
     }, []);
 
     // Function to handle profile picture tap
@@ -298,14 +324,40 @@ export default function ProfileScreen() {
         <>
             <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
                 <View style={{ marginHorizontal: 20, marginTop: 20 }}>
-                    <Header name="Profile" />
-
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Header name="Profile" />
+                        <TouchableOpacity
+                            onPress={() => {
+                                // TODO: Add notification navigat ion or modal here
+                            }}
+                            style={{ marginLeft: 0 }}
+                            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        >
+                            <NotificationIcon width={35} height={35} />
+                        </TouchableOpacity>
+                    </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection
                             profileImageUri={profileImageUri}
                             onPressProfilePic={handleProfilePicPress}
                             userName={userName}
                             streakCount={streakCount}
+                            miniBadges={
+                                <>
+                                    {piggyPioneerEarned && (
+                                        <MiniPiggyPioneer width={32} height={32} />
+                                    )}
+                                    {expenseExplorerEarned && (
+                                        <MiniExpenseExplorer width={32} height={32} />
+                                    )}
+                                </>
+                            }
                         />
 
                         <BudgetCard

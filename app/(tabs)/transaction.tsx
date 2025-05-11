@@ -50,6 +50,7 @@ import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import NotificationIcon from "@/assets/images/notification.svg";
 
 export default function TransactionScreen() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -97,10 +98,25 @@ export default function TransactionScreen() {
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View className="flex-1 mx-[20px] mt-[30px]">
-                <View style={styles.headerRow}>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 10,
+                    }}
+                >
                     <Text style={styles.title} className="font-lexend text-[24px]">
                         Transactions
                     </Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            // TODO: Add notification navigation or modal here
+                        }}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                        <NotificationIcon width={32} height={32} />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Search Bar */}
