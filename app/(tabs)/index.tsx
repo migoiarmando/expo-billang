@@ -3,7 +3,7 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
-        Miguel Sta. Ana [May 9, 2025]
+        Miguel Sta. Ana [May 11, 2025]
         John Bicierro [May 8, 2025]
         Romar Castro [Mar 9, 2025]
 
@@ -275,7 +275,7 @@ export default function HomeScreen() {
                     }}
                 >
                     <Text className="font-lexend text-[24px] text-[#2B3854]">
-                        Good Day, {items[0].name}!
+                        Good Day, {items[0].name?.split(" ")[0]}!
                     </Text>
                     <TouchableOpacity
                         onPress={() => {

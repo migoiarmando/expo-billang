@@ -2,7 +2,7 @@
 
     Last edited: 
 
-        Miguel Armand B. Sta. Ana [May 10, 2025]
+        Miguel Armand B. Sta. Ana [May 11, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -55,7 +55,9 @@ const ExpenseExplorer: React.FC<ExpenseExplorerProps> = ({
                     style={styles.container}
                 >
                     <Trophy />
-                    <Text style={styles.congrats}>{`Congrats, ${userName}!`}</Text>
+                    <Text
+                        style={styles.congrats}
+                    >{`Congrats, ${userName?.split(" ")[0] || "User"}!`}</Text>
                     <Text style={styles.unlocked}>You've Unlocked a Badge!</Text>
                     <ExpenseExplorerSVG />
                     <Text style={styles.title}>Expense Explorer</Text>
@@ -67,7 +69,7 @@ const ExpenseExplorer: React.FC<ExpenseExplorerProps> = ({
                     <TouchableOpacity style={styles.saveButton}>
                         <Save />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleExit}>
+                    <TouchableOpacity onPress={handleExit} style={{ marginRight: -15 }}>
                         <Continue />
                     </TouchableOpacity>
                 </View>
