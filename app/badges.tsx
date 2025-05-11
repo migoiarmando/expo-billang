@@ -2,7 +2,7 @@
     Route -> "index.tsx" ->"badges.tsx"
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 10 , 2025]
+        Miguel Armand B. Sta. Ana [May 11 , 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -26,7 +26,7 @@ import BigFireStreak from "../assets/streaksandbadges/bigfirestreak.svg";
 import { useNavigation, useRouter } from "expo-router";
 import { getStreak } from "../utils/streak";
 import { db } from "@/database";
-import { transactions_tb } from "@/database/schema";
+import { transactions_tb, user_tb } from "@/database/schema";
 import { sql, eq } from "drizzle-orm";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -41,7 +41,7 @@ const badgeRoutes: Record<string, string> = {
 const Badges: React.FC = () => {
     // Data
     const [streakCount, setStreakCount] = useState(0);
-    const userName = "Doe";
+    const [userName, setUserName] = useState<string>("");
     const [avgSpent, setAvgSpent] = useState<string>("₱1,000");
     const statsData = {
         weeks: Math.floor(streakCount / 7),
@@ -170,6 +170,23 @@ const Badges: React.FC = () => {
         AsyncStorage.getItem("expenseExplorerEarned").then((val) => {
             setExpenseExplorerEarned(val === "true");
         });
+    }, []);
+
+    useEffect(() => {
+        async function loadUserName() {
+            try {
+                const users = await db.select().from(user_tb);
+                if (users.length > 0) {
+                    setUserName(users[0].name || "Your Name");
+                } else {
+                    setUserName("Your Name");
+                }
+            } catch (err) {
+                console.error("Error loading user name:", err);
+                setUserName("Your Name");
+            }
+        }
+        loadUserName();
     }, []);
 
     // Streak Counter Component

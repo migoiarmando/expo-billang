@@ -49,6 +49,7 @@ import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StreakModal from "@/components/StreakModal";
+import NotificationIcon from "@/assets/images/notification.svg";
 
 function formatWithCommas(value: number | string): string {
     const str = String(value).replace(/,/g, "");
@@ -265,10 +266,25 @@ export default function HomeScreen() {
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View className="mx-[20px] mt-[20px]">
                 {/* Header */}
-                <View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 10,
+                    }}
+                >
                     <Text className="font-lexend text-[24px] text-[#2B3854]">
                         Good Day, {items[0].name}!
                     </Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            // TODO: Add notification navigation or modal here
+                        }}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                        <NotificationIcon width={32} height={32} />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Budget Card */}

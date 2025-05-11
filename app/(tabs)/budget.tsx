@@ -30,6 +30,7 @@ import { budget_tb, transactions_tb } from "@/database/schema";
 import { useFocusEffect } from "@react-navigation/native";
 import { SearchBar } from "@/components/SearchBar";
 import { and, eq, sql } from "drizzle-orm";
+import NotificationIcon from "@/assets/images/notification.svg";
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -112,7 +113,24 @@ export default function BudgetScreen() {
     return (
         <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
             <View className="flex-1 max-w-[440px] self-center w-full px-[20px] mt-[20px] ">
-                <Header name="Budget" />
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 10,
+                    }}
+                >
+                    <Header name="Budget" />
+                    <TouchableOpacity
+                        onPress={() => {
+                            // TODO: Add notification navigation or modal here
+                        }}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                        <NotificationIcon width={32} height={32} />
+                    </TouchableOpacity>
+                </View>
                 <SearchBar
                     title="Search Budget"
                     className="mt-5"
