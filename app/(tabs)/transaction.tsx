@@ -26,7 +26,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { SearchBar } from "@/components/SearchBar";
 import { transactions_tb } from "@/database/schema";
 import { db } from "@/database";
@@ -111,7 +111,7 @@ export default function TransactionScreen() {
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
-                            // TODO: Add notification navigation or modal here
+                            router.push("/notifications");
                         }}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >

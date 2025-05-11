@@ -279,7 +279,7 @@ export default function HomeScreen() {
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
-                            // TODO: Add notification navigation or modal here
+                            router.push("/notifications");
                         }}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
