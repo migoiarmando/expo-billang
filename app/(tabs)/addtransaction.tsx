@@ -16,15 +16,23 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { db } from "@/database";
-import { transactions_tb } from "@/database/schema";
+import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Folder, Paperclip } from "lucide-react-native";
-import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    Pressable,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { eq } from "drizzle-orm";
+import BudgetSelectModal, { Budget } from "@/components/BudgetSelectorModal";
 
 import FoodIcon from "@/assets/transaction-icons/food.svg";
 import TransitIcon from "@/assets/transaction-icons/transit.svg";
@@ -34,6 +42,22 @@ import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import IncomeIcon from "@/assets/transaction-icons/income.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
+import GrayIcon from "@/assets/smallbudgeticons/gray_smallbudgeticon.svg";
+import BlueIcon from "@/assets/smallbudgeticons/blue_budgeticon.svg";
+import OrangeIcon from "@/assets/smallbudgeticons/orange_budgeticon.svg";
+import RedIcon from "@/assets/smallbudgeticons/red_budgeticon.svg";
+import GreenIcon from "@/assets/smallbudgeticons/green_budgeticon.svg";
+import PinkIcon from "@/assets/smallbudgeticons/pink_budgeticon.svg";
+
+// Map themeColor to icon
+const iconMap: Record<string, React.FC<any>> = {
+    "#E6E6E6": GrayIcon,
+    "#87CDFF": BlueIcon,
+    "#FEC794": OrangeIcon,
+    "#FF8787": RedIcon,
+    "#9FE0A9": GreenIcon,
+    "#FADDFF": PinkIcon,
+};
 
 export default function AddTransaction() {
     const [amount, setAmount] = useState("");
@@ -143,6 +167,22 @@ function ExpenseContent({
     const [title, setTitle] = useState("");
     const [notes, setNotes] = useState("");
     const [budgetId, setBudgetId] = useState<string>("");
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [isBudgetModalVisible, setBudgetModalVisible] = useState(false);
+    const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
+
+    useEffect(() => {
+        async function fetchBudgets() {
+            try {
+                const res = await db.select().from(budget_tb);
+                console.log("All budgets fetched:", res);
+                setBudgets(res);
+            } catch (err) {
+                console.error("Failed to fetch budgets:", err);
+            }
+        }
+        fetchBudgets();
+    }, []);
 
     async function saveTransaction() {
         try {
@@ -202,15 +242,22 @@ function ExpenseContent({
     return (
         <View className="flex-grow mt-[20px]">
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                <Folder color="#9D9D9D" size={12} />
-                <TextInput
-                    placeholder="Select Budget ID"
-                    className="font-lexend"
-                    value={String(budgetId)}
-                    onChangeText={(text) => {
-                        setBudgetId(text);
-                    }}
-                />
+                <Pressable
+                    style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+                    onPress={() => setBudgetModalVisible(true)}
+                >
+                    {selectedBudget ? (
+                        <>
+                            {(iconMap[selectedBudget.themeColor] || iconMap["#E6E6E6"])({
+                                width: 24,
+                                height: 24,
+                            })}
+                            <Text style={{ marginLeft: 8 }}>{selectedBudget.title}</Text>
+                        </>
+                    ) : (
+                        <Text style={{ color: "#9D9D9D" }}>Select Budget</Text>
+                    )}
+                </Pressable>
             </View>
 
             {/* Category Dropdown */}
@@ -281,6 +328,16 @@ function ExpenseContent({
             >
                 <Text className="font-lexend text-white">Save Transaction</Text>
             </TouchableOpacity>
+
+            <BudgetSelectModal
+                isVisible={isBudgetModalVisible}
+                onClose={() => setBudgetModalVisible(false)}
+                budgets={budgets}
+                onSelect={(budget) => {
+                    setSelectedBudget(budget);
+                    setBudgetId(String(budget.id));
+                }}
+            />
         </View>
     );
 }
