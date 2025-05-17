@@ -21,7 +21,17 @@ import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Folder, Paperclip } from "lucide-react-native";
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { eq } from "drizzle-orm";
@@ -40,75 +50,95 @@ export default function AddTransaction() {
     const [selected, setSelected] = useState<"expense" | "income">("expense");
 
     return (
-        <SafeAreaView style={{ backgroundColor: "#fff" }}>
-            <View className="mx-[20px] h-screen flex">
-                {/* Header */}
-                <View className="mt-[30px] flex-row items-center justify-between">
-                    <Text className="text-[#2B3854] font-lexend text-[24px]">
-                        Add transaction
-                    </Text>
-                </View>
-
-                {/* Edit number */}
-                <View className="items-center mt-[50px]">
-                    <View className="flex-row items-center gap-1">
-                        <Text className="font-lexend text-[20px]">₱</Text>
-                        <TextInput
-                            keyboardType="numeric"
-                            placeholder="0"
-                            placeholderTextColor="#3B3854"
-                            className="font-lexend text-[32px]"
-                            value={amount}
-                            onChangeText={(text) => {
-                                setAmount(text);
-                            }}
-                        />
-                    </View>
-
-                    <Text className="text-[12px] font-lexend text-gray-600">
-                        Click me to edit
-                    </Text>
-                </View>
-
-                <View className="flex-row mt-[50px] gap-[15px]">
-                    <TouchableOpacity
-                        onPress={() => setSelected("expense")}
-                        className={`flex-grow items-center rounded-full py-2 ${
-                            selected === "expense" ? "bg-[#FD7474]" : "bg-bgBorder-2"
-                        }`}
+        <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        keyboardShouldPersistTaps="handled"
                     >
-                        <Text
-                            className={`font-lexendMedium ${
-                                selected === "expense" ? "text-white" : "text-[#BABABA]"
-                            }`}
-                        >
-                            Expense
-                        </Text>
-                    </TouchableOpacity>
+                        <View className="mx-[20px] h-screen flex">
+                            {/* Header */}
+                            <View className="mt-[30px] flex-row items-center justify-between">
+                                <Text className="text-[#2B3854] font-lexend text-[24px]">
+                                    Add transaction
+                                </Text>
+                            </View>
 
-                    <TouchableOpacity
-                        onPress={() => setSelected("income")}
-                        className={`flex-grow items-center rounded-full py-2 ${
-                            selected === "income" ? "bg-system-green" : "bg-bgBorder-2"
-                        }`}
-                    >
-                        <Text
-                            className={`font-lexendMedium ${
-                                selected === "income" ? "text-white" : "text-[#BABABA]"
-                            }`}
-                        >
-                            Income
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                            {/* Edit number */}
+                            <View className="items-center mt-[50px]">
+                                <View className="flex-row items-center gap-1">
+                                    <Text className="font-lexend text-[20px]">₱</Text>
+                                    <TextInput
+                                        keyboardType="numeric"
+                                        placeholder="0"
+                                        placeholderTextColor="#3B3854"
+                                        className="font-lexend text-[32px]"
+                                        value={amount}
+                                        onChangeText={(text) => {
+                                            setAmount(text);
+                                        }}
+                                    />
+                                </View>
 
-                {/* Dynamic Content */}
-                {selected === "expense" ? (
-                    <ExpenseContent amount={amount} setAmount={setAmount} />
-                ) : (
-                    <IncomeContent amount={amount} />
-                )}
-            </View>
+                                <Text className="text-[12px] font-lexend text-gray-600">
+                                    Click me to edit
+                                </Text>
+                            </View>
+
+                            <View className="flex-row mt-[50px] gap-[15px]">
+                                <TouchableOpacity
+                                    onPress={() => setSelected("expense")}
+                                    className={`flex-grow items-center rounded-full py-2 ${
+                                        selected === "expense"
+                                            ? "bg-[#FD7474]"
+                                            : "bg-bgBorder-2"
+                                    }`}
+                                >
+                                    <Text
+                                        className={`font-lexendMedium ${
+                                            selected === "expense"
+                                                ? "text-white"
+                                                : "text-[#BABABA]"
+                                        }`}
+                                    >
+                                        Expense
+                                    </Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={() => setSelected("income")}
+                                    className={`flex-grow items-center rounded-full py-2 ${
+                                        selected === "income"
+                                            ? "bg-system-green"
+                                            : "bg-bgBorder-2"
+                                    }`}
+                                >
+                                    <Text
+                                        className={`font-lexendMedium ${
+                                            selected === "income"
+                                                ? "text-white"
+                                                : "text-[#BABABA]"
+                                        }`}
+                                    >
+                                        Income
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Dynamic Content */}
+                            {selected === "expense" ? (
+                                <ExpenseContent amount={amount} setAmount={setAmount} />
+                            ) : (
+                                <IncomeContent amount={amount} />
+                            )}
+                        </View>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
 
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
