@@ -13,7 +13,7 @@
         - This is the modal that pops up when the user selects a budget from the budget screen.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Dimensions, FlatList } from "react-native";
 import Animated, {
     useAnimatedStyle,
@@ -30,6 +30,8 @@ import OrangeIcon from "@/assets/smallbudgeticons/orange_budgeticon.svg";
 import RedIcon from "@/assets/smallbudgeticons/red_budgeticon.svg";
 import GreenIcon from "@/assets/smallbudgeticons/green_budgeticon.svg";
 import PinkIcon from "@/assets/smallbudgeticons/pink_budgeticon.svg";
+import { db } from "@/database";
+import { budget_tb } from "@/database/schema";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.55;
@@ -65,9 +67,27 @@ interface BudgetSelectModalProps {
 const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
     isVisible,
     onClose,
-    budgets,
+
     onSelect,
 }) => {
+    // Fetch
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+
+    useEffect(() => {
+        if (!isVisible) return;
+
+        async function fetchBudgets() {
+            try {
+                const budgets = await db.select().from(budget_tb);
+                setBudgets(budgets);
+            } catch (err) {
+                console.error("[error] Failed to fetch budgets in modal:", err);
+            }
+        }
+
+        fetchBudgets();
+    }, [isVisible]);
+
     const translateY = useSharedValue(MODAL_HEIGHT);
     const context = useSharedValue({ y: 0 });
     const active = useSharedValue(false);
@@ -128,6 +148,7 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
             <GestureDetector gesture={gesture}>
                 <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
                     <Text style={styles.title}>Select Budget</Text>
+
                     {budgets.length <= 2 ? (
                         <View
                             style={{
@@ -145,15 +166,15 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                                         key={item.id}
                                         style={{
                                             alignItems: "center",
-                                            marginHorizontal: 16,
-                                            width: 90,
+                                            marginHorizontal: 10,
+                                            width: 80,
                                         }}
                                         onPress={() => {
                                             onSelect(item);
                                             handleClose();
                                         }}
                                     >
-                                        <Icon width={48} height={48} />
+                                        <Icon width={60} height={60} />
                                         <Text style={styles.folderText} numberOfLines={1}>
                                             {item.title}
                                         </Text>
@@ -166,7 +187,6 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                             data={budgets}
                             keyExtractor={(item) => item.id.toString()}
                             numColumns={3}
-                            contentContainerStyle={styles.grid}
                             renderItem={({ item }) => {
                                 const Icon = iconMap[item.themeColor] || GrayIcon;
                                 return (
@@ -177,8 +197,12 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                                             handleClose();
                                         }}
                                     >
-                                        <Icon width={48} height={48} />
-                                        <Text style={styles.folderText} numberOfLines={1}>
+                                        <Icon width={60} height={60} />
+                                        <Text
+                                            style={styles.folderText}
+                                            numberOfLines={1}
+                                            ellipsizeMode="tail"
+                                        >
                                             {item.title}
                                         </Text>
                                     </Pressable>
@@ -206,7 +230,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     modalContainer: {
-        height: MODAL_HEIGHT,
+        height: MODAL_HEIGHT, // e.g. 400 or any fixed height you want
         position: "absolute",
         bottom: 0,
         left: 0,
@@ -224,16 +248,12 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         fontFamily: "Lexend_600SemiBold",
     },
-    grid: {
-        paddingHorizontal: 16,
-        paddingBottom: 16,
-    },
+
     folder: {
-        flex: 1,
         alignItems: "center",
-        margin: 8,
-        minWidth: 90,
-        maxWidth: 110,
+        justifyContent: "center",
+        paddingHorizontal: 30,
+        paddingVertical: 10,
     },
     folderText: {
         marginTop: 8,
@@ -241,6 +261,9 @@ const styles = StyleSheet.create({
         color: "#222",
         textAlign: "center",
         fontFamily: "Lexend_400Regular",
+        width: 70,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
     },
 });
 
