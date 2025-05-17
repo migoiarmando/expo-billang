@@ -24,7 +24,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
-
 import GrayIcon from "@/assets/smallbudgeticons/gray_smallbudgeticon.svg";
 import BlueIcon from "@/assets/smallbudgeticons/blue_budgeticon.svg";
 import OrangeIcon from "@/assets/smallbudgeticons/orange_budgeticon.svg";

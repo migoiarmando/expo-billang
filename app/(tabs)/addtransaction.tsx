@@ -20,7 +20,6 @@ import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Folder, Paperclip } from "lucide-react-native"
 import { useState, useEffect } from "react";
-import { useState } from "react";
 import {
     View,
     Text,
