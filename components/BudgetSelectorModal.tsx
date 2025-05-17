@@ -128,64 +128,29 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
             <GestureDetector gesture={gesture}>
                 <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
                     <Text style={styles.title}>Select Budget</Text>
-                    {budgets.length <= 2 ? (
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                width: "100%",
-                                marginTop: 24,
-                            }}
-                        >
-                            {budgets.map((item) => {
-                                const Icon = iconMap[item.themeColor] || GrayIcon;
-                                return (
-                                    <Pressable
-                                        key={item.id}
-                                        style={{
-                                            alignItems: "center",
-                                            marginHorizontal: 16,
-                                            width: 90,
-                                        }}
-                                        onPress={() => {
-                                            onSelect(item);
-                                            handleClose();
-                                        }}
-                                    >
-                                        <Icon width={48} height={48} />
-                                        <Text style={styles.folderText} numberOfLines={1}>
-                                            {item.title}
-                                        </Text>
-                                    </Pressable>
-                                );
-                            })}
-                        </View>
-                    ) : (
-                        <FlatList
-                            data={budgets}
-                            keyExtractor={(item) => item.id.toString()}
-                            numColumns={3}
-                            contentContainerStyle={styles.grid}
-                            renderItem={({ item }) => {
-                                const Icon = iconMap[item.themeColor] || GrayIcon;
-                                return (
-                                    <Pressable
-                                        style={styles.folder}
-                                        onPress={() => {
-                                            onSelect(item);
-                                            handleClose();
-                                        }}
-                                    >
-                                        <Icon width={48} height={48} />
-                                        <Text style={styles.folderText} numberOfLines={1}>
-                                            {item.title}
-                                        </Text>
-                                    </Pressable>
-                                );
-                            }}
-                        />
-                    )}
+                    <FlatList
+                        data={budgets}
+                        keyExtractor={(item) => item.id.toString()}
+                        numColumns={3}
+                        contentContainerStyle={styles.grid}
+                        renderItem={({ item }) => {
+                            const Icon = iconMap[item.themeColor] || GrayIcon;
+                            return (
+                                <Pressable
+                                    style={styles.folder}
+                                    onPress={() => {
+                                        onSelect(item);
+                                        handleClose();
+                                    }}
+                                >
+                                    <Icon width={48} height={48} />
+                                    <Text style={styles.folderText} numberOfLines={1}>
+                                        {item.title}
+                                    </Text>
+                                </Pressable>
+                            );
+                        }}
+                    />
                 </Animated.View>
             </GestureDetector>
         </>

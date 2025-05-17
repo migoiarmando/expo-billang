@@ -3,7 +3,7 @@
     Route -> "onboarding/ob.tsx"
 
     Last edited:
-        Miguel Armand B. Sta. Ana [May 10, 2025]
+        Miguel Armand B. Sta. Ana [May 17, 2025]
         John Bicierro [Feb 22, 2025]
 
     Company: github.com/codekada
@@ -18,7 +18,7 @@ import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Folder, Paperclip } from "lucide-react-native"
+import { Folder, Paperclip } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import {
     View,
@@ -65,6 +65,26 @@ const iconMap: Record<string, React.FC<any>> = {
 export default function AddTransaction() {
     const [amount, setAmount] = useState("");
     const [selected, setSelected] = useState<"expense" | "income">("expense");
+
+    // --- LIFTED STATE FOR BUDGET MODAL ---
+    // These states were previously in ExpenseContent
+    const [budgets, setBudgets] = useState<Budget[]>([]); // All budgets
+    const [isBudgetModalVisible, setBudgetModalVisible] = useState(false); // Modal visibility
+    const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null); // Selected budget
+    const [budgetId, setBudgetId] = useState<string>(""); // Selected budget id
+
+    // Fetch budgets once on mount
+    useEffect(() => {
+        async function fetchBudgets() {
+            try {
+                const res = await db.select().from(budget_tb);
+                setBudgets(res);
+            } catch (err) {
+                console.error("Failed to fetch budgets:", err);
+            }
+        }
+        fetchBudgets();
+    }, []);
 
     return (
         <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -148,14 +168,44 @@ export default function AddTransaction() {
 
                             {/* Dynamic Content */}
                             {selected === "expense" ? (
-                                <ExpenseContent amount={amount} setAmount={setAmount} />
+                                <ExpenseContent
+                                    amount={amount}
+                                    setAmount={setAmount}
+                                    budgets={budgets}
+                                    isBudgetModalVisible={isBudgetModalVisible}
+                                    setBudgetModalVisible={setBudgetModalVisible}
+                                    selectedBudget={selectedBudget}
+                                    setSelectedBudget={setSelectedBudget}
+                                    budgetId={budgetId}
+                                    setBudgetId={setBudgetId}
+                                />
                             ) : (
-                                <IncomeContent amount={amount} />
+                                <IncomeContent
+                                    amount={amount}
+                                    budgets={budgets}
+                                    isBudgetModalVisible={isBudgetModalVisible}
+                                    setBudgetModalVisible={setBudgetModalVisible}
+                                    selectedBudget={selectedBudget}
+                                    setSelectedBudget={setSelectedBudget}
+                                    budgetId={budgetId}
+                                    setBudgetId={setBudgetId}
+                                />
                             )}
                         </View>
                     </ScrollView>
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
+
+            {/* --- Render BudgetSelectModal OUTSIDE the ScrollView --- */}
+            <BudgetSelectModal
+                isVisible={isBudgetModalVisible}
+                onClose={() => setBudgetModalVisible(false)}
+                budgets={budgets}
+                onSelect={(budget) => {
+                    setSelectedBudget(budget);
+                    setBudgetId(String(budget.id));
+                }}
+            />
 
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
@@ -165,9 +215,23 @@ export default function AddTransaction() {
 function ExpenseContent({
     amount,
     setAmount,
+    budgets,
+    isBudgetModalVisible,
+    setBudgetModalVisible,
+    selectedBudget,
+    setSelectedBudget,
+    budgetId,
+    setBudgetId,
 }: {
     amount: string;
     setAmount: React.Dispatch<React.SetStateAction<string>>;
+    budgets: Budget[];
+    isBudgetModalVisible: boolean;
+    setBudgetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedBudget: Budget | null;
+    setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
+    budgetId: string;
+    setBudgetId: React.Dispatch<React.SetStateAction<string>>;
 }) {
     const categoryIcons = [
         { name: "Food", icon: <FoodIcon width={24} height={24} /> },
@@ -189,23 +253,6 @@ function ExpenseContent({
     const [selectedCategory, setSelectedCategory] = useState(categoryIcons[0]);
     const [title, setTitle] = useState("");
     const [notes, setNotes] = useState("");
-    const [budgetId, setBudgetId] = useState<string>("");
-    const [budgets, setBudgets] = useState<Budget[]>([]);
-    const [isBudgetModalVisible, setBudgetModalVisible] = useState(false);
-    const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
-
-    useEffect(() => {
-        async function fetchBudgets() {
-            try {
-                const res = await db.select().from(budget_tb);
-                console.log("All budgets fetched:", res);
-                setBudgets(res);
-            } catch (err) {
-                console.error("Failed to fetch budgets:", err);
-            }
-        }
-        fetchBudgets();
-    }, []);
 
     async function saveTransaction() {
         try {
@@ -351,26 +398,29 @@ function ExpenseContent({
             >
                 <Text className="font-lexend text-white">Save Transaction</Text>
             </TouchableOpacity>
-
-            <BudgetSelectModal
-                isVisible={isBudgetModalVisible}
-                onClose={() => setBudgetModalVisible(false)}
-                budgets={budgets}
-                onSelect={(budget) => {
-                    setSelectedBudget(budget);
-                    setBudgetId(String(budget.id));
-                }}
-            />
         </View>
     );
 }
 
-type IncomeProps = {
+function IncomeContent({
+    amount,
+    budgets,
+    isBudgetModalVisible,
+    setBudgetModalVisible,
+    selectedBudget,
+    setSelectedBudget,
+    budgetId,
+    setBudgetId,
+}: {
     amount: string;
-};
-
-function IncomeContent(props: IncomeProps) {
-    const [budgetId, setBudgetId] = useState<string>("");
+    budgets: Budget[];
+    isBudgetModalVisible: boolean;
+    setBudgetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedBudget: Budget | null;
+    setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
+    budgetId: string;
+    setBudgetId: React.Dispatch<React.SetStateAction<string>>;
+}) {
     const [title, setTitle] = useState<string>("");
     const [notes, setNotes] = useState<string>("");
 
@@ -383,7 +433,7 @@ function IncomeContent(props: IncomeProps) {
             console.log("[debug] Invalid budget ID");
             return;
         }
-        if (!props.amount) {
+        if (!amount) {
             console.log("[debug] You need to edit the amount");
             return;
         }
@@ -392,7 +442,7 @@ function IncomeContent(props: IncomeProps) {
             await db.insert(transactions_tb).values({
                 budgetId: Number(budgetId),
                 type: "Income",
-                amount: Number(props.amount),
+                amount: Number(amount),
                 category: "Cash",
                 title: title,
                 notes: notes,
@@ -406,34 +456,26 @@ function IncomeContent(props: IncomeProps) {
         }
     }
 
-    /*
-        Developer Note: Logging for transaction database
-
-        useEffect(() => {
-            async function ShowTransactions() {
-                try {
-                    const res = await db.select().from(transactions_tb);
-                    console.log(res);
-                } catch (err) {
-                    console.error("Error fetching data:", err);
-                }
-            }
-            ShowTransactions();
-        }, []);
-    */
-
     return (
         <View className="flex-grow mt-[20px]">
+            {/* Budget Selector (same as Expense) */}
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                <Folder color="#9D9D9D" size={12} />
-                <TextInput
-                    placeholder="Select Budget ID"
-                    className="font-lexend"
-                    value={String(budgetId)}
-                    onChangeText={(text) => {
-                        setBudgetId(text);
-                    }}
-                />
+                <Pressable
+                    style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+                    onPress={() => setBudgetModalVisible(true)}
+                >
+                    {selectedBudget ? (
+                        <>
+                            {(iconMap[selectedBudget.themeColor] || iconMap["#E6E6E6"])({
+                                width: 24,
+                                height: 24,
+                            })}
+                            <Text style={{ marginLeft: 8 }}>{selectedBudget.title}</Text>
+                        </>
+                    ) : (
+                        <Text style={{ color: "#9D9D9D" }}>Select Budget</Text>
+                    )}
+                </Pressable>
             </View>
 
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
