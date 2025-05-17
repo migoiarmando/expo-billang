@@ -21,7 +21,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { Platform, Text, TouchableOpacity, View } from "react-native";
+import { Platform, Text, TouchableOpacity, View, Image } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
@@ -50,6 +50,10 @@ import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
+
+// Images
+import AddTransactions from "@/assets/home/add-transactions.svg";
+import ViewTransactions from "@/assets/home/view-transactions.svg";
 
 function formatWithCommas(value: number | string): string {
     const str = String(value).replace(/,/g, "");
@@ -402,6 +406,45 @@ export default function HomeScreen() {
                                     View more
                                 </Text>
                             </TouchableOpacity>
+
+                            <View className="flex-row items-center justify-between mt-10">
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        router.replace("/transaction");
+                                    }}
+                                    style={{
+                                        backgroundColor: "#F8F8F8",
+                                        width: "48%",
+                                        height: 90,
+                                        borderRadius: 10,
+                                        padding: 10,
+                                        gap: 5,
+                                    }}
+                                >
+                                    <ViewTransactions width={38} height={38} />
+                                    <Text className="font-lexend text-[12px] text-gray-900">
+                                        View Transactions
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        router.replace("/(tabs)/addtransaction");
+                                    }}
+                                    style={{
+                                        backgroundColor: "#F8F8F8",
+                                        width: "48%",
+                                        height: 90,
+                                        borderRadius: 10,
+                                        padding: 10,
+                                        gap: 5,
+                                    }}
+                                >
+                                    <AddTransactions width={38} height={38} />
+                                    <Text className="font-lexend text-[12px] text-gray-900">
+                                        Add Transactions
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     )}
                 </View>
