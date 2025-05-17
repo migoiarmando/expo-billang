@@ -84,7 +84,7 @@ export default function TailoredBudgetScreen() {
             // Add activity log here, after successful save
             addLog({
                 type: "budget",
-                message: `You have created a budget for ${title} containing ₱${amount}.`,
+                message: `You have created a budget for ${title} containing ₱${Number(amount).toLocaleString()}.`,
             });
 
             if (!onboarding) {
@@ -121,7 +121,7 @@ export default function TailoredBudgetScreen() {
 
                     <View className="flex-1 items-center">
                         <Text className="text-primary font-lexendSemiBold">
-                            Edit your first tailored budget
+                            Edit your tailored budget
                         </Text>
                     </View>
                 </View>

@@ -23,7 +23,6 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Platform,
     Dimensions,
     NativeSyntheticEvent,
     NativeScrollEvent,
@@ -341,9 +340,7 @@ export default function ProfileScreen() {
                             }}
                             style={{ marginLeft: 0 }}
                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                        >
-                            <NotificationIcon width={35} height={35} />
-                        </TouchableOpacity>
+                        ></TouchableOpacity>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection

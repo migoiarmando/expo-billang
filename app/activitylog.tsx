@@ -14,15 +14,13 @@ import React, { useLayoutEffect } from "react";
 import {
     View,
     Text,
-    TouchableOpacity,
     StyleSheet,
-    Image,
     ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ActivityLogIcon from "@/assets/images/activitylogicon.svg";
 import { useActivityLogStore } from "@/utils/activityLogStore";
-import { format } from "date-fns";
+//import { format } from "date-fns";
 import type { ActivityLogEntry } from "@/utils/activityLogStore";
 
 function groupLogsByDate(logs: ActivityLogEntry[]) {
@@ -59,7 +57,7 @@ export default function ActivityLogScreen() {
     return (
         <View style={styles.container}>
             {logs.length === 0 ? (
-                <Text style={{ color: "#B0B0B0" }}>No activity yet.</Text>
+                <Text style={{ fontFamily: "Lexend_400Regular", color: "#B0B0B0" }}>No activity yet.</Text>
             ) : (
                 <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
                     {sortedDates.map((dateKey) => (
