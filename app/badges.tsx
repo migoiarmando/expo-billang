@@ -29,6 +29,8 @@ import { db } from "@/database";
 import { transactions_tb, user_tb } from "@/database/schema";
 import { sql, eq } from "drizzle-orm";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useActivityLogStore } from "@/utils/activityLogStore";
+const addLog = useActivityLogStore.getState().addLog;
 
 const badgeRoutes: Record<string, string> = {
     "Piggy Pioneer": "/badgescreen/piggypioneer",
@@ -163,12 +165,24 @@ const Badges: React.FC = () => {
     useEffect(() => {
         AsyncStorage.getItem("piggyPioneerEarned").then((val) => {
             setPiggyPioneerEarned(val === "true");
+            if (val === "true") {
+                addLog({
+                    type: "badge",
+                    message: "You have unlocked the Piggy Pioneer badge!",
+                });
+            }
         });
     }, []);
 
     useEffect(() => {
         AsyncStorage.getItem("expenseExplorerEarned").then((val) => {
             setExpenseExplorerEarned(val === "true");
+            if (val === "true") {
+                addLog({
+                    type: "badge",
+                    message: "You have unlocked the Expense Explorer badge!",
+                });
+            }
         });
     }, []);
 

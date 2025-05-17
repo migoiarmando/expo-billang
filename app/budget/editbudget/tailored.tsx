@@ -22,6 +22,8 @@ import { Calendar, ChevronLeft, Pencil, RotateCw } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useActivityLogStore } from "@/utils/activityLogStore";
+const addLog = useActivityLogStore.getState().addLog;
 
 // Add this type definition
 type ThemeColorKey =
@@ -78,6 +80,12 @@ export default function TailoredBudgetScreen() {
                     contentColor: THEME_COLORS[selectedColor].content,
                 },
             ]);
+
+            // Add activity log here, after successful save
+            addLog({
+                type: "budget",
+                message: `You have created a budget for ${title} containing ₱${amount}.`,
+            });
 
             if (!onboarding) {
                 await db.update(user_tb).set({ onboarding: true });
