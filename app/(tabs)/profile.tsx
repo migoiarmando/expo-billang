@@ -379,7 +379,7 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="chart"
                             label="Spending Summary"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => router.push("/spendingsummary")}
                         />
                         <SettingsMenuItem
                             icon="badge"
@@ -389,7 +389,7 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="history"
                             label="Activity Log"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => router.push("/activitylog")}
                         />
 
                         <View className="py-2.5">

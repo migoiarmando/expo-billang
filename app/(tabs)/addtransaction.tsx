@@ -51,6 +51,8 @@ import OrangeIcon from "@/assets/smallbudgeticons/orange_budgeticon.svg";
 import RedIcon from "@/assets/smallbudgeticons/red_budgeticon.svg";
 import GreenIcon from "@/assets/smallbudgeticons/green_budgeticon.svg";
 import PinkIcon from "@/assets/smallbudgeticons/pink_budgeticon.svg";
+import { useActivityLogStore } from "@/utils/activityLogStore";
+const addLog = useActivityLogStore.getState().addLog;
 
 // Map themeColor to icon
 const iconMap: Record<string, React.FC<any>> = {
@@ -304,6 +306,13 @@ function ExpenseContent({
                 router.push("/badgescreen/earned_expense_explorer");
                 return;
             }
+
+            if (selectedBudget) {
+                addLog({
+                    type: "expense",
+                    message: `You have added an expense to ${selectedBudget.title} with an amount of ₱${amount}.`,
+                });
+            }
         } catch (err) {
             console.log("Error fetching or inserting data:", err);
         }
@@ -325,7 +334,11 @@ function ExpenseContent({
                             <Text style={{ marginLeft: 8 }}>{selectedBudget.title}</Text>
                         </>
                     ) : (
-                        <Text style={{ color: "#9D9D9D" }}>Select Budget</Text>
+                        <Text
+                            style={{ color: "#9D9D9D", fontFamily: "Lexend_500Medium" }}
+                        >
+                            Select Budget
+                        </Text>
                     )}
                 </Pressable>
             </View>
@@ -451,6 +464,13 @@ function IncomeContent({
 
             console.log("[debug] Transaction created successfully");
             router.replace("/transaction");
+
+            if (selectedBudget) {
+                addLog({
+                    type: "income",
+                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${amount}.`,
+                });
+            }
         } catch (err) {
             console.log("Error fetching or inserting data:", err);
         }
@@ -473,7 +493,11 @@ function IncomeContent({
                             <Text style={{ marginLeft: 8 }}>{selectedBudget.title}</Text>
                         </>
                     ) : (
-                        <Text style={{ color: "#9D9D9D" }}>Select Budget</Text>
+                        <Text
+                            style={{ color: "#9D9D9D", fontFamily: "Lexend_500Medium" }}
+                        >
+                            Select Budget
+                        </Text>
                     )}
                 </Pressable>
             </View>

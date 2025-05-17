@@ -130,8 +130,13 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                                 styles.progressBar,
                                 {
                                     width: `${percentage}%`,
+                                    // Special case: pink folder gets a custom progress color
                                     backgroundColor:
-                                        themeColor === "#E6E6E6" ? "#5FA7C6" : themeColor,
+                                        themeColor === "#E6E6E6"
+                                            ? "#5FA7C6"
+                                            : themeColor === "#FADDFF"
+                                              ? "#E4A8C5"
+                                              : themeColor,
                                 },
                             ]}
                         />
