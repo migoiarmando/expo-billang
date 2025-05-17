@@ -167,7 +167,6 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                             keyExtractor={(item) => item.id.toString()}
                             numColumns={3}
                             contentContainerStyle={styles.grid}
-                            style={{ flexGrow: 1 }}
                             renderItem={({ item }) => {
                                 const Icon = iconMap[item.themeColor] || GrayIcon;
                                 return (
