@@ -149,6 +149,7 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                 <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
                     <Text style={styles.title}>Select Budget</Text>
 
+
                     {budgets.length <= 2 ? (
                         <View
                             style={{
@@ -210,6 +211,7 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                             }}
                         />
                     )}
+
                 </Animated.View>
             </GestureDetector>
         </>
