@@ -18,7 +18,7 @@ import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Folder, Paperclip } from "lucide-react-native";
+import { Paperclip } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import {
     View,
@@ -103,7 +103,7 @@ export default function AddTransaction() {
                             {/* Header */}
                             <View className="mt-[30px] flex-row items-center justify-between">
                                 <Text className="text-[#2B3854] font-lexend text-[24px]">
-                                    Add transaction
+                                    Add Transaction
                                 </Text>
                             </View>
 
@@ -310,7 +310,7 @@ function ExpenseContent({
             if (selectedBudget) {
                 addLog({
                     type: "expense",
-                    message: `You have added an expense to ${selectedBudget.title} with an amount of ₱${amount}.`,
+                    message: `You have added an expense to ${selectedBudget.title} with an amount of ₱${Number(amount).toLocaleString()}.`,
                 });
             }
         } catch (err) {
@@ -468,7 +468,7 @@ function IncomeContent({
             if (selectedBudget) {
                 addLog({
                     type: "income",
-                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${amount}.`,
+                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${Number(amount).toLocaleString() }.`,
                 });
             }
         } catch (err) {
