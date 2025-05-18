@@ -306,12 +306,20 @@ function ExpenseContent({
 
             if (expenses.length === 1) {
                 await AsyncStorage.setItem("piggyPioneerEarned", "true");
+                addLog({
+                    type: "badge",
+                    message: "You have unlocked the Piggy Pioneer badge!",
+                });
                 router.push("/badgescreen/earned_piggy_pioneer");
                 return;
             }
 
             if (expenses.length === 10) {
                 await AsyncStorage.setItem("expenseExplorerEarned", "true");
+                addLog({
+                    type: "badge",
+                    message: "You have unlocked the Expense Explorer badge!",
+                });
                 router.push("/badgescreen/earned_expense_explorer");
                 return;
             }
