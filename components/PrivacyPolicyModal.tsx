@@ -44,11 +44,14 @@ const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
     const context = useSharedValue({ y: 0 });
     const active = useSharedValue(false);
 
-    const scrollTo = (destination: number) => {
-        "worklet";
-        active.value = destination !== SCREEN_HEIGHT;
-        translateY.value = withSpring(destination, SPRING_CONFIG);
-    };
+    const scrollTo = React.useCallback(
+        (destination: number) => {
+            "worklet";
+            active.value = destination !== SCREEN_HEIGHT;
+            translateY.value = withSpring(destination, SPRING_CONFIG);
+        },
+        [active, translateY],
+    );
 
     const handleClose = () => {
         scrollTo(SCREEN_HEIGHT);
@@ -61,7 +64,7 @@ const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
         } else {
             scrollTo(SCREEN_HEIGHT);
         }
-    }, [isVisible]);
+    }, [isVisible, scrollTo]);
 
     const gesture = Gesture.Pan()
         .onStart(() => {
@@ -127,7 +130,7 @@ const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
                             How We Use Your Information
                         </Text>
                         <Text style={styles.text}>
-                            • To provide and enhance Billang’s features.{"\n"}• To secure
+                            • To provide and enhance Billang's features.{"\n"}• To secure
                             your account and prevent fraud.{"\n"}• To analyze usage trends
                             and improve user experience.
                         </Text>

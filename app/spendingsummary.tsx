@@ -14,10 +14,6 @@ import React, { useLayoutEffect } from "react";
 import {
     View,
     Text,
-    TouchableOpacity,
-    StyleSheet,
-    Image,
-    ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 

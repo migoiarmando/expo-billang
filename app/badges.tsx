@@ -27,18 +27,10 @@ import { useNavigation, useRouter } from "expo-router";
 import { getStreak } from "../utils/streak";
 import { db } from "@/database";
 import { transactions_tb, user_tb } from "@/database/schema";
-import { sql, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useActivityLogStore } from "@/utils/activityLogStore";
 const addLog = useActivityLogStore.getState().addLog;
-
-const badgeRoutes: Record<string, string> = {
-    "Piggy Pioneer": "/badgescreen/piggypioneer",
-    "Expense Explorer": "/badgescreen/expense_explorer",
-    "Debt Slayer": "/badgescreen/debt_slayer",
-    "Sovereign Saver": "/badgescreen/sovereign_saver",
-    "Guardian of Gold": "/badgescreen/gog",
-};
 
 const Badges: React.FC = () => {
     // Data

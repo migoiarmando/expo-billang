@@ -17,23 +17,20 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
     View,
     Text,
     ScrollView,
     TouchableOpacity,
-    Dimensions,
-    NativeSyntheticEvent,
-    NativeScrollEvent,
     Image,
 } from "react-native";
-import { Plus, ChevronRight } from "lucide-react-native";
+import { ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
 import BudgetCard from "@/components/BudgetCard";
 import ProfilePic from "@/assets/images/profilepic.svg";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import StreakIcon from "@/assets/streaksandbadges/streakfire.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getStreak } from "@/utils/streak";
@@ -46,7 +43,6 @@ import SettingsCustomization from "@/assets/images/settingscustomization.svg";
 import Notifications from "@/assets/images/notifications.svg";
 import About from "@/assets/images/about.svg";
 import PrivacyPolicy from "@/assets/images/privacypolicy.svg";
-import NotificationIcon from "@/assets/images/notification.svg";
 import MiniPiggyPioneer from "@/assets/minibadges/mini_piggy_pioneer.svg";
 import MiniExpenseExplorer from "@/assets/minibadges/mini_expense_explorer.svg";
 
@@ -59,8 +55,6 @@ import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import * as ImagePicker from "expo-image-picker";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import AboutModal from "@/components/AboutModal";
-// Get screen width
-const { width } = Dimensions.get("window");
 
 const ProfileSection: React.FC<{
     profileImageUri: string | null;
@@ -112,23 +106,6 @@ const ProfileSection: React.FC<{
     );
 };
 
-interface AddBudgetButtonProps {
-    onPress: () => void;
-}
-
-const AddBudgetButton = ({ onPress }: AddBudgetButtonProps) => (
-    <TouchableOpacity
-        className="border border-dashed border-[#dadada] rounded-xl p-11 w-[90%] items-center justify-center bg-transparent"
-        onPress={onPress}
-        activeOpacity={0.7}
-    >
-        <View className="flex-row items-center gap-2.5">
-            <Plus size={24} color="#828282" />
-            <Text className="text-lg text-[#666] font-lexend">Add Budget</Text>
-        </View>
-    </TouchableOpacity>
-);
-
 interface SettingsMenuItemProps {
     icon:
         | "chart"
@@ -177,9 +154,6 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPres
 
 export default function ProfileScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const scrollViewRef = useRef<ScrollView>(null);
-    const horizontalScrollViewRef = useRef<ScrollView>(null);
-    const [showAddBudget, setShowAddBudget] = useState(false);
     const router = useRouter();
     const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
     const [userName, setUserName] = useState<string>("");
@@ -189,10 +163,6 @@ export default function ProfileScreen() {
     const [piggyPioneerEarned, setPiggyPioneerEarned] = useState(false);
     const [expenseExplorerEarned, setExpenseExplorerEarned] = useState(false);
 
-    const handleAddBudget = () => {
-        setIsModalVisible(true);
-    };
-
     const handleCloseModal = () => {
         setIsModalVisible(false);
     };
@@ -201,20 +171,6 @@ export default function ProfileScreen() {
         console.log("Selected budget type:", type);
         setIsModalVisible(false);
         // Handle the selected budget type here
-    };
-
-    const handleMenuPress = (menuItem: string) => {
-        console.log(`Menu item pressed: ${menuItem}`);
-    };
-
-    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        const offsetX = event.nativeEvent.contentOffset.x;
-        if (offsetX > width * 0.3) {
-            // Adjust threshold as needed
-            setShowAddBudget(true);
-        } else {
-            setShowAddBudget(false);
-        }
     };
 
     const [budgetAmount, setBudgetAmount] = useState(0);

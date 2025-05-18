@@ -20,7 +20,7 @@ import { db } from "@/database";
 import { budget_tb, user_tb } from "@/database/schema";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, ChevronLeft, Pencil, RotateCw } from "lucide-react-native";
+import { ChevronLeft, Pencil } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

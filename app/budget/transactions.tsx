@@ -23,10 +23,9 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Platform,
     Pressable,
 } from "react-native";
-import { Plus, ChevronLeft } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link, useLocalSearchParams } from "expo-router";
 
@@ -270,7 +269,7 @@ const TransactionItem = ({
     );
 };
 
-const AddTransactionButton = ({ onPress }: { onPress: () => void }) => (
+/*const AddTransactionButton = ({ onPress }: { onPress: () => void }) => (
     <TouchableOpacity
         className="border border-dashed border-[#dadada] rounded-xl px-32 py-12 mx-5 items-center justify-center mt-2"
         onPress={onPress}
@@ -283,13 +282,7 @@ const AddTransactionButton = ({ onPress }: { onPress: () => void }) => (
             </Text>
         </View>
     </TouchableOpacity>
-);
-
-const EmptyState = () => (
-    <View className="flex-1 items-center justify-center mt-10">
-        <AddTransactionButton onPress={() => console.log("Add transaction pressed")} />
-    </View>
-);
+); */
 
 const TransactionList = ({
     selectedFilter,

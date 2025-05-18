@@ -16,25 +16,25 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React, { useEffect, useRef, useState } from "react";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronDown, User } from "lucide-react-native";
-import { View, Text, Button, TextInput, Pressable, TouchableOpacity } from "react-native";
+import { ChevronDown } from "lucide-react-native";
+import { View, Text, TextInput, Pressable, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { user_tb } from "@/database/schema";
 import { db } from "@/database";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ProfilePic from "@/assets/images/profilepic.svg"; // Use your SVG or fallback
+import ProfilePic from "@/assets/images/profilepic.svg";
 import { Image } from "react-native";
 
-const currencies = [
+/*const currencies = [
     { id: "PHP", name: "Philippine Peso (₱)" },
     { id: "USD", name: "US Dollar ($)" },
     { id: "EUR", name: "Euro (€)" },
     { id: "JPY", name: "Japanese Yen (¥)" },
     { id: "GBP", name: "British Pound (£)" },
-];
+];*/
 
 export default function OnboardingPage4() {
     const inputRef = useRef<TextInput>(null);

@@ -21,11 +21,11 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { Platform, Text, TouchableOpacity, View, Image } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import migrations from "@/database/drizzle/migrations";
+//import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+//import migrations from "@/database/drizzle/migrations";
 import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -46,7 +46,7 @@ import BillsIcon from "@/assets/transaction-icons/bills.svg";
 import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
-import { updateStreakOnAppOpen, getStreak } from "../../utils/streak";
+import { updateStreakOnAppOpen } from "../../utils/streak";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
@@ -61,7 +61,6 @@ function formatWithCommas(value: number | string): string {
 }
 
 export default function HomeScreen() {
-    const days = ["Sun", "M", "T", "W", "Th", "F", "Sat"];
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
     const [streakCount, setStreakCount] = useState(0);
     const [showStreakModal, setShowStreakModal] = useState(false);
