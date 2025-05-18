@@ -123,11 +123,14 @@ const StreakModal: React.FC<StreakModalProps> = ({
         calculateAverages();
     }, [isVisible]);
 
-    const scrollTo = (destination: number) => {
-        "worklet";
-        active.value = destination !== SCREEN_HEIGHT;
-        translateY.value = withSpring(destination, SPRING_CONFIG);
-    };
+    const scrollTo = React.useCallback(
+        (destination: number) => {
+            "worklet";
+            active.value = destination !== SCREEN_HEIGHT;
+            translateY.value = withSpring(destination, SPRING_CONFIG);
+        },
+        [active, translateY],
+    );
 
     const handleClose = () => {
         scrollTo(SCREEN_HEIGHT);
@@ -140,7 +143,7 @@ const StreakModal: React.FC<StreakModalProps> = ({
         } else {
             scrollTo(SCREEN_HEIGHT);
         }
-    }, [isVisible]);
+    }, [isVisible, scrollTo]);
 
     const gesture = Gesture.Pan()
         .onStart(() => {

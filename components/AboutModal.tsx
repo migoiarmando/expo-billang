@@ -24,7 +24,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import SvgBillangLogo from "@/assets/images/billang_logo.svg";
-import Constants from "expo-constants";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
@@ -44,11 +43,14 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
     const context = useSharedValue({ y: 0 });
     const active = useSharedValue(false);
 
-    const scrollTo = (destination: number) => {
-        "worklet";
-        active.value = destination !== SCREEN_HEIGHT;
-        translateY.value = withSpring(destination, SPRING_CONFIG);
-    };
+    const scrollTo = React.useCallback(
+        (destination: number) => {
+            "worklet";
+            active.value = destination !== SCREEN_HEIGHT;
+            translateY.value = withSpring(destination, SPRING_CONFIG);
+        },
+        [active, translateY],
+    );
 
     const handleClose = () => {
         scrollTo(SCREEN_HEIGHT);
@@ -61,7 +63,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
         } else {
             scrollTo(SCREEN_HEIGHT);
         }
-    }, [isVisible]);
+    }, [isVisible, scrollTo]);
 
     const gesture = Gesture.Pan()
         .onStart(() => {

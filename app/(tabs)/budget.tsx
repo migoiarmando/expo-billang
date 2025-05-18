@@ -17,7 +17,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { useCallback, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity} from "react-native";
 import { Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";

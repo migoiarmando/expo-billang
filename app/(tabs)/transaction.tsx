@@ -16,9 +16,8 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback,useState } from "react";
 import {
-    Image,
     StyleSheet,
     View,
     Text,
@@ -26,7 +25,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import { SearchBar } from "@/components/SearchBar";
 import { transactions_tb } from "@/database/schema";
 import { db } from "@/database";

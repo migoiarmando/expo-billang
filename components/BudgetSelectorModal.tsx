@@ -109,7 +109,7 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
         } else {
             translateY.value = withSpring(MODAL_HEIGHT, SPRING_CONFIG);
         }
-    }, [isVisible]);
+    }, [isVisible, translateY]);
 
     const gesture = Gesture.Pan()
         .onStart(() => {
@@ -148,7 +148,6 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
             <GestureDetector gesture={gesture}>
                 <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
                     <Text style={styles.title}>Select Budget</Text>
-
 
                     {budgets.length <= 2 ? (
                         <View
@@ -211,7 +210,6 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
                             }}
                         />
                     )}
-
                 </Animated.View>
             </GestureDetector>
         </>
