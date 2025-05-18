@@ -452,6 +452,7 @@ function IncomeContent({
         }
 
         try {
+            // Insert the income transaction
             await db.insert(transactions_tb).values({
                 budgetId: Number(budgetId),
                 type: "Income",
@@ -462,13 +463,28 @@ function IncomeContent({
                 date: new Date().toISOString(),
             });
 
+            // Fetch the current budget
+            const budgetsRes = await db
+                .select()
+                .from(budget_tb)
+                .where(eq(budget_tb.id, Number(budgetId)));
+            const currentBudget = budgetsRes[0];
+            if (currentBudget) {
+                // Update the budget's amount
+                const newTotal = Number(currentBudget.amount) + Number(amount);
+                await db
+                    .update(budget_tb)
+                    .set({ amount: newTotal })
+                    .where(eq(budget_tb.id, Number(budgetId)));
+            }
+
             console.log("[debug] Transaction created successfully");
             router.replace("/transaction");
 
             if (selectedBudget) {
                 addLog({
                     type: "income",
-                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${Number(amount).toLocaleString() }.`,
+                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${Number(amount).toLocaleString()}.`,
                 });
             }
         } catch (err) {

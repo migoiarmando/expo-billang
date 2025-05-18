@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-         Miguel Armand B. Sta. Ana [May 11, 2025]
+         Miguel Armand B. Sta. Ana [May 18, 2025]
         John Bicierro [Mar 17, 2025]
 
 
@@ -59,7 +59,6 @@ import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import * as ImagePicker from "expo-image-picker";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import AboutModal from "@/components/AboutModal";
-
 // Get screen width
 const { width } = Dimensions.get("window");
 
