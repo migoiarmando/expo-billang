@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 11 , 2025]
+        Miguel Armand B. Sta. Ana [May 18, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -10,13 +10,34 @@
     Description: Notifications screen for users to track their notifications.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React, { useLayoutEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { useLayoutEffect } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ReminderIcon from "@/assets/images/notifications.svg";
+import NotificationIcon from "@/assets/images/notifications.svg";
+import { useActivityLogStore } from "@/utils/activityLogStore";
+//import { format } from "date-fns";
+import type { ActivityLogEntry } from "@/utils/activityLogStore";
+
+function groupLogsByDate(logs: ActivityLogEntry[]) {
+    const groups: { [key: string]: ActivityLogEntry[] } = {};
+    logs.forEach((log) => {
+        const date = new Date(log.timestamp);
+        const key = date.toISOString().split("T")[0];
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(log);
+    });
+    return groups;
+}
 
 export default function NotificationsScreen() {
     const navigation = useNavigation();
+    const logs = useActivityLogStore((state) => state.logs);
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: "Notifications",
@@ -28,43 +49,60 @@ export default function NotificationsScreen() {
         });
     }, [navigation]);
 
+    // Group logs by date
+    const groupedLogs = groupLogsByDate(logs);
+    const todayKey = new Date().toISOString().split("T")[0];
+    const sortedDates = Object.keys(groupedLogs).sort((a, b) => b.localeCompare(a)); // newest first
+
     return (
         <View style={styles.container}>
-            {/* Today Label */}
-            <Text style={styles.sectionLabel}>Today</Text>
-
-            {/* Notification Card */}
-            <View style={styles.notificationCard}>
-                {/* Red dot */}
-                <View style={styles.redDot} />
-                {/* Notification icon */}
-                <View style={styles.notificationIconWrapper}>
-                    <ReminderIcon width={20} height={20} />
-                </View>
-                {/* Notification text */}
-                <View style={{ flex: 1 }}>
-                    <Text style={styles.notificationTitle}>
-                        <Text
-                            style={{
-                                fontFamily: "Lexend_600SemiBold",
-                                fontSize: 15,
-                            }}
-                        >
-                            Reminder:
-                        </Text>
-                        <Text style={{ fontFamily: "Lexend_400Regular" }}>
-                            {" "}
-                            Netflix Subscription
-                        </Text>
-                    </Text>
-                    <Text style={styles.notificationTime}>10:30 AM</Text>
-                </View>
-            </View>
-            {/* Divider */}
+            {logs.length === 0 ? (
+                <Text style={{ fontFamily: "Lexend_400Regular", color: "#B0B0B0" }}>No activity yet.</Text>
+            ) : (
+                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                    {sortedDates.map((dateKey) => (
+                        <View key={dateKey}>
+                            <Text style={styles.sectionLabel}>
+                                {dateKey === todayKey
+                                    ? "Today"
+                                    : new Date(dateKey).toLocaleDateString(undefined, {
+                                          year: "numeric",
+                                          month: "long",
+                                          day: "numeric",
+                                      })}
+                            </Text>
+                            {groupedLogs[dateKey].map((log) => (
+                                <View key={log.id} style={styles.notificationCard}>
+                                    <NotificationIcon
+                                        width={20}
+                                        height={20}
+                                        style={{ marginRight: 10, marginTop: 6 }}
+                                    />
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.notificationTitle}>
+                                            {log.message}
+                                        </Text>
+                                        <Text style={styles.notificationTime}>
+                                            {new Date(log.timestamp).toLocaleTimeString(
+                                                [],
+                                                {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                },
+                                            )}
+                                        </Text>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    ))}
+                </ScrollView>
+            )}
             <View style={styles.divider} />
         </View>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -96,9 +134,9 @@ const styles = StyleSheet.create({
     },
     sectionLabel: {
         color: "#2B3854",
-        fontSize: 15,
+        fontSize: 16,
         marginBottom: 10,
-        fontFamily: "Lexend_400Regular",
+        fontFamily: "Lexend_600SemiBold",
     },
     notificationCard: {
         flexDirection: "row",
@@ -106,23 +144,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 0,
         backgroundColor: "transparent",
-    },
-    redDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: "#FF6B6B",
-        marginTop: 7,
-        marginRight: 8,
-    },
-    notificationIconWrapper: {
-        width: 28,
-        height: 28,
-        borderRadius: 6,
-        backgroundColor: "#7EC6E3",
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 10,
     },
     notificationTitle: {
         color: "#2B3854",

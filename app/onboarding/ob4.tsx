@@ -15,7 +15,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown } from "lucide-react-native";

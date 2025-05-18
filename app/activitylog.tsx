@@ -10,7 +10,7 @@
     Description: Activity log screen for users to track their activity.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React, { useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import {
     View,
     Text,
@@ -134,9 +134,9 @@ const styles = StyleSheet.create({
     },
     sectionLabel: {
         color: "#2B3854",
-        fontSize: 15,
+        fontSize: 16,
         marginBottom: 10,
-        fontFamily: "Lexend_400Regular",
+        fontFamily: "Lexend_600SemiBold",
     },
     notificationCard: {
         flexDirection: "row",
