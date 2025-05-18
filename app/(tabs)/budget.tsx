@@ -31,7 +31,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SearchBar } from "@/components/SearchBar";
 import { and, eq, sql } from "drizzle-orm";
 import NotificationIcon from "@/assets/images/notification.svg";
-
+import { getNotificationsEnabled } from "@/utils/notifications";
 interface AddBudgetButtonProps {
     onPress: () => void;
 }
@@ -123,9 +123,14 @@ export default function BudgetScreen() {
                 >
                     <Header name="Budget" />
                     <TouchableOpacity
-                        onPress={() => {
+                       onPress={async () => {
+                        const enabled = await getNotificationsEnabled();
+                        if (enabled) {
                             router.push("/notifications");
-                        }}
+                        } else {
+                            router.push("/offnotifications");
+                        }
+                    }}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
                         <NotificationIcon width={32} height={32} />

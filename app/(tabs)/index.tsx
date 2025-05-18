@@ -50,6 +50,7 @@ import { updateStreakOnAppOpen } from "../../utils/streak";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
+import { getNotificationsEnabled } from "@/utils/notifications";
 
 // Images
 import AddTransactions from "@/assets/home/add-transactions.svg";
@@ -281,8 +282,13 @@ export default function HomeScreen() {
                         Good Day, {items[0].name?.split(" ")[0]}!
                     </Text>
                     <TouchableOpacity
-                        onPress={() => {
-                            router.push("/notifications");
+                        onPress={async () => {
+                            const enabled = await getNotificationsEnabled();
+                            if (enabled) {
+                                router.push("/notifications");
+                            } else {
+                                router.push("/offnotifications");
+                            }
                         }}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
