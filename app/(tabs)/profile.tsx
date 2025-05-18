@@ -18,13 +18,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React, { useState, useCallback, useEffect } from "react";
-import {
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-    Image,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
@@ -34,6 +28,7 @@ import { useRouter } from "expo-router";
 import StreakIcon from "@/assets/streaksandbadges/streakfire.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getStreak } from "@/utils/streak";
+import { getNotificationsEnabled } from "@/utils/notifications";
 
 // Import SVG files directly
 import SpendingSummary from "@/assets/images/spendingsummary.svg";
@@ -55,6 +50,9 @@ import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import * as ImagePicker from "expo-image-picker";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import AboutModal from "@/components/AboutModal";
+import ToggleOn from "@/assets/icons/toggle_on.svg";
+import ToggleOff from "@/assets/icons/toggle_off.svg";
+import NotificationIcon from "@/assets/images/notification.svg";
 
 const ProfileSection: React.FC<{
     profileImageUri: string | null;
@@ -117,9 +115,19 @@ interface SettingsMenuItemProps {
         | "privacy policy & terms";
     label: string;
     onPress: () => void;
+    showToggle?: boolean;
+    toggleValue?: boolean;
+    onToggle?: () => void;
 }
 
-const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPress }) => {
+const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
+    icon,
+    label,
+    onPress,
+    showToggle = false,
+    toggleValue = false,
+    onToggle,
+}) => {
     const iconComponents = {
         chart: SpendingSummary,
         badge: StreaksBadges,
@@ -135,7 +143,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPres
     return (
         <TouchableOpacity
             className="flex-row items-center justify-between py-2 pr-3 mb-1"
-            onPress={onPress}
+            onPress={showToggle ? onToggle : onPress}
             activeOpacity={0.7}
         >
             <View className="flex-row items-center pl-3">
@@ -147,7 +155,15 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ icon, label, onPres
                     {label}
                 </Text>
             </View>
-            <ChevronRight size={20} color="#666" />
+            {showToggle ? (
+                toggleValue ? (
+                    <ToggleOn width={38} height={28} />
+                ) : (
+                    <ToggleOff width={38} height={28} />
+                )
+            ) : (
+                <ChevronRight size={20} color="#666" />
+            )}
         </TouchableOpacity>
     );
 };
@@ -162,6 +178,7 @@ export default function ProfileScreen() {
     const [streakCount, setStreakCount] = useState(0);
     const [piggyPioneerEarned, setPiggyPioneerEarned] = useState(false);
     const [expenseExplorerEarned, setExpenseExplorerEarned] = useState(false);
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
     const handleCloseModal = () => {
         setIsModalVisible(false);
@@ -252,9 +269,23 @@ export default function ProfileScreen() {
                 console.error("Error loading streak count:", err);
             }
         }
+        async function loadNotificationsEnabled() {
+            try {
+                const val = await AsyncStorage.getItem("notificationsEnabled");
+                if (val === null) {
+                    setNotificationsEnabled(true);
+                    AsyncStorage.setItem("notificationsEnabled", "true");
+                } else {
+                    setNotificationsEnabled(val === "true");
+                }
+            } catch (err) {
+                console.error("Error loading notifications enabled:", err);
+            }
+        }
         loadProfileImage();
         loadUserName();
         loadStreakCount();
+        loadNotificationsEnabled();
     }, []);
 
     // Function to handle profile picture tap
@@ -277,6 +308,14 @@ export default function ProfileScreen() {
         }
     };
 
+    // When toggling notifications
+    const handleToggleNotifications = async () => {
+        setNotificationsEnabled((prev) => {
+            AsyncStorage.setItem("notificationsEnabled", (!prev).toString());
+            return !prev;
+        });
+    };
+
     return (
         <>
             <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
@@ -290,12 +329,19 @@ export default function ProfileScreen() {
                     >
                         <Header name="Profile" />
                         <TouchableOpacity
-                            onPress={() => {
-                                router.push("/notifications");
+                            onPress={async () => {
+                                const enabled = await getNotificationsEnabled();
+                                if (enabled) {
+                                    router.push("/notifications");
+                                } else {
+                                    router.push("/offnotifications");
+                                }
                             }}
                             style={{ marginLeft: 0 }}
                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                        ></TouchableOpacity>
+                        >
+                            <NotificationIcon width={32} height={32} />
+                        </TouchableOpacity>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection
@@ -351,14 +397,17 @@ export default function ProfileScreen() {
                         </View>
 
                         <SettingsMenuItem
+                            icon="notification"
+                            label="Notifications"
+                            showToggle
+                            toggleValue={notificationsEnabled}
+                            onToggle={handleToggleNotifications}
+                            onPress={() => {}}
+                        />
+                        <SettingsMenuItem
                             icon="settings"
                             label="Settings & Customizations"
                             onPress={() => router.push("/+not-found")}
-                        />
-                        <SettingsMenuItem
-                            icon="notification"
-                            label="Notifications"
-                            onPress={() => router.push("/notifications")}
                         />
                         <SettingsMenuItem
                             icon="about"

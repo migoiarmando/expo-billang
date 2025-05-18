@@ -50,7 +50,7 @@ import IncomeArrow from "@/assets/images/incomearrow.svg";
 import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import NotificationIcon from "@/assets/images/notification.svg";
-
+import { getNotificationsEnabled } from "@/utils/notifications";
 export default function TransactionScreen() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [selectedFilter, setSelectedFilter] = useState<"all" | "expense" | "income">(
@@ -109,8 +109,13 @@ export default function TransactionScreen() {
                         Transactions
                     </Text>
                     <TouchableOpacity
-                        onPress={() => {
-                            router.push("/notifications");
+                        onPress={async () => {
+                            const enabled = await getNotificationsEnabled();
+                            if (enabled) {
+                                router.push("/notifications");
+                            } else {
+                                router.push("/offnotifications");
+                            }
                         }}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >

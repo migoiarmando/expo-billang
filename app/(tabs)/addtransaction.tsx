@@ -88,6 +88,13 @@ export default function AddTransaction() {
         fetchBudgets();
     }, []);
 
+    useEffect(() => {
+        return () => {
+            setSelectedBudget(null);
+            setBudgetId("");
+        };
+    }, []);
+
     return (
         <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
             <KeyboardAvoidingView
@@ -289,6 +296,8 @@ function ExpenseContent({
             setNotes("");
             setAmount("");
             setSelectedCategory(categoryIcons[0]);
+            setSelectedBudget(null);
+            setBudgetId("");
 
             const expenses = await db
                 .select()
@@ -487,6 +496,9 @@ function IncomeContent({
                     message: `You have added an income to ${selectedBudget.title} with a value of ₱${Number(amount).toLocaleString()}.`,
                 });
             }
+
+            setSelectedBudget(null);
+            setBudgetId("");
         } catch (err) {
             console.log("Error fetching or inserting data:", err);
         }
