@@ -42,7 +42,6 @@ import TransitIcon from "@/assets/transaction-icons/transit.svg";
 import GroceryIcon from "@/assets/transaction-icons/grocery.svg";
 import BillsIcon from "@/assets/transaction-icons/bills.svg";
 import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
-import IncomeIcon from "@/assets/transaction-icons/income.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import GrayIcon from "@/assets/smallbudgeticons/gray_smallbudgeticon.svg";
