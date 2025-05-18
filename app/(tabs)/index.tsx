@@ -235,12 +235,18 @@ export default function HomeScreen() {
                 const lastShown = await AsyncStorage.getItem("lastStreakModalDate");
                 if (lastShown !== today) {
                     setShowStreakModal(true);
-                    await AsyncStorage.setItem("lastStreakModalDate", today);
                 }
             }
             checkStreakModal();
         }, []),
     );
+
+    // When closing the modal, set the date
+    const handleCloseStreakModal = async () => {
+        const today = new Date().toISOString().slice(0, 10);
+        setShowStreakModal(false);
+        await AsyncStorage.setItem("lastStreakModalDate", today);
+    };
 
     if (items === null || items.length === 0) {
         return <View></View>;
@@ -456,7 +462,7 @@ export default function HomeScreen() {
             </View>
             <StreakModal
                 isVisible={showStreakModal}
-                onClose={() => setShowStreakModal(false)}
+                onClose={handleCloseStreakModal}
                 streakCount={streakCount}
                 userName={items?.[0]?.name || "Doe"}
                 avgMonthly={10000}

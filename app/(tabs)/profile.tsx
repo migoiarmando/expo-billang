@@ -80,7 +80,7 @@ const ProfileSection: React.FC<{
             <View className="flex-1">
                 <View className="flex-row items-center">
                     <Text className="text-[26px] text-[#2B3854] font-lexend">
-                        {userName?.split(" ")[0] || "Your Name"}
+                        {userName || "Your Name"}
                     </Text>
                     <View className="flex-row items-center ml-2">
                         <StreakIcon width={25} height={25} style={{ marginTop: 4 }} />

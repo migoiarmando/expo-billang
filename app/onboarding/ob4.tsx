@@ -19,7 +19,16 @@ import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown } from "lucide-react-native";
-import { View, Text, TextInput, Pressable, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    Pressable,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { user_tb } from "@/database/schema";
 import { db } from "@/database";
@@ -91,69 +100,83 @@ export default function OnboardingPage4() {
     }
 
     return (
-        <SafeAreaView>
-            <View className="pt-[100px] h-screen flex items-center justify-start">
-                <Text className="w-[250px] text-center text-[24px] font-lexendBold text-[#0075B2]">
-                    We'd love to know your name
-                </Text>
-
-                <View className="mb-5 mt-[100px] flex items-center justify-center">
-                    <TouchableOpacity
-                        onPress={handleProfilePicPress}
-                        activeOpacity={0.7}
-                        className="w-[120px] h-[120px] bg-bgBorder-1 rounded-full flex items-center justify-center"
-                    >
-                        {profileImageUri ? (
-                            <Image
-                                source={{ uri: profileImageUri }}
-                                style={{ width: 120, height: 120, borderRadius: 60 }}
-                            />
-                        ) : (
-                            <ProfilePic width={120} height={120} />
-                        )}
-                    </TouchableOpacity>
-
-                    {/* Form */}
-                    <View className="mt-10 mb-5 flex gap-3 items-center">
-                        <View className="flex flex-row gap-2 items-center">
-                            <Text className="font-lexendBold text-[24px] text-center flex items-center justify-center">
-                                I'm
-                            </Text>
-                            <TextInput
-                                ref={inputRef}
-                                placeholder="Smith"
-                                placeholderTextColor="#999999"
-                                className="font-lexendBold text-[24px] text-primary"
-                                value={name}
-                                onChangeText={(text) => {
-                                    setName(text);
-                                }}
-                            />
-                        </View>
-
-                        <Text className="font-lexendBold text-[24px] text-center">
-                            and the currency I use is
-                        </Text>
-                        <View className="flex flex-row items-center gap-1">
-                            <Text className="font-lexendBold text-[24px] text-center text-[#999999]">
-                                {currency}
-                            </Text>
-                            <ChevronDown color="#71717a" size={16} />
-                        </View>
-                    </View>
-                    <Text className="font-lexend text-[12px] text-[#8F8F8F]">
-                        Tap to edit, You can update this anytime.
-                    </Text>
-                </View>
-
-                <Pressable
-                    onPress={SaveUser}
-                    className="py-3 px-[80px] bg-[#0075B2] rounded-full"
+        <SafeAreaView style={{ flex: 1 }}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+            >
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
                 >
-                    <Text className="text-white font-lexend">Continue</Text>
-                </Pressable>
-            </View>
+                    <View className="pt-[100px] flex items-center justify-start">
+                        <Text className="w-[250px] text-center text-[24px] font-lexendBold text-[#0075B2]">
+                            We'd love to know your name
+                        </Text>
 
+                        <View className="mb-5 mt-[100px] flex items-center justify-center">
+                            <TouchableOpacity
+                                onPress={handleProfilePicPress}
+                                activeOpacity={0.7}
+                                className="w-[120px] h-[120px] bg-bgBorder-1 rounded-full flex items-center justify-center"
+                            >
+                                {profileImageUri ? (
+                                    <Image
+                                        source={{ uri: profileImageUri }}
+                                        style={{
+                                            width: 120,
+                                            height: 120,
+                                            borderRadius: 60,
+                                        }}
+                                    />
+                                ) : (
+                                    <ProfilePic width={120} height={120} />
+                                )}
+                            </TouchableOpacity>
+
+                            {/* Form */}
+                            <View className="mt-10 mb-5 flex gap-3 items-center">
+                                <View className="flex flex-row gap-2 items-center">
+                                    <Text className="font-lexendBold text-[24px] text-center flex items-center justify-center">
+                                        I'm
+                                    </Text>
+                                    <TextInput
+                                        ref={inputRef}
+                                        placeholder="Smith"
+                                        placeholderTextColor="#999999"
+                                        className="font-lexendBold text-[24px] text-primary"
+                                        value={name}
+                                        onChangeText={(text) => {
+                                            setName(text);
+                                        }}
+                                    />
+                                </View>
+
+                                <Text className="font-lexendBold text-[24px] text-center">
+                                    and the currency I use is
+                                </Text>
+                                <View className="flex flex-row items-center gap-1">
+                                    <Text className="font-lexendBold text-[24px] text-center text-[#999999]">
+                                        {currency}
+                                    </Text>
+                                    <ChevronDown color="#71717a" size={16} />
+                                </View>
+                            </View>
+                            <Text className="font-lexend text-[12px] text-[#8F8F8F]">
+                                Tap to edit, You can update this anytime.
+                            </Text>
+                        </View>
+
+                        <Pressable
+                            onPress={SaveUser}
+                            className="py-3 px-[80px] bg-[#0075B2] rounded-full"
+                        >
+                            <Text className="text-white font-lexend">Continue</Text>
+                        </Pressable>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
             <StatusBar style="dark" />
         </SafeAreaView>
     );
