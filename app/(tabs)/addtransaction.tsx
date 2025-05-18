@@ -3,7 +3,7 @@
     Route -> "onboarding/ob.tsx"
 
     Last edited:
-        Miguel Armand B. Sta. Ana [May 17, 2025]
+        Miguel Armand B. Sta. Ana [May 18, 2025]
         John Bicierro [Feb 22, 2025]
 
     Company: github.com/codekada
@@ -251,7 +251,6 @@ function ExpenseContent({
             name: "Entertainment",
             icon: <EntertainmentIcon width={24} height={24} />,
         },
-        { name: "Income", icon: <IncomeIcon width={24} height={24} /> },
         { name: "Work", icon: <WorkIcon width={24} height={24} /> },
         {
             name: "Subscription",
@@ -348,7 +347,11 @@ function ExpenseContent({
                                 width: 24,
                                 height: 24,
                             })}
-                            <Text style={{ marginLeft: 8 }}>{selectedBudget.title}</Text>
+                            <Text
+                                style={{ marginLeft: 9, fontFamily: "Lexend_500Medium" }}
+                            >
+                                {selectedBudget.title}
+                            </Text>
                         </>
                     ) : (
                         <Text
@@ -526,7 +529,11 @@ function IncomeContent({
                                 width: 24,
                                 height: 24,
                             })}
-                            <Text style={{ marginLeft: 8 }}>{selectedBudget.title}</Text>
+                            <Text
+                                style={{ marginLeft: 8, fontFamily: "Lexend_500Medium" }}
+                            >
+                                {selectedBudget.title}
+                            </Text>
                         </>
                     ) : (
                         <Text
