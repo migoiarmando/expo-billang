@@ -19,7 +19,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import GuardianOfGoldSVG from "../../assets/bigbadges/big_guardian_of_gold.svg";
 import Exit from "../../assets/bigbadges/exit.svg";
 import Trophy from "../../assets/bigbadges/trophy.svg";
-import Save from "../../assets/bigbadges/save.svg";
 import Continue from "../../assets/bigbadges/continue.svg";
 import { useNavigation } from "@react-navigation/native";
 
@@ -58,9 +57,6 @@ const GuardianOfGold: React.FC<GuardianOfGoldProps> = ({ onExit }) => {
                 </LinearGradient>
                 {/* Bottom action buttons */}
                 <View style={styles.bottomButtons}>
-                    <TouchableOpacity style={styles.saveButton}>
-                        <Save />
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={handleExit}>
                         <Continue />
                     </TouchableOpacity>
@@ -112,10 +108,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         justifyContent: "flex-end",
-        paddingRight: 24,
-    },
-    saveButton: {
-        marginRight: 16,
+        paddingRight: 84,
     },
 });
 

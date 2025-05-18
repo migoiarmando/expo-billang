@@ -19,7 +19,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import PiggyPioneerSVG from "../../assets/bigbadges/big_piggy_pioneer.svg";
 import Trophy from "../../assets/bigbadges/trophy.svg";
 import Exit from "../../assets/bigbadges/exit.svg";
-import Save from "../../assets/bigbadges/save.svg";
 import Continue from "../../assets/bigbadges/continue.svg";
 import { useNavigation } from "@react-navigation/native";
 
@@ -62,9 +61,6 @@ const PiggyPioneer: React.FC<PiggyPioneerProps> = ({ userName = "User", onExit }
                     </Text>
                 </LinearGradient>
                 <View style={styles.bottomButtons}>
-                    <TouchableOpacity style={styles.saveButton}>
-                        <Save />
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={handleExit}>
                         <Continue />
                     </TouchableOpacity>
@@ -117,9 +113,6 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: "flex-end",
         paddingRight: 24,
-    },
-    saveButton: {
-        marginRight: 16,
     },
 });
 

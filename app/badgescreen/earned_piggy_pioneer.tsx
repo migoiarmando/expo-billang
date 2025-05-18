@@ -24,6 +24,9 @@ import Continue from "../../assets/bigbadges/continue.svg";
 import { useNavigation } from "@react-navigation/native";
 import { db } from "@/database";
 import { user_tb } from "@/database/schema";
+import ViewShot, { captureRef } from "react-native-view-shot";
+import * as MediaLibrary from "expo-media-library";
+import { Alert } from "react-native";
 
 type PiggyPioneerProps = {
     userName?: string;
@@ -32,6 +35,7 @@ type PiggyPioneerProps = {
 
 const EarnedPiggyPioneerScreen = (props: PiggyPioneerProps) => {
     const [userName, setUserName] = useState("User");
+    const badgeRef = React.useRef<View>(null);
 
     useEffect(() => {
         async function fetchUserName() {
@@ -51,6 +55,27 @@ const EarnedPiggyPioneerScreen = (props: PiggyPioneerProps) => {
 
     const handleExit = props.onExit || (() => navigation.goBack());
 
+    const handleSave = async () => {
+        try {
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert("Permission required", "Please allow access to save images.");
+                return;
+            }
+
+            const uri = await captureRef(badgeRef, {
+                format: "png",
+                quality: 1,
+            });
+
+            await MediaLibrary.saveToLibraryAsync(uri);
+            Alert.alert("Saved!", "Badge image saved to your gallery.");
+        } catch (err) {
+            console.error("Error saving badge image:", err);
+            Alert.alert("Error", "Failed to save image.");
+        }
+    };
+
     return (
         <>
             <StatusBar
@@ -62,28 +87,34 @@ const EarnedPiggyPioneerScreen = (props: PiggyPioneerProps) => {
                 <TouchableOpacity style={styles.exitIcon} onPress={handleExit}>
                     <Exit width={28} height={28} />
                 </TouchableOpacity>
-                <LinearGradient
-                    colors={["#FF8383", "#FBFBFB"]}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
-                    style={styles.container}
+                <ViewShot
+                    ref={badgeRef}
+                    options={{ format: "png", quality: 1 }}
+                    style={{ flex: 1 }}
                 >
-                    <Trophy />
-                    <Text
-                        style={styles.congrats}
-                    >{`Congrats, ${userName?.split(" ")[0] || "User"}!`}</Text>
-                    <Text style={styles.unlocked}>You've Unlocked a Badge!</Text>
+                    <LinearGradient
+                        colors={["#FF8383", "#FBFBFB"]}
+                        start={{ x: 0.5, y: 0 }}
+                        end={{ x: 0.5, y: 1 }}
+                        style={styles.container}
+                    >
+                        <Trophy />
+                        <Text
+                            style={styles.congrats}
+                        >{`Congrats, ${userName?.split(" ")[0] || "User"}!`}</Text>
+                        <Text style={styles.unlocked}>You've Unlocked a Badge!</Text>
 
-                    <PiggyPioneerSVG />
+                        <PiggyPioneerSVG />
 
-                    <Text style={styles.title}>Piggy Pioneer</Text>
+                        <Text style={styles.title}>Piggy Pioneer</Text>
 
-                    <Text style={styles.subtitle}>
-                        You have spent money for the first time!
-                    </Text>
-                </LinearGradient>
+                        <Text style={styles.subtitle}>
+                            You have spent money for the first time!
+                        </Text>
+                    </LinearGradient>
+                </ViewShot>
                 <View style={styles.bottomButtons}>
-                    <TouchableOpacity style={styles.saveButton}>
+                    <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                         <Save />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleExit} style={{ marginRight: -15 }}>
