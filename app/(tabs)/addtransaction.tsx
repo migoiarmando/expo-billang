@@ -80,6 +80,10 @@ export default function AddTransaction() {
     // Reset formKey every time the screen is focused
     useFocusEffect(
         React.useCallback(() => {
+            setAmount("");
+            setSelectedBudget(null);
+            setBudgetId("");
+            setSelected("expense"); // Optional: reset to expense tab
             setFormKey((k) => k + 1);
         }, []),
     );
@@ -103,6 +107,13 @@ export default function AddTransaction() {
             setBudgetId("");
         };
     }, []);
+
+    const resetForm = () => {
+        setAmount("");
+        setSelectedBudget(null);
+        setBudgetId("");
+        setFormKey((k) => k + 1); // This will also reset child state
+    };
 
     return (
         <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -197,6 +208,7 @@ export default function AddTransaction() {
                                     setSelectedBudget={setSelectedBudget}
                                     budgetId={budgetId}
                                     setBudgetId={setBudgetId}
+                                    resetForm={resetForm}
                                 />
                             ) : (
                                 <IncomeContent
@@ -209,6 +221,7 @@ export default function AddTransaction() {
                                     setSelectedBudget={setSelectedBudget}
                                     budgetId={budgetId}
                                     setBudgetId={setBudgetId}
+                                    resetForm={resetForm}
                                 />
                             )}
                         </View>
@@ -242,6 +255,7 @@ function ExpenseContent({
     setSelectedBudget,
     budgetId,
     setBudgetId,
+    resetForm,
 }: {
     amount: string;
     setAmount: React.Dispatch<React.SetStateAction<string>>;
@@ -252,6 +266,7 @@ function ExpenseContent({
     setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
     budgetId: string;
     setBudgetId: React.Dispatch<React.SetStateAction<string>>;
+    resetForm: () => void;
 }) {
     const categoryIcons = [
         { name: "Food", icon: <FoodIcon width={24} height={24} /> },
@@ -318,12 +333,12 @@ function ExpenseContent({
             console.log("[debug] Transaction created successfully");
             router.replace("/transaction");
 
+            // Reset parent state
+            resetForm();
+            // Reset child state
             setTitle("");
             setNotes("");
-            setAmount("");
             setSelectedCategory(categoryIcons[0]);
-            setSelectedBudget(null);
-            setBudgetId("");
 
             const expenses = await db
                 .select()
@@ -479,6 +494,7 @@ function IncomeContent({
     setSelectedBudget,
     budgetId,
     setBudgetId,
+    resetForm,
 }: {
     amount: string;
     budgets: Budget[];
@@ -488,6 +504,7 @@ function IncomeContent({
     setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
     budgetId: string;
     setBudgetId: React.Dispatch<React.SetStateAction<string>>;
+    resetForm: () => void;
 }) {
     const [title, setTitle] = useState<string>("");
     const [notes, setNotes] = useState<string>("");
@@ -543,8 +560,7 @@ function IncomeContent({
                 });
             }
 
-            setSelectedBudget(null);
-            setBudgetId("");
+            resetForm();
         } catch (err) {
             console.log("Error fetching or inserting data:", err);
         }

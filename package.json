@@ -1,7 +1,7 @@
 {
   "name": "billang",
   "main": "expo-router/entry",
-  "version": "0.4.96",
+  "version": "0.4.97",
   "private": true,
   "scripts": {
     "start": "expo start",
@@ -28,6 +28,7 @@
     "expo-asset": "~11.0.4",
     "expo-constants": "~17.0.8",
     "expo-dev-client": "~5.0.12",
+    "expo-file-system": "^18.1.10",
     "expo-font": "~13.0.4",
     "expo-image": "~2.0.6",
     "expo-image-picker": "~16.0.6",

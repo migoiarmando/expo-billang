@@ -18,7 +18,15 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import React, { useState, useCallback, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+    Platform,
+    Alert,
+} from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
@@ -45,7 +53,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { useFocusEffect } from "@react-navigation/native";
 import { db } from "@/database";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, and } from "drizzle-orm";
 import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import * as ImagePicker from "expo-image-picker";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
@@ -53,6 +61,8 @@ import AboutModal from "@/components/AboutModal";
 import ToggleOn from "@/assets/icons/toggle_on.svg";
 import ToggleOff from "@/assets/icons/toggle_off.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 const ProfileSection: React.FC<{
     profileImageUri: string | null;
@@ -316,6 +326,100 @@ export default function ProfileScreen() {
         });
     };
 
+    const handleExportCSV = async () => {
+        try {
+            // 1. Fetch all budgets
+            const budgets = await db.select().from(budget_tb);
+
+            // 2. For each budget, fetch expenses and incomes
+            let csv = "Budget,Amount,Total Expense,Total Income\n";
+            let overallBudget = 0;
+            let overallExpense = 0;
+            let overallIncome = 0;
+
+            for (const budget of budgets) {
+                const expenses = await db
+                    .select()
+                    .from(transactions_tb)
+                    .where(
+                        and(
+                            eq(transactions_tb.budgetId, budget.id),
+                            eq(transactions_tb.type, "Expense"),
+                        ),
+                    );
+                const incomes = await db
+                    .select()
+                    .from(transactions_tb)
+                    .where(
+                        and(
+                            eq(transactions_tb.budgetId, budget.id),
+                            eq(transactions_tb.type, "Income"),
+                        ),
+                    );
+
+                const totalExpense = expenses.reduce(
+                    (sum, tx) => sum + (tx.amount || 0),
+                    0,
+                );
+                const totalIncome = incomes.reduce(
+                    (sum, tx) => sum + (tx.amount || 0),
+                    0,
+                );
+
+                csv += `${budget.title},${budget.amount},${totalExpense},${totalIncome}\n`;
+
+                overallBudget += budget.amount;
+                overallExpense += totalExpense;
+                overallIncome += totalIncome;
+            }
+
+            csv += "\n";
+            csv += `Overall Budget,${overallBudget}\n`;
+            csv += `Overall Expense,${overallExpense}\n`;
+            csv += `Overall Income,${overallIncome}\n`;
+
+            // 3. Write to file (cache)
+            const fileUri = FileSystem.cacheDirectory + "spending_summary.csv";
+            await FileSystem.writeAsStringAsync(fileUri, csv, {
+                encoding: FileSystem.EncodingType.UTF8,
+            });
+
+            // 4. Download to device (Android only)
+            if (Platform.OS === "android") {
+                const permissions =
+                    await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+                if (permissions.granted) {
+                    const base64 = await FileSystem.readAsStringAsync(fileUri, {
+                        encoding: FileSystem.EncodingType.Base64,
+                    });
+                    const newUri =
+                        await FileSystem.StorageAccessFramework.createFileAsync(
+                            permissions.directoryUri,
+                            "spending_summary.csv",
+                            "text/csv",
+                        );
+                    await FileSystem.writeAsStringAsync(newUri, base64, {
+                        encoding: FileSystem.EncodingType.Base64,
+                    });
+                    Alert.alert("Success", "CSV file saved to Downloads!");
+                } else {
+                    Alert.alert(
+                        "Permission denied",
+                        "Cannot save file without permission.",
+                    );
+                }
+            }
+
+            // 5. Share the file (all platforms)
+            await Sharing.shareAsync(fileUri, {
+                mimeType: "text/csv",
+                dialogTitle: "Share Spending Summary CSV",
+            });
+        } catch (err) {
+            Alert.alert("Error", "Failed to export CSV: " + (err as Error).message);
+        }
+    };
+
     return (
         <>
             <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
@@ -377,7 +481,7 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="chart"
                             label="Spending Summary"
-                            onPress={() => router.push("/spendingsummary")}
+                            onPress={handleExportCSV}
                         />
                         <SettingsMenuItem
                             icon="badge"
