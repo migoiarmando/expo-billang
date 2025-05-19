@@ -173,7 +173,7 @@ export default function BudgetScreen() {
                                             onPress={() => {
                                                 router.push({
                                                     pathname:
-                                                        "/budget/editbudget/tailored",
+                                                        "/budget/editbudget/editbudgetfolder",
                                                     params: { budgetID: budget.id },
                                                 });
                                                 setSelectedBudgetId(null);

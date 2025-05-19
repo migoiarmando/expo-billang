@@ -310,7 +310,7 @@ export default function HomeScreen() {
                         }}
                     >
                         <BudgetCard
-                            name="Budget"
+                            name="Total Budget"
                             amount={budgetAmount}
                             spent={String(budgetSpent)}
                             percentage={1}
