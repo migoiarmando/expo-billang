@@ -3,6 +3,7 @@
     Route -> "onboarding/ob.tsx"
 
     Last edited:
+        Romar Josh E. Castro [May 19, 2025]
         Miguel Armand B. Sta. Ana [May 18, 2025]
         John Bicierro [Feb 22, 2025]
 
@@ -19,8 +20,10 @@ import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Paperclip } from "lucide-react-native";
+import { CalendarIcon, Paperclip, RefreshCwIcon } from "lucide-react-native";
 import { useState, useEffect } from "react";
+import Modal from "react-native-modal";
+
 import {
     View,
     Text,
@@ -119,7 +122,7 @@ export default function AddTransaction() {
         <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{ flex: 1 }}
+                style={{ flex: 1, position: "relative" }}
             >
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <ScrollView
@@ -142,7 +145,10 @@ export default function AddTransaction() {
                                         keyboardType="numeric"
                                         placeholder="0"
                                         placeholderTextColor="#3B3854"
-                                        className="font-lexend text-[32px]"
+                                        className="font-lexend "
+                                        style={{
+                                            fontSize: 40,
+                                        }}
                                         value={amount}
                                         onChangeText={(text) => {
                                             setAmount(text);
@@ -155,10 +161,10 @@ export default function AddTransaction() {
                                 </Text>
                             </View>
 
-                            <View className="flex-row mt-[50px] gap-[15px]">
+                            <View className="flex-row mt-[30px] gap-[15px]">
                                 <TouchableOpacity
                                     onPress={() => setSelected("expense")}
-                                    className={`flex-grow items-center rounded-full py-2 ${
+                                    className={`flex-grow items-center rounded-full px-4 py-3 ${
                                         selected === "expense"
                                             ? "bg-[#FD7474]"
                                             : "bg-bgBorder-2"
@@ -177,7 +183,7 @@ export default function AddTransaction() {
 
                                 <TouchableOpacity
                                     onPress={() => setSelected("income")}
-                                    className={`flex-grow items-center rounded-full py-2 ${
+                                    className={`flex-grow items-center rounded-full px-4 py-3 ${
                                         selected === "income"
                                             ? "bg-system-green"
                                             : "bg-bgBorder-2"
@@ -227,18 +233,17 @@ export default function AddTransaction() {
                         </View>
                     </ScrollView>
                 </TouchableWithoutFeedback>
+                {/* --- Render BudgetSelectModal OUTSIDE the ScrollView --- */}
+                <BudgetSelectModal
+                    isVisible={isBudgetModalVisible}
+                    onClose={() => setBudgetModalVisible(false)}
+                    budgets={budgets}
+                    onSelect={(budget) => {
+                        setSelectedBudget(budget);
+                        setBudgetId(String(budget.id));
+                    }}
+                />
             </KeyboardAvoidingView>
-
-            {/* --- Render BudgetSelectModal OUTSIDE the ScrollView --- */}
-            <BudgetSelectModal
-                isVisible={isBudgetModalVisible}
-                onClose={() => setBudgetModalVisible(false)}
-                budgets={budgets}
-                onSelect={(budget) => {
-                    setSelectedBudget(budget);
-                    setBudgetId(String(budget.id));
-                }}
-            />
 
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
@@ -251,7 +256,9 @@ function ExpenseContent({
     budgets,
     isBudgetModalVisible,
     setBudgetModalVisible,
+
     selectedBudget,
+
     setSelectedBudget,
     budgetId,
     setBudgetId,
@@ -261,7 +268,9 @@ function ExpenseContent({
     setAmount: React.Dispatch<React.SetStateAction<string>>;
     budgets: Budget[];
     isBudgetModalVisible: boolean;
+
     setBudgetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+
     selectedBudget: Budget | null;
     setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
     budgetId: string;
@@ -378,35 +387,19 @@ function ExpenseContent({
 
     return (
         <View className="flex-grow mt-[20px]">
-            <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                <Pressable
-                    style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-                    onPress={() => setBudgetModalVisible(true)}
-                >
-                    {selectedBudget ? (
-                        <>
-                            {(iconMap[selectedBudget.themeColor] || iconMap["#E6E6E6"])({
-                                width: 24,
-                                height: 24,
-                            })}
-                            <Text
-                                style={{ marginLeft: 9, fontFamily: "Lexend_500Medium" }}
-                            >
-                                {selectedBudget.title}
-                            </Text>
-                        </>
-                    ) : (
-                        <Text
-                            style={{ color: "#9D9D9D", fontFamily: "Lexend_500Medium" }}
-                        >
-                            Select Budget
-                        </Text>
-                    )}
-                </Pressable>
-            </View>
-
+            <Text
+                className="text-xs text-muted-foreground mb-2 font-medium text-[#767676]"
+                style={{
+                    color: "#676776",
+                    marginLeft: 4,
+                    fontSize: 12,
+                    fontFamily: "Lexend_500Medium",
+                }}
+            >
+                Select Category
+            </Text>
             {/* Category Dropdown */}
-            <View style={{ maxHeight: 60 }}>
+            <View style={{ maxHeight: 80 }}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {categoryIcons.map((item, index) => {
                         const isSelected = selectedCategory.name === item.name;
@@ -422,7 +415,7 @@ function ExpenseContent({
                                         gap: 8,
                                         borderRadius: 12,
                                         paddingVertical: 8,
-                                        paddingHorizontal: 20,
+                                        paddingHorizontal: 15,
                                         marginRight: 8,
                                         backgroundColor: "#F3F4F6", // bg-bgBorder-2
                                         borderWidth: isSelected ? 2 : 0,
@@ -433,8 +426,8 @@ function ExpenseContent({
                                 >
                                     {item.icon}
                                     <Text
-                                        className="font-lexend font-semibold"
-                                        style={{ color: "#9D9D9D" }}
+                                        className="font-lexend font-semibold text-sm"
+                                        style={{ color: "#767676" }}
                                     >
                                         {item.name}
                                     </Text>
@@ -445,8 +438,63 @@ function ExpenseContent({
                 </ScrollView>
             </View>
 
+            <View className="flex-row gap-3 my-3 mt-4">
+                {/* Select Budget */}
+                <View className="flex-1">
+                    <Text
+                        className="text-xs text-muted-foreground mb-1 font-medium text-[#767676]"
+                        style={{
+                            color: "#676776",
+                            marginLeft: 4,
+                            fontSize: 12,
+                            fontFamily: "Lexend_500Medium",
+                        }}
+                    >
+                        Budget
+                    </Text>
+                    <Pressable
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            minWidth: 100,
+                        }}
+                        className="py-3 px-5 bg-bgBorder-2 rounded-xl flex-row items-center gap-2"
+                        onPress={() => setBudgetModalVisible(true)}
+                    >
+                        {selectedBudget ? (
+                            <>
+                                {(
+                                    iconMap[selectedBudget.themeColor] ||
+                                    iconMap["#E6E6E6"]
+                                )({
+                                    width: 24,
+                                    height: 24,
+                                })}
+                                <Text
+                                    style={{
+                                        marginLeft: 9,
+                                        fontFamily: "Lexend_500Medium",
+                                    }}
+                                >
+                                    {selectedBudget.title}
+                                </Text>
+                            </>
+                        ) : (
+                            <Text
+                                style={{
+                                    color: "#9D9D9D",
+                                    fontFamily: "Lexend_400Regular",
+                                }}
+                            >
+                                Select Budget
+                            </Text>
+                        )}
+                    </Pressable>
+                </View>
+            </View>
+
             {/* Title Input */}
-            <View className="py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-[20px]">
+            <View className="py-2 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-[20px]">
                 <Text className="text-[#9D9D9D]">T</Text>
                 <TextInput
                     placeholder="Title"
@@ -597,10 +645,10 @@ function IncomeContent({
             </View>
 
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
-                <Text className="text-[#9D9D9D]">T</Text>
+                {/* <Text className="text-[#9D9D9D]">T</Text> */}
                 <TextInput
                     placeholder="Title"
-                    className="font-lexend"
+                    className="font-lexend text-[#767676]"
                     value={title}
                     onChangeText={(text) => {
                         setTitle(text);

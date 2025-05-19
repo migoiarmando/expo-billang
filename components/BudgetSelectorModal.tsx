@@ -34,7 +34,7 @@ import { db } from "@/database";
 import { budget_tb } from "@/database/schema";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-const MODAL_HEIGHT = SCREEN_HEIGHT * 0.55;
+const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
 const SPRING_CONFIG = {
     damping: 50,
     stiffness: 300,
@@ -142,7 +142,10 @@ const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
 
     return (
         <>
-            <Animated.View style={[styles.backdrop, rBackdropStyle]}>
+            <Animated.View
+                style={[styles.backdrop, rBackdropStyle]}
+                pointerEvents={active.value ? "auto" : "none"}
+            >
                 <Pressable style={styles.backdropButton} onPress={handleClose} />
             </Animated.View>
             <GestureDetector gesture={gesture}>
@@ -223,8 +226,8 @@ const styles = StyleSheet.create({
         right: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: "transparent",
-        zIndex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        zIndex: 999,
     },
     backdropButton: {
         flex: 1,
