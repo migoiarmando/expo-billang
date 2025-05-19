@@ -32,6 +32,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { and, eq, sql } from "drizzle-orm";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
+import { resetBudgetsIfNeeded } from "@/utils/budgetReset";
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -68,6 +69,9 @@ export default function BudgetScreen() {
 
     useFocusEffect(
         useCallback(() => {
+            // Call the reset function when the screen is focused
+            resetBudgetsIfNeeded();
+
             async function fetchBudget() {
                 try {
                     const budgets = await db.select().from(budget_tb);
@@ -219,7 +223,13 @@ export default function BudgetScreen() {
                 style: "destructive",
                 onPress: async () => {
                     try {
+                        // Delete the budget
                         await db.delete(budget_tb).where(eq(budget_tb.id, id));
+
+                        // Also delete all transactions linked to this budget
+                        await db
+                            .delete(transactions_tb)
+                            .where(eq(transactions_tb.budgetId, id));
 
                         // Update state
                         setBudgets((prev) =>
@@ -227,7 +237,10 @@ export default function BudgetScreen() {
                         );
                         setSelectedBudgetId(null);
                     } catch (err) {
-                        console.error("[error] Failed to delete budget:", err);
+                        console.error(
+                            "[error] Failed to delete budget or transactions:",
+                            err,
+                        );
                     }
                 },
             },
@@ -267,7 +280,7 @@ function BudgetCardSpent(budget: Budget) {
 
     return (
         <BudgetCard
-            name={`(${budget.id}) ${budget.title}`}
+            name={budget.title}
             amount={budget.amount}
             spent={String(spentBudget)}
             percentage={0}

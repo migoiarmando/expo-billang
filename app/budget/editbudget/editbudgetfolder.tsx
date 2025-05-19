@@ -127,18 +127,18 @@ export default function TailoredBudgetScreen() {
                 }
             } else {
                 // Create new budget (fallback, should not happen from edit)
-                await db.insert(budget_tb).values([
-                    {
-                        title: title.trim() || "Budget",
+            await db.insert(budget_tb).values([
+                {
+                    title: title.trim() || "Budget",
                         amount: 0,
-                        themeColor: selectedColor,
-                        contentColor: THEME_COLORS[selectedColor].content,
-                    },
-                ]);
-                addLog({
-                    type: "budget",
+                    themeColor: selectedColor,
+                    contentColor: THEME_COLORS[selectedColor].content,
+                },
+            ]);
+            addLog({
+                type: "budget",
                     message: `You have created a budget for ${title} containing ₱${Number(0).toLocaleString()}.`,
-                });
+            });
             }
 
             if (!onboarding) {
