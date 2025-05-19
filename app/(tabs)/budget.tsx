@@ -183,7 +183,7 @@ export default function BudgetScreen() {
                                                 setSelectedBudgetId(null);
                                             }}
                                         >
-                                            <Text className=" text-center font-semibold">
+                                            <Text className="text-center font-lexendRegular">
                                                 Edit
                                             </Text>
                                         </TouchableOpacity>
@@ -192,7 +192,7 @@ export default function BudgetScreen() {
                                             className="bg-bgBorder-2 py-2 px-4 rounded-xl flex-1 ml-2"
                                             onPress={() => confirmDelete(budget.id)}
                                         >
-                                            <Text className=" text-center font-semibold">
+                                            <Text className="text-center font-lexendRegular">
                                                 Delete
                                             </Text>
                                         </TouchableOpacity>
