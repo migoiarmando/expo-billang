@@ -107,8 +107,11 @@ export default function StructuredScreen() {
             await db.insert(budget_tb).values({
                 title: title.trim() || "Budget",
                 amount: numericAmount,
+                originalAmount: numericAmount,
                 themeColor: selectedColor,
                 contentColor: THEME_COLORS[selectedColor].content,
+                duration: selectedDuration,
+                lastReset: new Date().toISOString(),
             });
 
             // Add activity log here, after successful save

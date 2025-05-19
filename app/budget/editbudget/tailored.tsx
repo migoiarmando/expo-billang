@@ -81,8 +81,11 @@ export default function TailoredBudgetScreen() {
                 {
                     title: title.trim() || "Budget",
                     amount: numericAmount,
+                    originalAmount: numericAmount,
                     themeColor: selectedColor,
                     contentColor: THEME_COLORS[selectedColor].content,
+                    duration: selectedDuration,
+                    lastReset: new Date().toISOString(),
                 },
             ]);
 
