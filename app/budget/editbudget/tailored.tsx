@@ -21,7 +21,7 @@ import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronLeft, Pencil, RefreshCwIcon } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable, TextInput } from "react-native";
+import { View, Text, Pressable, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useActivityLogStore } from "@/utils/activityLogStore";
 import DurationSelectModal from "@/components/DurationSelectorModal";
@@ -72,8 +72,24 @@ export default function TailoredBudgetScreen() {
     async function SaveBudget() {
         try {
             const numericAmount = parseFloat(amount);
-            if (isNaN(numericAmount)) {
-                console.error("[error] Invalid amount entered:", amount);
+
+            // Check for required fields
+            if (!title.trim()) {
+                Alert.alert("Missing Title", "Please enter a title for your budget.");
+                return;
+            }
+            if (isNaN(numericAmount) || numericAmount <= 0) {
+                Alert.alert(
+                    "Invalid Amount",
+                    "Please enter a valid amount greater than 0.",
+                );
+                return;
+            }
+            if (!selectedDuration) {
+                Alert.alert(
+                    "Missing Duration",
+                    "Please select a duration for your budget.",
+                );
                 return;
             }
 
@@ -253,6 +269,11 @@ export default function TailoredBudgetScreen() {
                                 <View
                                     style={{
                                         backgroundColor: color,
+                                        borderWidth: selectedColor === color ? 3 : 0,
+                                        borderColor:
+                                            selectedColor === color
+                                                ? "#2C2C2C"
+                                                : "transparent",
                                     }}
                                     className={`w-[50px] h-[50px] rounded-full ${
                                         selectedColor === color
