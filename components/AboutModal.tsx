@@ -119,7 +119,14 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
                             to efficiently track, manage, and allocate monetary expenses
                             and bills.
                         </Text>
-                        <Text style={[styles.title, { marginTop: -5 }]}>Developers</Text>
+                        <Text
+                            style={[
+                                styles.title,
+                                { marginTop: -5, fontFamily: "Lexend_600SemiBold" },
+                            ]}
+                        >
+                            Developers
+                        </Text>
                         <Text style={styles.description}>
                             <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
                                 Lead Developer:{" "}
