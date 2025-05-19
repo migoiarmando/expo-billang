@@ -20,11 +20,12 @@ import { db } from "@/database";
 import { budget_tb, user_tb } from "@/database/schema";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronLeft, Pencil } from "lucide-react-native";
+import { ChevronLeft, Pencil, RefreshCwIcon } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useActivityLogStore } from "@/utils/activityLogStore";
+import DurationSelectModal from "@/components/DurationSelectorModal";
 const addLog = useActivityLogStore.getState().addLog;
 
 type ThemeColorKey =
@@ -39,9 +40,15 @@ export default function StructuredScreen() {
     const inputRef = useRef<TextInput>(null); // Create the ref
     const [title, setTitle] = useState("");
     const [amount, setAmount] = useState("");
+    const [needs, setNeeds] = useState(0);
+    const [wants, setWants] = useState(0);
+    const [savings, setSavings] = useState(0);
     const [onboarding, setOnboarding] = useState<boolean | null>(null);
     const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
-
+    const [durationModalVisible, setDurationModalVisible] = useState(false);
+    const [selectedDuration, setSelectedDuration] = useState<"weekly" | "monthly" | null>(
+        null,
+    );
     // Define theme colors with the type
     const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
         "#E6E6E6": { content: "#F6F6F6" }, // Gray
@@ -51,6 +58,24 @@ export default function StructuredScreen() {
         "#9FE0A9": { content: "#DEFDD3" }, // Green
         "#FADDFF": { content: "#E4A8C5" }, // Pink
     };
+
+    // Function to divide the amount based on 50-30-20 rule
+    const divideAmount = (value: string) => {
+        const num = parseFloat(value);
+        if (!isNaN(num)) {
+            setNeeds(num * 0.5);
+            setWants(num * 0.3);
+            setSavings(num * 0.2);
+        } else {
+            setNeeds(0);
+            setWants(0);
+            setSavings(0);
+        }
+    };
+
+    useEffect(() => {
+        divideAmount(amount);
+    }, [amount]);
 
     const THEME_COLOR_LIST = Object.keys(THEME_COLORS);
 
@@ -164,7 +189,7 @@ export default function StructuredScreen() {
                             <View className="flex justify-center">
                                 <Text className="font-lexend text-[12px]">Needs</Text>
                                 <Text className="font-lexend text-[12px] text-gray-700">
-                                    $50
+                                    ₱{needs.toFixed(2)}
                                 </Text>
                             </View>
                         </View>
@@ -177,7 +202,7 @@ export default function StructuredScreen() {
                             <View className="flex justify-center">
                                 <Text className="font-lexend text-[12px]">Wants</Text>
                                 <Text className="font-lexend text-[12px] text-gray-700">
-                                    $30
+                                    ₱{wants.toFixed(2)}
                                 </Text>
                             </View>
                         </View>
@@ -190,7 +215,7 @@ export default function StructuredScreen() {
                             <View className="flex justify-center">
                                 <Text className="font-lexend text-[12px]">Savings</Text>
                                 <Text className="font-lexend text-[12px] text-gray-700">
-                                    $20
+                                    ₱{savings.toFixed(2)}
                                 </Text>
                             </View>
                         </View>
@@ -198,7 +223,51 @@ export default function StructuredScreen() {
                 </View>
 
                 {/* Input fields */}
-                <View className="gap-[10px] mt-[20px]">
+                {/* Set Duration */}
+                <View className=" mt-[20px]" style={{ marginBottom: 10 }}>
+                    <Text
+                        style={{
+                            color: "#676776",
+                            marginLeft: 4,
+                            fontSize: 12,
+                            fontFamily: "Lexend_500Medium",
+                        }}
+                    >
+                        Duration
+                    </Text>
+
+                    <Pressable
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            backgroundColor: "#EEEEE",
+                            paddingVertical: 12,
+                            paddingHorizontal: 20,
+                            borderRadius: 12,
+                            marginTop: 4,
+                        }}
+                        onPress={() => setDurationModalVisible(true)}
+                    >
+                        <RefreshCwIcon size={16} color="#9D9D9D" />
+                        <View style={{ width: 6 }} />
+                        <Text
+                            style={{
+                                fontFamily: selectedDuration
+                                    ? "Lexend_500Medium"
+                                    : "Lexend_400Regular",
+                                color: selectedDuration ? "#2B3854" : "#9D9D9D",
+                            }}
+                        >
+                            {selectedDuration
+                                ? selectedDuration === "monthly"
+                                    ? "Monthly"
+                                    : "Weekly"
+                                : "Select Duration"}
+                        </Text>
+                    </Pressable>
+                </View>
+
+                <View className="gap-[10px]">
                     <View className="mt-2 py-3 px-5 flex-row justify-between items-center gap-2 bg-bgBorder-2 rounded-xl">
                         <Pressable
                             className="flex-1"
@@ -259,7 +328,13 @@ export default function StructuredScreen() {
                     )}
                 </View>
             </View>
-
+            <DurationSelectModal
+                isVisible={durationModalVisible}
+                onClose={() => setDurationModalVisible(false)}
+                onSelect={(duration) => {
+                    setSelectedDuration(duration);
+                }}
+            />
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );

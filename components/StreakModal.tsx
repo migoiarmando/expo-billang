@@ -341,6 +341,7 @@ const styles = StyleSheet.create({
     },
     streakLabel: {
         fontSize: 24,
+        textAlign: "center",
         color: "#2B3854",
         marginTop: 8,
         fontFamily: "Lexend_600SemiBold",

@@ -19,11 +19,12 @@ import { db } from "@/database";
 import { budget_tb, user_tb } from "@/database/schema";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronLeft, Pencil } from "lucide-react-native";
+import { ChevronLeft, Pencil, RefreshCwIcon } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useActivityLogStore } from "@/utils/activityLogStore";
+import DurationSelectModal from "@/components/DurationSelectorModal";
 const addLog = useActivityLogStore.getState().addLog;
 
 // Add this type definition
@@ -40,7 +41,10 @@ export default function TailoredBudgetScreen() {
     const [title, setTitle] = useState("");
     const [amount, setAmount] = useState("");
     const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
-
+    const [durationModalVisible, setDurationModalVisible] = useState(false);
+    const [selectedDuration, setSelectedDuration] = useState<"weekly" | "monthly" | null>(
+        null,
+    );
     const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
         "#E6E6E6": { content: "#F6F6F6" }, // Gray
         "#87CDFF": { content: "#BAE4FC" }, // Blue
@@ -170,6 +174,51 @@ export default function TailoredBudgetScreen() {
                         </View>
                     </View> */}
 
+                    {/* Add Duration */}
+
+                    <View>
+                        <Text
+                            style={{
+                                color: "#676776",
+                                marginLeft: 4,
+                                fontSize: 12,
+                                fontFamily: "Lexend_500Medium",
+                            }}
+                        >
+                            Duration
+                        </Text>
+
+                        <Pressable
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                backgroundColor: "#F2F2F2",
+                                paddingVertical: 12,
+                                paddingHorizontal: 20,
+                                borderRadius: 12,
+                                marginTop: 4,
+                            }}
+                            onPress={() => setDurationModalVisible(true)}
+                        >
+                            <RefreshCwIcon size={16} color="#9D9D9D" />
+                            <View style={{ width: 6 }} />
+                            <Text
+                                style={{
+                                    fontFamily: selectedDuration
+                                        ? "Lexend_500Medium"
+                                        : "Lexend_400Regular",
+                                    color: selectedDuration ? "#2B3854" : "#9D9D9D",
+                                }}
+                            >
+                                {selectedDuration
+                                    ? selectedDuration === "monthly"
+                                        ? "Monthly"
+                                        : "Weekly"
+                                    : "Select Duration"}
+                            </Text>
+                        </Pressable>
+                    </View>
+
                     <View className="py-3 px-5 flex-row justify-between items-center gap-2 bg-bgBorder-2 rounded-xl">
                         <Pressable
                             className="flex-1"
@@ -233,7 +282,13 @@ export default function TailoredBudgetScreen() {
                     )}
                 </View>
             </View>
-
+            <DurationSelectModal
+                isVisible={durationModalVisible}
+                onClose={() => setDurationModalVisible(false)}
+                onSelect={(duration) => {
+                    setSelectedDuration(duration);
+                }}
+            />
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );

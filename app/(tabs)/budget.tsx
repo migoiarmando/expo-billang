@@ -15,9 +15,9 @@
         - Users can add new budgets by selecting between default or structured budget.
 
 -------------------------------------------------------------------------------------------------------------- */
-
+import { Alert, Pressable } from "react-native";
 import { useCallback, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
@@ -32,6 +32,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { and, eq, sql } from "drizzle-orm";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
+
 interface AddBudgetButtonProps {
     onPress: () => void;
 }
@@ -61,6 +62,7 @@ interface Budget {
 
 export default function BudgetScreen() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [selectedBudgetId, setSelectedBudgetId] = useState<number | null>(null);
 
     const [search, setSearch] = useState("");
 
@@ -123,14 +125,14 @@ export default function BudgetScreen() {
                 >
                     <Header name="Budget" />
                     <TouchableOpacity
-                       onPress={async () => {
-                        const enabled = await getNotificationsEnabled();
-                        if (enabled) {
-                            router.push("/notifications");
-                        } else {
-                            router.push("/offnotifications");
-                        }
-                    }}
+                        onPress={async () => {
+                            const enabled = await getNotificationsEnabled();
+                            if (enabled) {
+                                router.push("/notifications");
+                            } else {
+                                router.push("/offnotifications");
+                            }
+                        }}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
                         <NotificationIcon width={32} height={32} />
@@ -149,18 +151,50 @@ export default function BudgetScreen() {
                 >
                     <View className="gap-3.5">
                         {filteredBudgets.map((budget) => (
-                            <TouchableOpacity
-                                key={budget.id}
-                                onPress={() => handleBudgetCardPress(budget.id)}
-                            >
-                                <BudgetCardSpent
-                                    id={budget.id}
-                                    title={budget.title}
-                                    amount={budget.amount}
-                                    contentColor={budget.contentColor}
-                                    themeColor={budget.themeColor}
-                                />
-                            </TouchableOpacity>
+                            <View key={budget.id}>
+                                <TouchableOpacity
+                                    onPress={() => handleBudgetCardPress(budget.id)}
+                                    onLongPress={() => setSelectedBudgetId(budget.id)}
+                                >
+                                    <BudgetCardSpent
+                                        id={budget.id}
+                                        title={budget.title}
+                                        amount={budget.amount}
+                                        contentColor={budget.contentColor}
+                                        themeColor={budget.themeColor}
+                                    />
+                                </TouchableOpacity>
+
+                                {/* Show edit/delete right after selected budget */}
+                                {selectedBudgetId === budget.id && (
+                                    <View className="flex-row justify-between mt-2 mb-4">
+                                        <TouchableOpacity
+                                            className="bg-bgBorder-2   py-2 px-4 rounded-xl flex-1 mr-2"
+                                            onPress={() => {
+                                                router.push({
+                                                    pathname:
+                                                        "/budget/editbudget/tailored",
+                                                    params: { budgetID: budget.id },
+                                                });
+                                                setSelectedBudgetId(null);
+                                            }}
+                                        >
+                                            <Text className=" text-center font-semibold">
+                                                Edit
+                                            </Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            className="bg-bgBorder-2 py-2 px-4 rounded-xl flex-1 ml-2"
+                                            onPress={() => confirmDelete(budget.id)}
+                                        >
+                                            <Text className=" text-center font-semibold">
+                                                Delete
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            </View>
                         ))}
 
                         <AddBudgetButton onPress={handleAddBudget} />
@@ -177,6 +211,28 @@ export default function BudgetScreen() {
             />
         </SafeAreaView>
     );
+    function confirmDelete(id: number) {
+        Alert.alert("Delete Budget", "Are you sure you want to delete this budget?", [
+            { text: "Cancel", style: "cancel" },
+            {
+                text: "Delete",
+                style: "destructive",
+                onPress: async () => {
+                    try {
+                        await db.delete(budget_tb).where(eq(budget_tb.id, id));
+
+                        // Update state
+                        setBudgets((prev) =>
+                            prev.filter((b: { id: number }) => b.id !== id),
+                        );
+                        setSelectedBudgetId(null);
+                    } catch (err) {
+                        console.error("[error] Failed to delete budget:", err);
+                    }
+                },
+            },
+        ]);
+    }
 }
 
 function BudgetCardSpent(budget: Budget) {
