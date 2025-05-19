@@ -14,6 +14,7 @@
     Feature Title: Onboarding Screen
 
 -------------------------------------------------------------------------------------------------------------- */
+import React from "react";
 import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
@@ -36,6 +37,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { eq } from "drizzle-orm";
 import BudgetSelectModal, { Budget } from "@/components/BudgetSelectorModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 import FoodIcon from "@/assets/transaction-icons/food.svg";
 import TransitIcon from "@/assets/transaction-icons/transit.svg";
@@ -73,6 +75,14 @@ export default function AddTransaction() {
     const [isBudgetModalVisible, setBudgetModalVisible] = useState(false); // Modal visibility
     const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null); // Selected budget
     const [budgetId, setBudgetId] = useState<string>(""); // Selected budget id
+    const [formKey, setFormKey] = useState(0);
+
+    // Reset formKey every time the screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+            setFormKey((k) => k + 1);
+        }, []),
+    );
 
     // Fetch budgets once on mount
     useEffect(() => {
@@ -177,6 +187,7 @@ export default function AddTransaction() {
                             {/* Dynamic Content */}
                             {selected === "expense" ? (
                                 <ExpenseContent
+                                    key={formKey}
                                     amount={amount}
                                     setAmount={setAmount}
                                     budgets={budgets}
@@ -189,6 +200,7 @@ export default function AddTransaction() {
                                 />
                             ) : (
                                 <IncomeContent
+                                    key={formKey}
                                     amount={amount}
                                     budgets={budgets}
                                     isBudgetModalVisible={isBudgetModalVisible}
@@ -277,6 +289,7 @@ function ExpenseContent({
                 return;
             }
 
+            // Insert the expense transaction
             await db.insert(transactions_tb).values({
                 budgetId: Number(budgetId),
                 type: "Expense",
@@ -286,6 +299,21 @@ function ExpenseContent({
                 notes: notes,
                 date: new Date().toISOString(),
             });
+
+            // --- NEW: Update the budget's amount after expense ---
+            const budgetsRes = await db
+                .select()
+                .from(budget_tb)
+                .where(eq(budget_tb.id, Number(budgetId)));
+            const currentBudget = budgetsRes[0];
+            if (currentBudget) {
+                const newTotal = Number(currentBudget.amount) - Number(amount);
+                await db
+                    .update(budget_tb)
+                    .set({ amount: newTotal })
+                    .where(eq(budget_tb.id, Number(budgetId)));
+            }
+            // --- END NEW ---
 
             console.log("[debug] Transaction created successfully");
             router.replace("/transaction");
@@ -373,17 +401,25 @@ function ExpenseContent({
                                 onPress={() => setSelectedCategory(item)}
                             >
                                 <View
-                                    className={`flex-row items-center gap-2 rounded-xl py-2 px-5 mr-2 bg-bgBorder-2 ${
-                                        isSelected ? "opacity-100" : "opacity-50"
-                                    }`}
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        gap: 8,
+                                        borderRadius: 12,
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 20,
+                                        marginRight: 8,
+                                        backgroundColor: "#F3F4F6", // bg-bgBorder-2
+                                        borderWidth: isSelected ? 2 : 0,
+                                        borderColor: isSelected
+                                            ? "#0075B2"
+                                            : "transparent", // Use your highlight color
+                                    }}
                                 >
                                     {item.icon}
                                     <Text
-                                        className={`font-lexend font-semibold ${
-                                            isSelected
-                                                ? "text-[#9D9D9D] "
-                                                : "text-[#9D9D9D]"
-                                        }`}
+                                        className="font-lexend font-semibold"
+                                        style={{ color: "#9D9D9D" }}
                                     >
                                         {item.name}
                                     </Text>

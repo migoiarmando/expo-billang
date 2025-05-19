@@ -119,6 +119,21 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
                             to efficiently track, manage, and allocate monetary expenses
                             and bills.
                         </Text>
+                        <Text style={[styles.title, { marginTop: 5 }]}>Developers</Text>
+                        <Text style={styles.description}>
+                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
+                                Lead Developer:{" "}
+                            </Text>
+                            Miguel Armand Sta. Ana{"\n"}
+                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
+                                Back End Developer:{" "}
+                            </Text>
+                            John Kristoffer Bicierro{"\n"}
+                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
+                                UI/UX / Front End Developer:{" "}
+                            </Text>
+                            Romar Josh Castro
+                        </Text>
                         <Text style={styles.copyright}>codekada™</Text>
                     </View>
                 </Animated.View>
@@ -159,7 +174,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: 30,
-        paddingTop: 30,
+        paddingTop: 21,
     },
     logoContainer: {
         marginBottom: 10,
@@ -181,13 +196,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#676666",
         textAlign: "center",
-        marginBottom: 20,
+        marginBottom: 15,
         fontFamily: "Lexend_300Light",
     },
     copyright: {
         fontSize: 14,
         color: "#676666",
-        marginTop: 10,
+        marginTop: 2,
         fontFamily: "Lexend_300Light",
     },
 });
