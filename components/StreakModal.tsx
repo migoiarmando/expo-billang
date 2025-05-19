@@ -13,7 +13,7 @@
         - This is the modal that pops up when logged in first time of.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
     View,
     Text,
@@ -34,6 +34,8 @@ import ModalFire from "@/assets/images/modalfire.svg";
 import { db } from "@/database";
 import { transactions_tb } from "@/database/schema";
 import { eq } from "drizzle-orm";
+import { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.7;
@@ -75,6 +77,8 @@ const StreakModal: React.FC<StreakModalProps> = ({
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const context = useSharedValue({ y: 0 });
     const active = useSharedValue(false);
+    const streakViewRef = useRef(null);
+    const [hideShare, setHideShare] = useState(false);
 
     // Pick a random motivational sentence each time the modal is shown
     const [sentence, setSentence] = React.useState(MOTIVATIONAL_SENTENCES[0]);
@@ -177,6 +181,22 @@ const StreakModal: React.FC<StreakModalProps> = ({
         };
     });
 
+    const handleShare = async () => {
+        setHideShare(true);
+        setTimeout(async () => {
+            try {
+                const uri = await captureRef(streakViewRef, {
+                    format: "png",
+                    quality: 1,
+                });
+                await Sharing.shareAsync(uri);
+            } catch (error) {
+                console.error("Error sharing streak:", error);
+            }
+            setHideShare(false);
+        }, 200); // Increased delay for reliability
+    };
+
     if (!isVisible) {
         return null;
     }
@@ -192,63 +212,76 @@ const StreakModal: React.FC<StreakModalProps> = ({
             <GestureDetector gesture={gesture}>
                 <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
                     <View style={styles.modalContent}>
-                        <View style={styles.fireContainer}>
-                            <ModalFire width={90} height={90} />
-                            <Text style={styles.streakNumber}>{streakCount}</Text>
-                        </View>
-                        <Text style={styles.streakLabel}>Days Streak</Text>
-                        <Text style={styles.motivation}>
-                            {sentence.replace("Doe", userName)}
-                        </Text>
-                        <View style={styles.streakBar}>
-                            {days.map((day, idx) => (
-                                <View key={idx} style={styles.streakDay}>
-                                    <ModalFire
-                                        width={22}
-                                        height={22}
-                                        opacity={weekStreak[idx] ? 1 : 0.2}
-                                        fill={weekStreak[idx] ? "#FF9900" : "#BDBDBD"}
-                                    />
-                                    <Text
-                                        style={[
-                                            styles.streakDayLabel,
-                                            {
-                                                color: weekStreak[idx]
-                                                    ? "#FF9900"
-                                                    : "#BDBDBD",
-                                            },
-                                        ]}
-                                    >
-                                        {day}
+                        <View
+                            ref={streakViewRef}
+                            collapsable={false}
+                            style={{ width: "100%" }}
+                        >
+                            <View style={styles.fireContainer}>
+                                <ModalFire width={90} height={90} />
+                                <Text style={styles.streakNumber}>{streakCount}</Text>
+                            </View>
+                            <Text style={styles.streakLabel}>Days Streak</Text>
+                            <Text style={styles.motivation}>
+                                {sentence.replace("Doe", userName)}
+                            </Text>
+                            <View style={styles.streakBar}>
+                                {days.map((day, idx) => (
+                                    <View key={idx} style={styles.streakDay}>
+                                        <ModalFire
+                                            width={22}
+                                            height={22}
+                                            opacity={weekStreak[idx] ? 1 : 0.2}
+                                            fill={weekStreak[idx] ? "#FF9900" : "#BDBDBD"}
+                                        />
+                                        <Text
+                                            style={[
+                                                styles.streakDayLabel,
+                                                {
+                                                    color: weekStreak[idx]
+                                                        ? "#FF9900"
+                                                        : "#BDBDBD",
+                                                },
+                                            ]}
+                                        >
+                                            {day}
+                                        </Text>
+                                    </View>
+                                ))}
+                            </View>
+                            <View style={styles.statsRow}>
+                                <View style={styles.statsBox}>
+                                    <Text style={styles.statsLabel}>
+                                        Avg. Monthly Spending
+                                    </Text>
+                                    <Text style={styles.statsValue}>
+                                        ₱
+                                        {avgMonthly.toLocaleString(undefined, {
+                                            maximumFractionDigits: 2,
+                                        })}
                                     </Text>
                                 </View>
-                            ))}
-                        </View>
-                        <View style={styles.statsRow}>
-                            <View style={styles.statsBox}>
-                                <Text style={styles.statsLabel}>
-                                    Avg. Monthly Spending
-                                </Text>
-                                <Text style={styles.statsValue}>
-                                    ₱
-                                    {avgMonthly.toLocaleString(undefined, {
-                                        maximumFractionDigits: 2,
-                                    })}
-                                </Text>
-                            </View>
-                            <View style={styles.statsBox}>
-                                <Text style={styles.statsLabel}>Avg. Daily Spending</Text>
-                                <Text style={styles.statsValue}>
-                                    ₱
-                                    {avgDaily.toLocaleString(undefined, {
-                                        maximumFractionDigits: 2,
-                                    })}
-                                </Text>
+                                <View style={styles.statsBox}>
+                                    <Text style={styles.statsLabel}>
+                                        Avg. Daily Spending
+                                    </Text>
+                                    <Text style={styles.statsValue}>
+                                        ₱
+                                        {avgDaily.toLocaleString(undefined, {
+                                            maximumFractionDigits: 2,
+                                        })}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.shareButton}>
-                            <Text style={styles.shareButtonText}>Share Streak</Text>
-                        </TouchableOpacity>
+                        {!hideShare && (
+                            <TouchableOpacity
+                                style={styles.shareButton}
+                                onPress={handleShare}
+                            >
+                                <Text style={styles.shareButtonText}>Share Streak</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </Animated.View>
             </GestureDetector>
