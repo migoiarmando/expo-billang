@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: [
-        "./app/**/*.{js,jsx,ts,tsx}",
-        "./components/**/*.{js,jsx,ts,tsx}",
-    ],
+    content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
     presets: [require("nativewind/preset")],
     theme: {
         extend: {
@@ -14,6 +11,10 @@ module.exports = {
                 lexendMedium: ["Lexend_500Medium"],
                 lexendSemiBold: ["Lexend_600SemiBold"],
                 lexendBold: ["Lexend_700Bold"],
+            },
+            backgroundImage: {
+                "fade-bgBorder":
+                    "linear-gradient(to bottom, var(--bgBorder-2) 0%, transparent 100%)",
             },
         },
         colors: {

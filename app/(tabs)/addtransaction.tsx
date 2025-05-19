@@ -438,7 +438,7 @@ function ExpenseContent({
                 </ScrollView>
             </View>
 
-            <View className="flex-row gap-3 my-3 mt-4">
+            <View className="flex-row gap-3 my-3 mt-5">
                 {/* Select Budget */}
                 <View className="flex-1">
                     <Text
@@ -494,7 +494,7 @@ function ExpenseContent({
             </View>
 
             {/* Title Input */}
-            <View className="py-2 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-[20px]">
+            <View className="py-2 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-7">
                 <Text className="text-[#9D9D9D]">T</Text>
                 <TextInput
                     placeholder="Title"
@@ -505,7 +505,7 @@ function ExpenseContent({
             </View>
 
             {/* Notes Input */}
-            <View className="mt-5 py-3 px-5 bg-bgBorder-2 rounded-xl h-[130px]">
+            <View className="mt-3 py-3 px-5 bg-bgBorder-2 rounded-xl h-[130px]">
                 <View className="flex-row gap-2 items-center">
                     <Paperclip color="#9D9D9D" size={12} />
                     <TextInput
@@ -617,7 +617,7 @@ function IncomeContent({
     return (
         <View className="flex-grow mt-[20px]">
             {/* Budget Selector (same as Expense) */}
-            <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
+            <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-fade-bgBorder rounded-xl">
                 <Pressable
                     style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
                     onPress={() => setBudgetModalVisible(true)}
