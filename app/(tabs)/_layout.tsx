@@ -15,12 +15,11 @@ import { Home, Plus, Search, User, WalletCards } from "lucide-react-native";
 import { View } from "react-native";
 
 export default function TabLayout() {
-
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: Colors.light.tint,
-
+                tabBarActiveTintColor: "#00A3E9",
+                tabBarInactiveTintColor: "#676666",
                 // Disable the static render of the header on web
                 // to prevent a hydration error in React Navigation v6.
                 headerShown: useClientOnlyValue(false, true),
@@ -31,10 +30,7 @@ export default function TabLayout() {
                 options={{
                     title: "Home",
                     headerShown: false,
-                    tabBarActiveTintColor: Colors.light.tint,
-                    tabBarIcon: () => (
-                        <Home color={Colors.light.tabIconDefault} size={20} />
-                    ),
+                    tabBarIcon: ({ color }) => <Home color={color} size={20} />,
                 }}
             />
             <Tabs.Screen
@@ -42,9 +38,7 @@ export default function TabLayout() {
                 options={{
                     title: "Transaction",
                     headerShown: false,
-                    tabBarIcon: () => (
-                        <Search color={Colors.light.tabIconDefault} size={20} />
-                    ),
+                    tabBarIcon: ({ color }) => <Search color={color} size={20} />,
                 }}
             />
 
@@ -53,16 +47,12 @@ export default function TabLayout() {
                 name="addtransaction"
                 options={{
                     title: "Add transaction",
-                    tabBarLabel: () => {
-                        return null;
-                    },
+                    tabBarLabel: () => null,
                     headerShown: false,
-                    tabBarIcon: () => (
-                        <>
-                            <View className="w-[40px] h-[40px] bg-[#E0F6FF] rounded-full flex items-center justify-center mt-4">
-                                <Plus color={"#5FA7C6"} size={24} />
-                            </View>
-                        </>
+                    tabBarIcon: ({ color }) => (
+                        <View className="w-[40px] h-[40px] bg-[#E0F6FF] rounded-full flex items-center justify-center mt-4">
+                            <Plus color={color} size={24} />
+                        </View>
                     ),
                 }}
             />
@@ -72,9 +62,7 @@ export default function TabLayout() {
                 options={{
                     title: "Budget",
                     headerShown: false,
-                    tabBarIcon: () => (
-                        <WalletCards color={Colors.light.tabIconDefault} size={20} />
-                    ),
+                    tabBarIcon: ({ color }) => <WalletCards color={color} size={20} />,
                 }}
             />
             <Tabs.Screen
@@ -82,9 +70,7 @@ export default function TabLayout() {
                 options={{
                     title: "Profile",
                     headerShown: false,
-                    tabBarIcon: () => (
-                        <User color={Colors.light.tabIconDefault} size={20} />
-                    ),
+                    tabBarIcon: ({ color }) => <User color={color} size={20} />,
                 }}
             />
         </Tabs>
