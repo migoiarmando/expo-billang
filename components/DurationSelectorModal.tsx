@@ -1,3 +1,17 @@
+/* --------------------------------------------------------------------------------------------------------------
+
+    Last edited: 
+        Miguel Armand B. Sta. Ana [May 20, 2025]
+
+    Company: github.com/codekada
+    Project: github.com/jkbicierro/expo-billang
+
+   
+    Feature Title: Duration Selector Modal
+    Description:  
+        - This is the modal that pops up if you tap the Duration Selector on the Budget Card.
+
+-------------------------------------------------------------------------------------------------------------- */
 import React from "react";
 
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";

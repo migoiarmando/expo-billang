@@ -2,7 +2,6 @@
 
     Last edited: 
          Miguel Armand B. Sta. Ana [May 20, 2025]
-        John Bicierro [Mar 17, 2025]
 
 
     Company: github.com/codekada
@@ -34,6 +33,7 @@ import { db } from "@/database";
 import { user_tb } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import { useUser } from "@/contexts/UserContext";
+import { useActivityLogStore } from "@/utils/activityLogStore";
 
 // Settings screen for changing profile picture and user name
 export default function SettingsScreen() {
@@ -75,13 +75,25 @@ export default function SettingsScreen() {
         if (!result.canceled && result.assets && result.assets.length > 0) {
             const uri = result.assets[0].uri;
             await setProfileImageUri(uri);
+            useActivityLogStore.getState().addLog({
+                type: "profile",
+                message: "Updated profile picture.",
+            });
         }
     };
 
     // Handle user name save
     const handleSaveName = async () => {
-        await setName(editingName);
-        Alert.alert("Success", "Changes saved!");
+        if (editingName !== name) {
+            await setName(editingName);
+            useActivityLogStore.getState().addLog({
+                type: "profile",
+                message: `Changed name from "${name}" to "${editingName}".`,
+            });
+            Alert.alert("Success", "Changes saved!");
+        } else {
+            Alert.alert("No changes", "Name is the same as before.");
+        }
     };
 
     return (
@@ -143,7 +155,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: "80%",
-        marginTop: 10,
+        marginTop: 5,
         alignSelf: "center",
     },
     label: {

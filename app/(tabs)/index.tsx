@@ -3,7 +3,7 @@
     Route -> "(tabs)/index.tsx"
 
     Last edited: 
-        Miguel Sta. Ana [May 11, 2025]
+        Miguel Sta. Ana [May 20, 2025]
         John Bicierro [May 8, 2025]
         Romar Castro [Mar 9, 2025]
 

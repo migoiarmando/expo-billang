@@ -2,7 +2,7 @@
     Route -> "transaction.tsx"
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 8, 2025]
+        Miguel Armand B. Sta. Ana [May 20, 2025]
         John Bicierro [Mar 17, 2025]
         Peter Joshua O. Jornales [March  4, 2025]
 
