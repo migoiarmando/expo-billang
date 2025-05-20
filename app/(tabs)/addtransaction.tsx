@@ -38,7 +38,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { eq } from "drizzle-orm";
-import BudgetSelectModal, { Budget } from "@/components/BudgetSelectorModal";
+// import BudgetSelectModal, { Budget } from "@/components/BudgetSelectorModal";
+import BudgetDropdown, { Budget } from "@/components/BudgetSelectorModal";
+
 import { useFocusEffect } from "@react-navigation/native";
 
 import FoodIcon from "@/assets/transaction-icons/food.svg";
@@ -74,7 +76,6 @@ export default function AddTransaction() {
     // --- LIFTED STATE FOR BUDGET MODAL ---
     // These states were previously in ExpenseContent
     const [budgets, setBudgets] = useState<Budget[]>([]); // All budgets
-    const [isBudgetModalVisible, setBudgetModalVisible] = useState(false); // Modal visibility
     const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null); // Selected budget
     const [budgetId, setBudgetId] = useState<string>(""); // Selected budget id
     const [formKey, setFormKey] = useState(0);
@@ -207,8 +208,6 @@ export default function AddTransaction() {
                                     amount={amount}
                                     setAmount={setAmount}
                                     budgets={budgets}
-                                    isBudgetModalVisible={isBudgetModalVisible}
-                                    setBudgetModalVisible={setBudgetModalVisible}
                                     selectedBudget={selectedBudget}
                                     setSelectedBudget={setSelectedBudget}
                                     budgetId={budgetId}
@@ -220,8 +219,6 @@ export default function AddTransaction() {
                                     key={formKey}
                                     amount={amount}
                                     budgets={budgets}
-                                    isBudgetModalVisible={isBudgetModalVisible}
-                                    setBudgetModalVisible={setBudgetModalVisible}
                                     selectedBudget={selectedBudget}
                                     setSelectedBudget={setSelectedBudget}
                                     budgetId={budgetId}
@@ -233,7 +230,7 @@ export default function AddTransaction() {
                     </ScrollView>
                 </TouchableWithoutFeedback>
                 {/* --- Render BudgetSelectModal OUTSIDE the ScrollView --- */}
-                <BudgetSelectModal
+                {/* <BudgetSelectModal
                     isVisible={isBudgetModalVisible}
                     onClose={() => setBudgetModalVisible(false)}
                     budgets={budgets}
@@ -241,7 +238,7 @@ export default function AddTransaction() {
                         setSelectedBudget(budget);
                         setBudgetId(String(budget.id));
                     }}
-                />
+                /> */}
             </KeyboardAvoidingView>
 
             <StatusBar style="dark" backgroundColor="white" />
@@ -253,11 +250,7 @@ function ExpenseContent({
     amount,
     setAmount,
     budgets,
-    isBudgetModalVisible,
-    setBudgetModalVisible,
-
     selectedBudget,
-
     setSelectedBudget,
     budgetId,
     setBudgetId,
@@ -266,10 +259,6 @@ function ExpenseContent({
     amount: string;
     setAmount: React.Dispatch<React.SetStateAction<string>>;
     budgets: Budget[];
-    isBudgetModalVisible: boolean;
-
-    setBudgetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-
     selectedBudget: Budget | null;
     setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
     budgetId: string;
@@ -457,49 +446,19 @@ function ExpenseContent({
                     >
                         Budget
                     </Text>
-                    <Pressable
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            minWidth: 100,
+                    <BudgetDropdown
+                        selectedBudget={selectedBudget}
+                        onSelect={(budget) => {
+                            setSelectedBudget(budget);
+                            setBudgetId(String(budget.id));
                         }}
-                        className="py-3 px-5 bg-bgBorder-2 rounded-xl flex-row items-center gap-2"
-                        onPress={() => setBudgetModalVisible(true)}
-                    >
-                        {selectedBudget ? (
-                            <>
-                                {(
-                                    iconMap[selectedBudget.themeColor] ||
-                                    iconMap["#E6E6E6"]
-                                )({
-                                    width: 24,
-                                    height: 24,
-                                })}
-                                <Text
-                                    style={{
-                                        marginLeft: 9,
-                                        fontFamily: "Lexend_500Medium",
-                                    }}
-                                >
-                                    {selectedBudget.title}
-                                </Text>
-                            </>
-                        ) : (
-                            <Text
-                                style={{
-                                    color: "#9D9D9D",
-                                    fontFamily: "Lexend_400Regular",
-                                }}
-                            >
-                                Select Budget
-                            </Text>
-                        )}
-                    </Pressable>
+                        budgets={budgets}
+                    />
                 </View>
             </View>
 
             {/* Title Input */}
-            <View className="py-2 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl mt-7">
+            <View className="py-2 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                 <Text className="text-[#9D9D9D]">T</Text>
                 <TextInput
                     placeholder="Title"
@@ -541,8 +500,6 @@ function ExpenseContent({
 function IncomeContent({
     amount,
     budgets,
-    isBudgetModalVisible,
-    setBudgetModalVisible,
     selectedBudget,
     setSelectedBudget,
     budgetId,
@@ -551,8 +508,7 @@ function IncomeContent({
 }: {
     amount: string;
     budgets: Budget[];
-    isBudgetModalVisible: boolean;
-    setBudgetModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+
     selectedBudget: Budget | null;
     setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
     budgetId: string;
@@ -625,32 +581,6 @@ function IncomeContent({
     return (
         <View className="flex-grow mt-[20px]">
             {/* Budget Selector (same as Expense) */}
-            <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-fade-bgBorder rounded-xl">
-                <Pressable
-                    style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-                    onPress={() => setBudgetModalVisible(true)}
-                >
-                    {selectedBudget ? (
-                        <>
-                            {(iconMap[selectedBudget.themeColor] || iconMap["#E6E6E6"])({
-                                width: 24,
-                                height: 24,
-                            })}
-                            <Text
-                                style={{ marginLeft: 8, fontFamily: "Lexend_500Medium" }}
-                            >
-                                {selectedBudget.title}
-                            </Text>
-                        </>
-                    ) : (
-                        <Text
-                            style={{ color: "#9D9D9D", fontFamily: "Lexend_500Medium" }}
-                        >
-                            Select Budget
-                        </Text>
-                    )}
-                </Pressable>
-            </View>
 
             <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
                 {/* <Text className="text-[#9D9D9D]">T</Text> */}
