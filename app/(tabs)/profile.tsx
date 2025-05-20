@@ -257,18 +257,6 @@ export default function ProfileScreen() {
         }, []),
     );
 
-    useFocusEffect(
-        useCallback(() => {
-            async function fetchBudgetColor() {
-                const budgets = await db.select().from(budget_tb);
-                if (budgets.length > 0) {
-                    setBudgetColor(budgets[0].themeColor || "#E6E6E6");
-                }
-            }
-            fetchBudgetColor();
-        }, []),
-    );
-
     useEffect(() => {
         async function loadProfileImage() {
             const uri = await AsyncStorage.getItem("profileImageUri");
@@ -305,11 +293,32 @@ export default function ProfileScreen() {
                 console.error("Error loading notifications enabled:", err);
             }
         }
+        async function loadHomeCardColor() {
+            const color = await AsyncStorage.getItem("homeBudgetCardColor");
+            if (color) setBudgetColor(color);
+            else setBudgetColor("#E6E6E6"); // fallback to default
+        }
         loadProfileImage();
         loadUserName();
         loadStreakCount();
         loadNotificationsEnabled();
+        loadHomeCardColor();
     }, []);
+
+    useEffect(() => {
+        AsyncStorage.removeItem("homeBudgetCardColor");
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function loadHomeCardColor() {
+                const color = await AsyncStorage.getItem("homeBudgetCardColor");
+                if (color) setBudgetColor(color);
+                else setBudgetColor("#E6E6E6"); // fallback to default
+            }
+            loadHomeCardColor();
+        }, []),
+    );
 
     // Function to handle profile picture tap
     const handleProfilePicPress = async () => {

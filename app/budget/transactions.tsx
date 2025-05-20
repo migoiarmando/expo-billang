@@ -18,13 +18,7 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { useEffect, useState } from "react";
-import {
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-    Pressable,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import { ChevronLeft } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
 import { Link, useLocalSearchParams } from "expo-router";
@@ -50,6 +44,11 @@ import BillsIcon from "@/assets/transaction-icons/bills.svg";
 import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
+
+function formatWithCommas(value: number | string): string {
+    const str = String(value).replace(/,/g, "");
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 export default function BudgetTransactionScreen() {
     const [selectedFilter, setSelectedFilter] = useState("all");
@@ -253,14 +252,14 @@ const TransactionItem = ({
                     <>
                         <ExpenseIcon width={10} height={10} className="mr-1" />
                         <Text className="text-[16px] font-lexendMedium text-[#FD7474]">
-                            ₱{amount}
+                            ₱{formatWithCommas(amount)}
                         </Text>
                     </>
                 ) : (
                     <>
                         <IncomeIcon width={10} height={10} className="mr-1" />
                         <Text className="text-[16px] font-lexendMedium text-[#80B154]">
-                            ₱{amount}
+                            ₱{formatWithCommas(amount)}
                         </Text>
                     </>
                 )}

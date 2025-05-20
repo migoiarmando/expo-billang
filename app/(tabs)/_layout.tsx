@@ -9,7 +9,6 @@
 -------------------------------------------------------------------------------------------------------------- */
 
 import { Tabs } from "expo-router";
-import Colors from "../../constants/Colors";
 import { useClientOnlyValue } from "../../components/expo/useClientOnlyValue";
 import { Home, Plus, Search, User, WalletCards } from "lucide-react-native";
 import { View } from "react-native";

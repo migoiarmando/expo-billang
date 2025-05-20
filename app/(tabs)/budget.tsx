@@ -15,7 +15,7 @@
         - Users can add new budgets by selecting between default or structured budget.
 
 -------------------------------------------------------------------------------------------------------------- */
-import { Alert, Pressable } from "react-native";
+import { Alert } from "react-native";
 import { useCallback, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Plus } from "lucide-react-native";
