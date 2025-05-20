@@ -1,8 +1,8 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited:
+        Miguel Armand B. Sta. Ana [May 20, 2025]
         Romar Castro [Mar 9, 2025]
-        Miguel Armand B. Sta. Ana [Feb 23, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang

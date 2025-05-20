@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-         Miguel Armand B. Sta. Ana [May 18, 2025]
+         Miguel Armand B. Sta. Ana [May 20, 2025]
         John Bicierro [Mar 17, 2025]
 
 
@@ -54,8 +54,7 @@ import { Header } from "@/components/Header";
 import { useFocusEffect } from "@react-navigation/native";
 import { db } from "@/database";
 import { eq, sql, and } from "drizzle-orm";
-import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
-import * as ImagePicker from "expo-image-picker";
+import { budget_tb, transactions_tb } from "@/database/schema";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import AboutModal from "@/components/AboutModal";
 import ToggleOn from "@/assets/icons/toggle_on.svg";
@@ -181,7 +180,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
 export default function ProfileScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter();
-    const { name, profileImageUri, setProfileImageUri } = useUser();
+    const { name, profileImageUri } = useUser();
     const [privacyVisible, setPrivacyVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
     const [streakCount, setStreakCount] = useState(0);
@@ -300,26 +299,6 @@ export default function ProfileScreen() {
             loadHomeCardColor();
         }, []),
     );
-
-    // Function to handle profile picture tap
-    const handleProfilePicPress = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-            alert("Permission to access gallery is required!");
-            return;
-        }
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            const uri = result.assets[0].uri;
-            setProfileImageUri(uri);
-            await AsyncStorage.setItem("profileImageUri", uri);
-        }
-    };
 
     // When toggling notifications
     const handleToggleNotifications = async () => {
