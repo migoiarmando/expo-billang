@@ -21,7 +21,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, Image } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 //import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
@@ -131,39 +131,30 @@ export default function HomeScreen() {
     const [showStreakModal, setShowStreakModal] = useState(false);
     const [colorModalVisible, setColorModalVisible] = useState(false);
     const [budgetColor, setBudgetColor] = useState("#E6E6E6");
+    const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
 
-    useEffect(() => {
-        async function GetUser() {
-            try {
-                //await db.delete(budget_tb);
-                //await db.delete(transactions_tb);
-                //await db.delete(user_tb);
-
-                const users = await db.select().from(user_tb);
-
-                if (!users.length) {
-                    await db.insert(user_tb).values({
-                        name: "",
-                    });
-
-                    router.replace("/onboarding/ob");
-                    console.log("[debug] Created user data successfully");
-                    return;
+    useFocusEffect(
+        useCallback(() => {
+            async function GetUser() {
+                try {
+                    const users = await db.select().from(user_tb);
+                    if (!users.length) {
+                        await db.insert(user_tb).values({ name: "" });
+                        router.replace("/onboarding/ob");
+                        return;
+                    }
+                    if (!users[0].onboarding) {
+                        router.replace("/onboarding/ob");
+                        return;
+                    }
+                    setItems(users);
+                } catch (err) {
+                    console.error("[GetUser] Error fetching or inserting data:", err);
                 }
-                if (!users[0].onboarding) {
-                    router.replace("/onboarding/ob");
-                    console.log("[debug] User required onboarding phase");
-                    return;
-                }
-
-                setItems(users);
-            } catch (err) {
-                console.error("[GetUser] Error fetching or inserting data:", err);
             }
-        }
-
-        GetUser();
-    }, []);
+            GetUser();
+        }, []),
+    );
 
     const [totalExpense, setTotalExpense] = useState(0);
     const [totalIncome, setTotalIncome] = useState(0);
@@ -334,6 +325,12 @@ export default function HomeScreen() {
         loadHomeCardColor();
     }, []);
 
+    useEffect(() => {
+        AsyncStorage.getItem("profileImageUri").then((uri) => {
+            if (uri) setProfileImageUri(uri);
+        });
+    }, []);
+
     if (items === null || items.length === 0) {
         return <View></View>;
     }
@@ -370,9 +367,11 @@ export default function HomeScreen() {
                         marginBottom: 10,
                     }}
                 >
-                    <Text className="font-lexend text-[24px] text-[#2B3854]">
-                        Good Day, {name?.split(" ")[0] || "User"}!
-                    </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Text className="font-lexend text-[24px] text-[#2B3854]">
+                            Good Day, {items?.[0]?.name?.split(" ")[0] || "User"}!
+                        </Text>
+                    </View>
                     <TouchableOpacity
                         onPress={async () => {
                             const enabled = await getNotificationsEnabled();

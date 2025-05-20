@@ -29,12 +29,30 @@ import * as ImagePicker from "expo-image-picker";
 import ProfilePic from "@/assets/images/profilepic.svg";
 import { useUser } from "@/contexts/UserContext";
 import { useActivityLogStore } from "@/utils/activityLogStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { db } from "@/database";
+import { user_tb } from "@/database/schema";
 
 // Settings screen for changing profile picture and user name
 export default function SettingsScreen() {
     const navigation = useNavigation();
     const { name, setName, profileImageUri, setProfileImageUri } = useUser();
     const [editingName, setEditingName] = useState(name);
+
+    // NEW: Fetch profile image and name on mount
+    useEffect(() => {
+        // Fetch profile image from AsyncStorage
+        AsyncStorage.getItem("profileImageUri").then((uri) => {
+            if (uri && setProfileImageUri) setProfileImageUri(uri);
+        });
+
+        // Fetch name from database
+        async function fetchName() {
+            const users = await db.select().from(user_tb);
+            if (users.length > 0 && setName) setName(users[0].name);
+        }
+        fetchName();
+    }, [setName, setProfileImageUri]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -80,7 +98,12 @@ export default function SettingsScreen() {
     // Handle user name save
     const handleSaveName = async () => {
         if (editingName !== name) {
+            // Update in context
             await setName(editingName);
+
+            // Update in database
+            await db.update(user_tb).set({ name: editingName });
+
             useActivityLogStore.getState().addLog({
                 type: "profile",
                 message: `Changed name from "${name}" to "${editingName}".`,

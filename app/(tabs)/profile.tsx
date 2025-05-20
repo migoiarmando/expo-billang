@@ -54,7 +54,7 @@ import { Header } from "@/components/Header";
 import { useFocusEffect } from "@react-navigation/native";
 import { db } from "@/database";
 import { eq, sql, and } from "drizzle-orm";
-import { budget_tb, transactions_tb } from "@/database/schema";
+import { budget_tb, transactions_tb, user_tb } from "@/database/schema";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import AboutModal from "@/components/AboutModal";
 import ToggleOn from "@/assets/icons/toggle_on.svg";
@@ -188,6 +188,8 @@ export default function ProfileScreen() {
     const [expenseExplorerEarned, setExpenseExplorerEarned] = useState(false);
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [budgetColor, setBudgetColor] = useState("#E6E6E6");
+    const [localProfileImageUri, setLocalProfileImageUri] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string>("");
 
     const handleCloseModal = () => {
         setIsModalVisible(false);
@@ -283,9 +285,19 @@ export default function ProfileScreen() {
                 setBudgetColor(color);
             else setBudgetColor("#E6E6E6");
         }
+        async function loadProfileImageUri() {
+            const uri = await AsyncStorage.getItem("profileImageUri");
+            if (uri) setLocalProfileImageUri(uri);
+        }
+        async function fetchUserName() {
+            const users = await db.select().from(user_tb);
+            if (users.length > 0) setUserName(users[0].name);
+        }
         loadStreakCount();
         loadNotificationsEnabled();
         loadHomeCardColor();
+        loadProfileImageUri();
+        fetchUserName();
     }, []);
 
     useFocusEffect(
@@ -402,6 +414,16 @@ export default function ProfileScreen() {
         }
     };
 
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchUserName() {
+                const users = await db.select().from(user_tb);
+                if (users.length > 0) setUserName(users[0].name);
+            }
+            fetchUserName();
+        }, []),
+    );
+
     return (
         <>
             <SafeAreaView className="h-full" style={{ backgroundColor: "#fff" }}>
@@ -431,8 +453,8 @@ export default function ProfileScreen() {
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection
-                            profileImageUri={profileImageUri}
-                            userName={name}
+                            profileImageUri={profileImageUri || localProfileImageUri}
+                            userName={userName}
                             streakCount={streakCount}
                             miniBadges={
                                 <>
