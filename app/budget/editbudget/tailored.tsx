@@ -25,6 +25,7 @@ import { View, Text, Pressable, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useActivityLogStore } from "@/utils/activityLogStore";
 import DurationSelectModal from "@/components/DurationSelectorModal";
+import DurationDropdown from "@/components/DurationSelectorModal";
 const addLog = useActivityLogStore.getState().addLog;
 
 // Add this type definition
@@ -193,9 +194,8 @@ export default function TailoredBudgetScreen() {
                         </View>
                     </View> */}
 
-                    {/* Add Duration */}
-
-                    <View>
+                    {/* Set Duration */}
+                    <View style={{ marginTop: 20, marginBottom: 10 }}>
                         <Text
                             style={{
                                 color: "#676776",
@@ -207,35 +207,12 @@ export default function TailoredBudgetScreen() {
                             Duration
                         </Text>
 
-                        <Pressable
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                backgroundColor: "#F2F2F2",
-                                paddingVertical: 12,
-                                paddingHorizontal: 20,
-                                borderRadius: 12,
-                                marginTop: 4,
-                            }}
-                            onPress={() => setDurationModalVisible(true)}
-                        >
-                            <RefreshCwIcon size={16} color="#9D9D9D" />
-                            <View style={{ width: 6 }} />
-                            <Text
-                                style={{
-                                    fontFamily: selectedDuration
-                                        ? "Lexend_500Medium"
-                                        : "Lexend_400Regular",
-                                    color: selectedDuration ? "#2B3854" : "#9D9D9D",
-                                }}
-                            >
-                                {selectedDuration
-                                    ? selectedDuration === "monthly"
-                                        ? "Monthly"
-                                        : "Weekly"
-                                    : "Select Duration"}
-                            </Text>
-                        </Pressable>
+                        <View style={{ marginTop: 6 }}>
+                            <DurationDropdown
+                                selectedDuration={selectedDuration}
+                                onSelect={(value) => setSelectedDuration(value)}
+                            />
+                        </View>
                     </View>
 
                     <View className="py-3 px-5 flex-row justify-between items-center gap-2 bg-bgBorder-2 rounded-xl">
@@ -306,13 +283,7 @@ export default function TailoredBudgetScreen() {
                     )}
                 </View>
             </View>
-            <DurationSelectModal
-                isVisible={durationModalVisible}
-                onClose={() => setDurationModalVisible(false)}
-                onSelect={(duration) => {
-                    setSelectedDuration(duration);
-                }}
-            />
+
             <StatusBar style="dark" backgroundColor="white" />
         </SafeAreaView>
     );

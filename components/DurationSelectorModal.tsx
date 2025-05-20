@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------------------------
 
     Last edited: 
-        Miguel Armand B. Sta. Ana [May 20, 2025]
+        Romar Castro [May 20, 2025]
 
     Company: github.com/codekada
     Project: github.com/jkbicierro/expo-billang
@@ -12,117 +12,58 @@
         - This is the modal that pops up if you tap the Duration Selector on the Budget Card.
 
 -------------------------------------------------------------------------------------------------------------- */
-import React from "react";
 
-import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    withTiming,
-    runOnJS,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { RefreshCwIcon } from "lucide-react-native";
+import React, { useState } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 
-const SCREEN_HEIGHT = Dimensions.get("window").height;
-const MODAL_HEIGHT = SCREEN_HEIGHT * 0.4;
-const SPRING_CONFIG = {
-    damping: 50,
-    stiffness: 300,
-    mass: 0.5,
-};
-
-interface DurationSelectModalProps {
-    isVisible: boolean;
-    onClose: () => void;
-    onSelect: (duration: "monthly" | "weekly") => void;
+interface DurationDropdownProps {
+    selectedDuration: "weekly" | "monthly" | null;
+    onSelect: (value: "weekly" | "monthly") => void;
 }
 
-const DurationSelectModal: React.FC<DurationSelectModalProps> = ({
-    isVisible,
-    onClose,
+const DurationDropdown: React.FC<DurationDropdownProps> = ({
+    selectedDuration,
     onSelect,
 }) => {
-    const translateY = useSharedValue(MODAL_HEIGHT);
-    const context = useSharedValue({ y: 0 });
-    const active = useSharedValue(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const scrollTo = (destination: number) => {
-        "worklet";
-        active.value = destination !== MODAL_HEIGHT;
-        translateY.value = withSpring(destination, SPRING_CONFIG);
-    };
-
-    const handleClose = () => {
-        scrollTo(MODAL_HEIGHT);
-        runOnJS(onClose)();
-    };
-
-    React.useEffect(() => {
-        translateY.value = isVisible
-            ? withSpring(0, SPRING_CONFIG)
-            : withSpring(MODAL_HEIGHT, SPRING_CONFIG);
-    }, [isVisible, translateY]);
-
-    const gesture = Gesture.Pan()
-        .onStart(() => {
-            context.value = { y: translateY.value };
-        })
-        .onUpdate((event) => {
-            const newTranslateY = event.translationY + context.value.y;
-            translateY.value = Math.max(0, Math.min(newTranslateY, MODAL_HEIGHT));
-        })
-        .onEnd((event) => {
-            if (event.velocityY > 500 || event.translationY > MODAL_HEIGHT / 3) {
-                runOnJS(handleClose)();
-            } else {
-                translateY.value = withSpring(0, SPRING_CONFIG);
-            }
-        });
-
-    const rBottomSheetStyle = useAnimatedStyle(() => ({
-        transform: [{ translateY: translateY.value }],
-    }));
-
-    const rBackdropStyle = useAnimatedStyle(() => ({
-        opacity: withTiming(active.value ? 1 : 0),
-    }));
-
-    if (!isVisible) return null;
     return (
-        <>
-            <Animated.View
-                style={[styles.backdrop, rBackdropStyle]}
-                pointerEvents={isVisible ? "auto" : "none"} // ← this must go here, not in style
-            >
-                <Pressable style={styles.backdropButton} onPress={handleClose} />
-            </Animated.View>
-            <GestureDetector gesture={gesture}>
-                <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
-                    <Text style={styles.title}>Select Duration</Text>
+        <View style={styles.container}>
+            <Pressable style={styles.dropdownButton} onPress={() => setIsOpen(!isOpen)}>
+                <Text style={styles.dropdownText}>
+                    {selectedDuration === "monthly"
+                        ? "Monthly"
+                        : selectedDuration === "weekly"
+                          ? "Weekly"
+                          : "Select Duration"}
+                </Text>
+                <RefreshCwIcon size={12} color="#9D9D9D" />
+            </Pressable>
 
+            {isOpen && (
+                <View style={styles.dropdownList}>
                     <Pressable
                         style={styles.option}
                         onPress={() => {
                             onSelect("monthly");
-                            handleClose();
+                            setIsOpen(false);
                         }}
                     >
-                        <View>
-                            <Text style={styles.optionTitle}>Monthly</Text>
-                        </View>
-
+                        <Text style={styles.optionTitle}>Monthly</Text>
                         <Text style={styles.optionDesc}>
                             Your budget resets every month. Ideal if you manage bills,
                             salary, or long-term expenses.
                         </Text>
                     </Pressable>
 
+                    <View style={styles.separator} />
+
                     <Pressable
                         style={styles.option}
                         onPress={() => {
                             onSelect("weekly");
-                            handleClose();
+                            setIsOpen(false);
                         }}
                     >
                         <Text style={styles.optionTitle}>Weekly</Text>
@@ -131,58 +72,55 @@ const DurationSelectModal: React.FC<DurationSelectModalProps> = ({
                             check-ins on your expenses.
                         </Text>
                     </Pressable>
-                </Animated.View>
-            </GestureDetector>
-        </>
+                </View>
+            )}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    backdrop: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "#00000000",
-        zIndex: 1,
+    container: {
+        width: "100%",
     },
-    backdropButton: {
-        flex: 1,
+    dropdownButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 20,
+        borderRadius: 8,
+        backgroundColor: "#eee",
     },
-    modalContainer: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: MODAL_HEIGHT,
-        backgroundColor: "white",
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        padding: 24,
-        zIndex: 2,
+    dropdownText: {
+        fontSize: 13,
+        fontFamily: "Lexend_400Regular",
+        textAlign: "left",
     },
-    title: {
-        fontSize: 18,
-        fontFamily: "Lexend_600SemiBold",
-        marginBottom: 20,
-        textAlign: "center",
+    dropdownList: {
+        marginTop: 8,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        paddingHorizontal: 10,
+        backgroundColor: "#fff",
     },
     option: {
-        paddingVertical: 16,
-        borderBottomColor: "#e5e5e5",
-        borderBottomWidth: 1,
+        paddingVertical: 12,
     },
     optionTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontFamily: "Lexend_500Medium",
         marginBottom: 4,
     },
     optionDesc: {
-        fontSize: 14,
+        fontSize: 13,
         color: "#666",
         fontFamily: "Lexend_400Regular",
     },
+    separator: {
+        height: 1,
+        backgroundColor: "#ccc",
+        marginVertical: 5,
+    },
 });
 
-export default DurationSelectModal;
+export default DurationDropdown;

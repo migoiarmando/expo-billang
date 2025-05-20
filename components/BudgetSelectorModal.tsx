@@ -14,15 +14,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable, Dimensions, FlatList } from "react-native";
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    withTiming,
-    runOnJS,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { View, Text, Pressable, StyleSheet, FlatList } from "react-native";
 
 import GrayIcon from "@/assets/smallbudgeticons/gray_smallbudgeticon.svg";
 import BlueIcon from "@/assets/smallbudgeticons/blue_budgeticon.svg";
@@ -32,16 +24,8 @@ import GreenIcon from "@/assets/smallbudgeticons/green_budgeticon.svg";
 import PinkIcon from "@/assets/smallbudgeticons/pink_budgeticon.svg";
 import { db } from "@/database";
 import { budget_tb } from "@/database/schema";
+import { LogBox } from "react-native";
 
-const SCREEN_HEIGHT = Dimensions.get("window").height;
-const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
-const SPRING_CONFIG = {
-    damping: 50,
-    stiffness: 300,
-    mass: 0.5,
-};
-
-// Map themeColor to icon
 const iconMap: Record<string, React.FC<any>> = {
     "#E6E6E6": GrayIcon,
     "#87CDFF": BlueIcon,
@@ -57,217 +41,138 @@ export interface Budget {
     themeColor: string;
 }
 
-interface BudgetSelectModalProps {
-    isVisible: boolean;
-    onClose: () => void;
-    budgets: Budget[];
+interface BudgetDropdownProps {
+    selectedBudget: Budget | null;
     onSelect: (budget: Budget) => void;
+    budgets: Budget[];
 }
+// type BudgetDropdownProps = {
+//     selectedBudget: Budget | null; // or `Budget | undefined`
+//     onSelect: (budget: Budget) => void;
+// };
 
-const BudgetSelectModal: React.FC<BudgetSelectModalProps> = ({
-    isVisible,
-    onClose,
-
-    onSelect,
-}) => {
-    // Fetch
+const BudgetDropdown: React.FC<BudgetDropdownProps> = ({ onSelect, selectedBudget }) => {
     const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [isOpen, setIsOpen] = useState(false);
+    useEffect(() => {
+        LogBox.ignoreLogs([
+            "VirtualizedLists should never be nested", // ignore specific warning
+        ]);
+    }, []);
 
     useEffect(() => {
-        if (!isVisible) return;
-
         async function fetchBudgets() {
             try {
-                const budgets = await db.select().from(budget_tb);
-                setBudgets(budgets);
+                const data = await db.select().from(budget_tb);
+                setBudgets(data);
             } catch (err) {
-                console.error("[error] Failed to fetch budgets in modal:", err);
+                console.error("Failed to fetch budgets:", err);
             }
         }
 
         fetchBudgets();
-    }, [isVisible]);
-
-    const translateY = useSharedValue(MODAL_HEIGHT);
-    const context = useSharedValue({ y: 0 });
-    const active = useSharedValue(false);
-
-    const scrollTo = (destination: number) => {
-        "worklet";
-        active.value = destination !== MODAL_HEIGHT;
-        translateY.value = withSpring(destination, SPRING_CONFIG);
-    };
-
-    const handleClose = () => {
-        scrollTo(MODAL_HEIGHT);
-        runOnJS(onClose)();
-    };
-
-    React.useEffect(() => {
-        if (isVisible) {
-            translateY.value = withSpring(0, SPRING_CONFIG);
-        } else {
-            translateY.value = withSpring(MODAL_HEIGHT, SPRING_CONFIG);
-        }
-    }, [isVisible, translateY]);
-
-    const gesture = Gesture.Pan()
-        .onStart(() => {
-            context.value = { y: translateY.value };
-        })
-        .onUpdate((event) => {
-            const newTranslateY = event.translationY + context.value.y;
-            translateY.value = Math.max(0, Math.min(newTranslateY, MODAL_HEIGHT));
-        })
-        .onEnd((event) => {
-            if (event.velocityY > 500 || event.translationY > MODAL_HEIGHT / 3) {
-                runOnJS(handleClose)();
-            } else {
-                translateY.value = withSpring(0, SPRING_CONFIG);
-            }
-        });
-
-    const rBottomSheetStyle = useAnimatedStyle(() => ({
-        transform: [{ translateY: translateY.value }],
-    }));
-
-    const rBackdropStyle = useAnimatedStyle(() => ({
-        opacity: withTiming(active.value ? 1 : 0),
-        pointerEvents: active.value ? "auto" : "none",
-    }));
-
-    if (!isVisible) return null;
-
-    console.log("Budgets passed to modal:", budgets);
+    }, []);
 
     return (
-        <>
-            <Animated.View
-                style={[styles.backdrop, rBackdropStyle]}
-                pointerEvents={active.value ? "auto" : "none"}
-            >
-                <Pressable style={styles.backdropButton} onPress={handleClose} />
-            </Animated.View>
-            <GestureDetector gesture={gesture}>
-                <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
-                    <Text style={styles.title}>Select Budget</Text>
+        <View style={styles.container}>
+            <Pressable style={styles.dropdownButton} onPress={() => setIsOpen(!isOpen)}>
+                {selectedBudget ? (
+                    <>
+                        {React.createElement(
+                            iconMap[selectedBudget.themeColor] || GrayIcon,
+                            {
+                                width: 30,
+                                height: 30,
+                            },
+                        )}
+                        <Text style={styles.dropdownText}>{selectedBudget.title}</Text>
+                    </>
+                ) : (
+                    <Text style={styles.dropdownText}>Select a Budget</Text>
+                )}
+            </Pressable>
 
-                    {budgets.length <= 2 ? (
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                width: "100%",
-                                marginTop: 24,
-                            }}
-                        >
-                            {budgets.map((item) => {
-                                const Icon = iconMap[item.themeColor] || GrayIcon;
-                                return (
-                                    <Pressable
-                                        key={item.id}
-                                        style={{
-                                            alignItems: "center",
-                                            marginHorizontal: 10,
-                                            width: 80,
-                                        }}
-                                        onPress={() => {
-                                            onSelect(item);
-                                            handleClose();
-                                        }}
-                                    >
-                                        <Icon width={60} height={60} />
-                                        <Text style={styles.folderText} numberOfLines={1}>
-                                            {item.title}
-                                        </Text>
-                                    </Pressable>
-                                );
-                            })}
-                        </View>
-                    ) : (
-                        <FlatList
-                            data={budgets}
-                            keyExtractor={(item) => item.id.toString()}
-                            numColumns={3}
-                            renderItem={({ item }) => {
-                                const Icon = iconMap[item.themeColor] || GrayIcon;
-                                return (
-                                    <Pressable
-                                        style={styles.folder}
-                                        onPress={() => {
-                                            onSelect(item);
-                                            handleClose();
-                                        }}
-                                    >
-                                        <Icon width={60} height={60} />
-                                        <Text
-                                            style={styles.folderText}
-                                            numberOfLines={1}
-                                            ellipsizeMode="tail"
-                                        >
-                                            {item.title}
-                                        </Text>
-                                    </Pressable>
-                                );
-                            }}
-                        />
-                    )}
-                </Animated.View>
-            </GestureDetector>
-        </>
+            {isOpen && (
+                <View style={styles.dropdownList}>
+                    <FlatList
+                        data={budgets}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => {
+                            const Icon = iconMap[item.themeColor] || GrayIcon;
+                            return (
+                                <Pressable
+                                    style={styles.option}
+                                    onPress={() => {
+                                        onSelect(item);
+                                        setIsOpen(false);
+                                    }}
+                                >
+                                    <Icon width={20} height={20} />
+                                    <Text style={styles.optionText}>{item.title}</Text>
+                                </Pressable>
+                            );
+                        }}
+                        scrollEnabled={true}
+                        nestedScrollEnabled={true}
+                        removeClippedSubviews={false}
+                        ItemSeparatorComponent={() => (
+                            <View
+                                style={{
+                                    height: 1,
+                                    backgroundColor: "#ccc",
+                                    marginVertical: 2,
+                                }}
+                            />
+                        )}
+                    />
+                </View>
+            )}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    backdrop: {
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        zIndex: 999,
+    container: {
+        width: "100%",
     },
-    backdropButton: {
-        flex: 1,
-    },
-    modalContainer: {
-        height: MODAL_HEIGHT, // e.g. 400 or any fixed height you want
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: "white",
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        zIndex: 2,
-        paddingTop: 24,
+    dropdownButton: {
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "flex-start",
+        padding: 12,
+
+        borderRadius: 8,
+        backgroundColor: "#eee",
     },
-    title: {
-        fontSize: 18,
-        marginBottom: 12,
-        fontFamily: "Lexend_600SemiBold",
+    dropdownText: {
+        textAlign: "center",
+
+        fontSize: 13,
+        marginLeft: 10,
+        fontFamily: "Lexend_400Regular",
+    },
+    dropdownList: {
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        maxHeight: 200,
+        marginTop: 8,
+        paddingHorizontal: 10,
+    },
+    option: {
+        alignContent: "center",
+        marginVertical: 6,
+        paddingVertical: 12,
+        paddingHorizontal: 5,
+        flexDirection: "row",
+        gap: 10,
     },
 
-    folder: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 30,
-        paddingVertical: 10,
-    },
-    folderText: {
-        marginTop: 8,
-        fontSize: 13,
-        color: "#222",
-        textAlign: "center",
+    optionText: {
+        fontSize: 14,
         fontFamily: "Lexend_400Regular",
-        width: 70,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
+        textAlign: "center",
     },
 });
 
-export default BudgetSelectModal;
+export default BudgetDropdown;

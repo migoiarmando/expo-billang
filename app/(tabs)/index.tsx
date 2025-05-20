@@ -540,7 +540,7 @@ export default function HomeScreen() {
                                 >
                                     <AddTransactions width={38} height={38} />
                                     <Text className="font-lexend text-[12px] text-gray-900">
-                                        Add Transactions
+                                        Add Transaction
                                     </Text>
                                 </TouchableOpacity>
                             </View>
