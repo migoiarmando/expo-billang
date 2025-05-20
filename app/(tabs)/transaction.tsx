@@ -16,14 +16,8 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useCallback,useState } from "react";
-import {
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-} from "react-native";
+import { useCallback, useState } from "react";
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { SearchBar } from "@/components/SearchBar";
@@ -143,16 +137,30 @@ export default function TransactionScreen() {
                             Transactions
                         </Text>
 
-                        {filteredTransactions.map((transaction) => (
-                            <TransactionItem
-                                key={transaction.id}
-                                title={transaction.title || transaction.category}
-                                date={transaction.date}
-                                amount={transaction.amount}
-                                iconUrl={transaction.category}
-                                amountColor={transaction.type}
-                            />
-                        ))}
+                        {filteredTransactions.length === 0 ? (
+                            <Text
+                                style={{
+                                    fontFamily: "Lexend_400Regular",
+                                    textAlign: "center",
+                                    fontSize: 20,
+                                    marginTop: 180,
+                                    color: "#676666",
+                                }}
+                            >
+                                There are no Transactions yet.
+                            </Text>
+                        ) : (
+                            filteredTransactions.map((transaction) => (
+                                <TransactionItem
+                                    key={transaction.id}
+                                    title={transaction.title || transaction.category}
+                                    date={transaction.date}
+                                    amount={transaction.amount}
+                                    iconUrl={transaction.category}
+                                    amountColor={transaction.type}
+                                />
+                            ))
+                        )}
                     </View>
                 </ScrollView>
             </View>

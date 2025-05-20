@@ -189,6 +189,7 @@ export default function ProfileScreen() {
     const [piggyPioneerEarned, setPiggyPioneerEarned] = useState(false);
     const [expenseExplorerEarned, setExpenseExplorerEarned] = useState(false);
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [budgetColor, setBudgetColor] = useState("#E6E6E6");
 
     const handleCloseModal = () => {
         setIsModalVisible(false);
@@ -253,6 +254,18 @@ export default function ProfileScreen() {
                 }
             }
             loadBadges();
+        }, []),
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchBudgetColor() {
+                const budgets = await db.select().from(budget_tb);
+                if (budgets.length > 0) {
+                    setBudgetColor(budgets[0].themeColor || "#E6E6E6");
+                }
+            }
+            fetchBudgetColor();
         }, []),
     );
 
@@ -466,10 +479,11 @@ export default function ProfileScreen() {
                         />
 
                         <BudgetCard
-                            name="Budget"
+                            name="Overall Budget"
                             amount={budgetAmount}
                             spent={String(budgetSpent)}
                             percentage={1}
+                            themeColor={budgetColor}
                         />
 
                         <View className="py-2 mt-[20px]">
