@@ -1,42 +1,50 @@
 {
-    "expo": {
-        "name": "Billang",
-        "slug": "codekada",
-        "version": "0.2.2",
-        "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
-        "scheme": "myapp",
-        "userInterfaceStyle": "automatic",
-        "newArchEnabled": true,
-        "splash": {
-            "image": "./assets/images/splash-icon.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#0075B2"
-        },
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.codekada.billang"
-        },
-        "android": {
-            "package": "com.codekada.billang",
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
-                "backgroundColor": "#0075B2"
-            }
-        },
-        "web": {
-            "bundler": "metro",
-            "output": "static",
-            "favicon": "./assets/images/favicon.png"
-        },
-        "plugins": ["expo-router", "expo-sqlite", "expo-asset"],
-        "experiments": {
-            "typedRoutes": true
-        },
-        "extra": {
-            "router": {
-                "origin": false
-            }
-        }
-    }
+  "expo": {
+    "name": "Billang",
+    "slug": "codekada",
+    "version": "0.2.2",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0075B2"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.codekada.billang"
+    },
+    "android": {
+      "package": "com.codekada.billang",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0075B2"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "70269b68-ab26-4a20-ab6c-cd46b56a15e4"
+      }
+    },
+    "owner": "migoiarmando"
+  }
 }
