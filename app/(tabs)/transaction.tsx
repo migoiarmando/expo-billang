@@ -30,6 +30,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import ExpenseIcon from "@/assets/images/expense.svg";
 import IncomeIcon from "@/assets/images/income.svg";
+import UpIncomeArrow from "@/assets/images/upgrayarrow.svg";
 import IncomeTrans from "@/assets/transaction-icons/income.svg";
 import CashIcon from "@/assets/images/cash.svg";
 import FoodIcon from "@/assets/transaction-icons/food.svg";
@@ -261,7 +262,7 @@ const TransactionFilter = ({
                 {selectedFilter === "income" ? (
                     <IncomeArrow width={10} height={10} className="mr-1" />
                 ) : (
-                    <GrayArrow width={10} height={10} className="mr-1" />
+                    <UpIncomeArrow width={10} height={10} className="mr-1" />
                 )}
                 <Text
                     className={`

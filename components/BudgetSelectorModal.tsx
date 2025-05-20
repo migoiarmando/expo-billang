@@ -115,6 +115,7 @@ const BudgetDropdown: React.FC<BudgetDropdownProps> = ({ onSelect, selectedBudge
                         scrollEnabled={true}
                         nestedScrollEnabled={true}
                         removeClippedSubviews={false}
+                        showsVerticalScrollIndicator={false}
                         ItemSeparatorComponent={() => (
                             <View
                                 style={{
@@ -151,13 +152,11 @@ const styles = StyleSheet.create({
         fontFamily: "Lexend_400Regular",
     },
     dropdownList: {
-        flexDirection: "row",
-        borderWidth: 1,
-        borderColor: "#ccc",
+        marginTop: 8,
         borderRadius: 8,
         maxHeight: 200,
-        marginTop: 8,
         paddingHorizontal: 10,
+        backgroundColor: "#",
     },
     option: {
         alignContent: "center",

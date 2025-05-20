@@ -436,7 +436,7 @@ function ExpenseContent({
                 {/* Select Budget */}
                 <View className="flex-1">
                     <Text
-                        className="text-xs text-muted-foreground mb-1 font-medium text-[#767676]"
+                        className="text-xs text-muted-foreground mb-3 font-medium text-[#767676]"
                         style={{
                             color: "#676776",
                             marginLeft: 4,
