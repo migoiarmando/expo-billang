@@ -97,9 +97,6 @@ const styles = StyleSheet.create({
     },
     dropdownList: {
         marginTop: 8,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#ccc",
         paddingHorizontal: 10,
         backgroundColor: "#fff",
     },

@@ -26,6 +26,7 @@ import { Link, useLocalSearchParams } from "expo-router";
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
 import IncomeArrow from "@/assets/images/incomearrow.svg";
+import UpIncomeArrow from "@/assets/images/upgrayarrow.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { db } from "@/database";
 import { transactions_tb } from "@/database/schema";
@@ -175,7 +176,7 @@ const TransactionFilters = ({
                 {selectedFilter === "income" ? (
                     <IncomeArrow width={10} height={10} className="mr-1" />
                 ) : (
-                    <GrayArrow width={10} height={10} className="mr-1" />
+                    <UpIncomeArrow width={10} height={10} className="mr-1" />
                 )}
                 <Text
                     className={`
