@@ -581,8 +581,18 @@ function IncomeContent({
     return (
         <View className="flex-grow mt-[20px]">
             {/* Budget Selector (same as Expense) */}
-
-            <View className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl">
+            <BudgetDropdown
+                selectedBudget={selectedBudget}
+                onSelect={(budget) => {
+                    setSelectedBudget(budget);
+                    setBudgetId(String(budget.id));
+                }}
+                budgets={budgets}
+            />
+            <View
+                className="mb-5 py-10 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl"
+                style={{ marginTop: 15 }}
+            >
                 {/* <Text className="text-[#9D9D9D]">T</Text> */}
                 <TextInput
                     placeholder="Title"

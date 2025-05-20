@@ -17,11 +17,7 @@
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-    ChevronLeft,
-    ChevronRight,
-    Info,
-} from "lucide-react-native";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
 import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -59,8 +55,8 @@ export default function OnboardingPage5() {
                                     I prefer a tailored approach
                                 </Text>
                                 <Text className="font-lexend text-[12px] text-[#8F8F8F]">
-                                    Adapts to your spending habits and financial
-                                    goals based on your inputs.
+                                    Adapts to your spending habits and financial goals
+                                    based on your inputs.
                                 </Text>
                             </View>
                             <ChevronRight color={"black"} size={16} />
@@ -87,8 +83,7 @@ export default function OnboardingPage5() {
                                     I like a structured plan
                                 </Text>
                                 <Text className="font-lexend text-[12px] text-[#8F8F8F]">
-                                    50% for needs, 30% for wants, and 20% for
-                                    savings.
+                                    50% for needs, 30% for wants, and 20% for savings.
                                 </Text>
                             </View>
                             <ChevronRight color={"black"} size={16} />
@@ -96,7 +91,7 @@ export default function OnboardingPage5() {
                     </Link>
 
                     {/* Learn More */}
-                    <View className="bg-bgBorder-1 rounded-lg px-[20px] py-[15px] flex flex-row items-center justify-between">
+                    {/* <View className="bg-bgBorder-1 rounded-lg px-[20px] py-[15px] flex flex-row items-center justify-between">
                         <View className="flex gap-2">
                             <Text className="font-lexendBold text-[16px]">
                                 Learn more
@@ -106,7 +101,7 @@ export default function OnboardingPage5() {
                             </Text>
                         </View>
                         <Info color={"black"} size={16} />
-                    </View>
+                    </View> */}
                 </View>
             </View>
 
