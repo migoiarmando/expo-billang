@@ -22,16 +22,11 @@ import {
     TouchableOpacity,
     Image,
     TextInput,
-    Button,
     Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProfilePic from "@/assets/images/profilepic.svg";
-import { db } from "@/database";
-import { user_tb } from "@/database/schema";
-import { eq } from "drizzle-orm";
 import { useUser } from "@/contexts/UserContext";
 import { useActivityLogStore } from "@/utils/activityLogStore";
 
