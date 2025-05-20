@@ -16,13 +16,13 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 import { Alert } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Plus } from "lucide-react-native";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetTypeSelectorModal from "@/components/BudgetTypeSelectorModal";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { db } from "@/database";
@@ -33,6 +33,7 @@ import { and, eq, sql } from "drizzle-orm";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
 import { resetBudgetsIfNeeded } from "@/utils/budgetReset";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 
 interface AddBudgetButtonProps {
     onPress: () => void;
@@ -67,6 +68,15 @@ export default function BudgetScreen() {
     const [selectedBudgetId, setSelectedBudgetId] = useState<number | null>(null);
 
     const [search, setSearch] = useState("");
+
+    const navigation = useNavigation();
+    const keyboardVisible = useKeyboardVisible();
+
+    useEffect(() => {
+        navigation.setOptions({
+            tabBarStyle: { display: keyboardVisible ? "none" : "flex" },
+        });
+    }, [keyboardVisible, navigation]);
 
     useFocusEffect(
         useCallback(() => {

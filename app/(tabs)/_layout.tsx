@@ -12,18 +12,46 @@
 import { Tabs } from "expo-router";
 import { useClientOnlyValue } from "../../components/expo/useClientOnlyValue";
 import { Home, Plus, Search, User, WalletCards } from "lucide-react-native";
-import { View } from "react-native";
+import { View, Keyboard, Platform } from "react-native";
+import { useEffect, useState } from "react";
 
 export default function TabLayout() {
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardWillShowListener = Keyboard.addListener(
+            Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+            () => setKeyboardVisible(true),
+        );
+        const keyboardWillHideListener = Keyboard.addListener(
+            Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+            () => setKeyboardVisible(false),
+        );
+
+        return () => {
+            keyboardWillShowListener.remove();
+            keyboardWillHideListener.remove();
+        };
+    }, []);
+
     return (
         <Tabs
-            screenOptions={{
+            screenOptions={({ route }) => ({
                 tabBarActiveTintColor: "#00A3E9",
                 tabBarInactiveTintColor: "#676666",
                 // Disable the static render of the header on web
                 // to prevent a hydration error in React Navigation v6.
                 headerShown: useClientOnlyValue(false, true),
-            }}
+                tabBarStyle: {
+                    display:
+                        isKeyboardVisible &&
+                        (route.name === "transaction" ||
+                            route.name === "budget" ||
+                            route.name === "addtransaction")
+                            ? "none"
+                            : "flex",
+                },
+            })}
         >
             <Tabs.Screen
                 name="index"

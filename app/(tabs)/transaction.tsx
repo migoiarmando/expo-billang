@@ -16,7 +16,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -25,6 +25,8 @@ import { transactions_tb } from "@/database/schema";
 import { db } from "@/database";
 import { Transaction } from "@/database/models";
 import { desc } from "drizzle-orm";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { useNavigation } from "@react-navigation/native";
 
 import ExpenseIcon from "@/assets/images/expense.svg";
 import IncomeIcon from "@/assets/images/income.svg";
@@ -45,12 +47,21 @@ import { useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
+
 export default function TransactionScreen() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [selectedFilter, setSelectedFilter] = useState<"all" | "expense" | "income">(
         "all",
     );
     const [search, setSearch] = useState("");
+    const navigation = useNavigation();
+    const keyboardVisible = useKeyboardVisible();
+
+    useEffect(() => {
+        navigation.setOptions({
+            tabBarStyle: { display: keyboardVisible ? "none" : "flex" },
+        });
+    }, [keyboardVisible, navigation]);
 
     useFocusEffect(
         useCallback(() => {
