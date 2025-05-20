@@ -20,12 +20,11 @@ import { db } from "@/database";
 import { budget_tb, user_tb } from "@/database/schema";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronLeft, Pencil, RefreshCwIcon } from "lucide-react-native";
+import { ChevronLeft, Pencil } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useActivityLogStore } from "@/utils/activityLogStore";
-import DurationSelectModal from "@/components/DurationSelectorModal";
 import DurationDropdown from "@/components/DurationSelectorModal";
 const addLog = useActivityLogStore.getState().addLog;
 
