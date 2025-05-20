@@ -52,6 +52,7 @@ import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
 import Modal from "react-native-modal";
+import { useUser } from "@/contexts/UserContext";
 
 // Images
 import AddTransactions from "@/assets/home/add-transactions.svg";
@@ -124,6 +125,7 @@ function ColorPickerModal({ visible, onClose, onSelect }: ColorPickerModalProps)
 }
 
 export default function HomeScreen() {
+    const { name } = useUser();
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
     const [streakCount, setStreakCount] = useState(0);
     const [showStreakModal, setShowStreakModal] = useState(false);
@@ -369,7 +371,7 @@ export default function HomeScreen() {
                     }}
                 >
                     <Text className="font-lexend text-[24px] text-[#2B3854]">
-                        Good Day, {items[0].name?.split(" ")[0]}!
+                        Good Day, {name?.split(" ")[0] || "User"}!
                     </Text>
                     <TouchableOpacity
                         onPress={async () => {
