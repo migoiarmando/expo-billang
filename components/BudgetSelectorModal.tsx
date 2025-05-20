@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         maxHeight: 200,
         paddingHorizontal: 10,
-        backgroundColor: "#",
+        borderWidth: 1,
+        borderColor: "#ccc",
     },
     option: {
         alignContent: "center",
