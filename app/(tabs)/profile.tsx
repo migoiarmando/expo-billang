@@ -180,7 +180,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
 export default function ProfileScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter();
-    const { name, profileImageUri } = useUser();
+    const { profileImageUri } = useUser();
     const [privacyVisible, setPrivacyVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
     const [streakCount, setStreakCount] = useState(0);

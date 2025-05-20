@@ -21,7 +21,7 @@
 
 -------------------------------------------------------------------------------------------------------------- */
 
-import { Text, TouchableOpacity, View, Image } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 //import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
@@ -52,7 +52,7 @@ import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
 import Modal from "react-native-modal";
-import { useUser } from "@/contexts/UserContext";
+
 
 // Images
 import AddTransactions from "@/assets/home/add-transactions.svg";
@@ -125,13 +125,12 @@ function ColorPickerModal({ visible, onClose, onSelect }: ColorPickerModalProps)
 }
 
 export default function HomeScreen() {
-    const { name } = useUser();
+    
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
     const [streakCount, setStreakCount] = useState(0);
     const [showStreakModal, setShowStreakModal] = useState(false);
     const [colorModalVisible, setColorModalVisible] = useState(false);
     const [budgetColor, setBudgetColor] = useState("#E6E6E6");
-    const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
 
     useFocusEffect(
         useCallback(() => {
@@ -325,11 +324,6 @@ export default function HomeScreen() {
         loadHomeCardColor();
     }, []);
 
-    useEffect(() => {
-        AsyncStorage.getItem("profileImageUri").then((uri) => {
-            if (uri) setProfileImageUri(uri);
-        });
-    }, []);
 
     if (items === null || items.length === 0) {
         return <View></View>;
