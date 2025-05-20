@@ -20,9 +20,8 @@ import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { CalendarIcon, Paperclip, RefreshCwIcon } from "lucide-react-native";
+import { Paperclip} from "lucide-react-native";
 import { useState, useEffect } from "react";
-import Modal from "react-native-modal";
 
 import {
     View,
