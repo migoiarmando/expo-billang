@@ -1,5 +1,4 @@
 import React from "react";
-import { useColorScheme } from "react-native";
 
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
 import Animated, {
@@ -30,8 +29,6 @@ const DurationSelectModal: React.FC<DurationSelectModalProps> = ({
     onClose,
     onSelect,
 }) => {
-    const colorScheme = useColorScheme(); // <--- light | dark
-
     const translateY = useSharedValue(MODAL_HEIGHT);
     const context = useSharedValue({ y: 0 });
     const active = useSharedValue(false);
@@ -51,7 +48,7 @@ const DurationSelectModal: React.FC<DurationSelectModalProps> = ({
         translateY.value = isVisible
             ? withSpring(0, SPRING_CONFIG)
             : withSpring(MODAL_HEIGHT, SPRING_CONFIG);
-    }, [isVisible]);
+    }, [isVisible, translateY]);
 
     const gesture = Gesture.Pan()
         .onStart(() => {

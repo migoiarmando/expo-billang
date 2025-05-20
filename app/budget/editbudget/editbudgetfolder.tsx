@@ -18,7 +18,7 @@ import { db } from "@/database";
 import { budget_tb, user_tb } from "@/database/schema";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronLeft, Pencil, RefreshCwIcon } from "lucide-react-native";
+import { ChevronLeft, Pencil} from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -50,10 +50,7 @@ export default function TailoredBudgetScreen() {
     const { budgetID } = useLocalSearchParams();
     const [title, setTitle] = useState("");
     const [selectedColor, setSelectedColor] = useState<ThemeColorKey>("#E6E6E6");
-    const [durationModalVisible, setDurationModalVisible] = useState(false);
-    const [selectedDuration, setSelectedDuration] = useState<"weekly" | "monthly" | null>(
-        null,
-    );
+    
     const THEME_COLORS: Record<ThemeColorKey, { content: string }> = {
         "#E6E6E6": { content: "#F6F6F6" }, // Gray
         "#87CDFF": { content: "#BAE4FC" }, // Blue
