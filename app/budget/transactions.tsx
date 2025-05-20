@@ -327,16 +327,30 @@ const TransactionList = ({
                 Transactions
             </Text>
             <ScrollView>
-                {filteredTransactions.map((transaction) => (
-                    <TransactionItem
-                        key={transaction.id}
-                        title={transaction.title || "Cash"}
-                        date={transaction.date}
-                        amount={transaction.amount}
-                        iconUrl={transaction.category}
-                        amountColor={transaction.type}
-                    />
-                ))}
+                {filteredTransactions.length === 0 ? (
+                    <Text
+                        style={{
+                            fontFamily: "Lexend_400Regular",
+                            textAlign: "center",
+                            fontSize: 20,
+                            marginTop: 180,
+                            color: "#676666",
+                        }}
+                    >
+                        There are no Transactions yet.
+                    </Text>
+                ) : (
+                    filteredTransactions.map((transaction) => (
+                        <TransactionItem
+                            key={transaction.id}
+                            title={transaction.title || "Cash"}
+                            date={transaction.date}
+                            amount={transaction.amount}
+                            iconUrl={transaction.category}
+                            amountColor={transaction.type}
+                        />
+                    ))
+                )}
             </ScrollView>
         </View>
     );
