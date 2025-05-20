@@ -63,17 +63,17 @@ import ToggleOff from "@/assets/icons/toggle_off.svg";
 import NotificationIcon from "@/assets/images/notification.svg";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { useUser } from "@/contexts/UserContext";
 
 const ProfileSection: React.FC<{
     profileImageUri: string | null;
-    onPressProfilePic: () => void;
     userName: string;
     streakCount: number;
     miniBadges?: React.ReactNode;
-}> = ({ profileImageUri, onPressProfilePic, userName, streakCount, miniBadges }) => {
+}> = ({ profileImageUri, userName, streakCount, miniBadges }) => {
     return (
         <View className="flex-row items-center mt-5 mb-5">
-            <TouchableOpacity onPress={onPressProfilePic} className="mr-4">
+            <View className="mr-4">
                 {profileImageUri ? (
                     <Image
                         source={{ uri: profileImageUri }}
@@ -86,7 +86,7 @@ const ProfileSection: React.FC<{
                 ) : (
                     <ProfilePic width={100} height={100} className="rounded-[50px]" />
                 )}
-            </TouchableOpacity>
+            </View>
             <View className="flex-1">
                 <View className="flex-row items-center">
                     <Text className="text-[26px] text-[#2B3854] font-lexend">
@@ -181,8 +181,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({
 export default function ProfileScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter();
-    const [profileImageUri, setProfileImageUri] = useState<string | null>(null);
-    const [userName, setUserName] = useState<string>("");
+    const { name, profileImageUri, setProfileImageUri } = useUser();
     const [privacyVisible, setPrivacyVisible] = useState(false);
     const [aboutVisible, setAboutVisible] = useState(false);
     const [streakCount, setStreakCount] = useState(0);
@@ -258,20 +257,6 @@ export default function ProfileScreen() {
     );
 
     useEffect(() => {
-        async function loadProfileImage() {
-            const uri = await AsyncStorage.getItem("profileImageUri");
-            if (uri) setProfileImageUri(uri);
-        }
-        async function loadUserName() {
-            try {
-                const users = await db.select().from(user_tb);
-                if (users.length > 0) {
-                    setUserName(users[0].name || "Your Name");
-                }
-            } catch (err) {
-                console.error("Error loading user name:", err);
-            }
-        }
         async function loadStreakCount() {
             try {
                 const streak = await getStreak();
@@ -299,8 +284,6 @@ export default function ProfileScreen() {
                 setBudgetColor(color);
             else setBudgetColor("#E6E6E6");
         }
-        loadProfileImage();
-        loadUserName();
         loadStreakCount();
         loadNotificationsEnabled();
         loadHomeCardColor();
@@ -470,8 +453,7 @@ export default function ProfileScreen() {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <ProfileSection
                             profileImageUri={profileImageUri}
-                            onPressProfilePic={handleProfilePicPress}
-                            userName={userName}
+                            userName={name}
                             streakCount={streakCount}
                             miniBadges={
                                 <>
@@ -532,7 +514,7 @@ export default function ProfileScreen() {
                         <SettingsMenuItem
                             icon="settings"
                             label="Settings & Customizations"
-                            onPress={() => router.push("/+not-found")}
+                            onPress={() => router.push("/settings")}
                         />
                         <SettingsMenuItem
                             icon="about"

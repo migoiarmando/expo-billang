@@ -35,6 +35,7 @@ import Colors from "@/constants/Colors";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/database/drizzle/migrations";
 import { db } from "@/database";
+import { UserProvider } from "@/contexts/UserContext";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -92,63 +93,74 @@ function RootLayoutNav() {
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <Stack
-                screenOptions={{
-                    contentStyle: {
-                        backgroundColor: Colors.light.background,
-                    },
-                    navigationBarColor: "rgb(255, 255, 255)",
-                }}
-            >
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="badges" options={{ headerShown: true }} />
-                <Stack.Screen name="badgescreen" options={{ headerShown: false }} />
-                <Stack.Screen name="notifications" options={{ headerShown: true }} />
+        <UserProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <Stack
+                    screenOptions={{
+                        contentStyle: {
+                            backgroundColor: Colors.light.background,
+                        },
+                        navigationBarColor: "rgb(255, 255, 255)",
+                    }}
+                >
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen name="badges" options={{ headerShown: true }} />
+                    <Stack.Screen name="badgescreen" options={{ headerShown: false }} />
+                    <Stack.Screen name="notifications" options={{ headerShown: true }} />
 
-                {/* Onboarding */}
-                <Stack.Screen name="onboarding/ob" options={{ headerShown: false }} />
-                <Stack.Screen name="onboarding/ob2" options={{ headerShown: false }} />
-                <Stack.Screen name="onboarding/ob3" options={{ headerShown: false }} />
-                <Stack.Screen name="onboarding/ob4" options={{ headerShown: false }} />
-                <Stack.Screen
-                    name="onboarding/ob5"
-                    options={{
-                        title: "Onboarding 5",
-                        headerShown: false,
-                    }}
-                />
+                    {/* Onboarding */}
+                    <Stack.Screen name="onboarding/ob" options={{ headerShown: false }} />
+                    <Stack.Screen
+                        name="onboarding/ob2"
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="onboarding/ob3"
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="onboarding/ob4"
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="onboarding/ob5"
+                        options={{
+                            title: "Onboarding 5",
+                            headerShown: false,
+                        }}
+                    />
 
-                {/* Budget Routes */}
-                <Stack.Screen
-                    name="budget/editbudget/tailored"
-                    options={{
-                        title: "Tailored Budget Method",
-                        headerShown: false,
-                    }}
-                />
-                <Stack.Screen
-                    name="budget/editbudget/structured"
-                    options={{
-                        title: "Structured Budget Method",
-                        headerShown: false,
-                    }}
-                />
-                <Stack.Screen
-                    name="budget/editbudget/editbudgetfolder"
-                    options={{
-                        title: "Edit Budget",
-                        headerShown: false,
-                    }}
-                />
-                <Stack.Screen
-                    name="budget/transactions"
-                    options={{
-                        title: "All Budget Transactions",
-                        headerShown: false,
-                    }}
-                />
-            </Stack>
-        </GestureHandlerRootView>
+                    {/* Budget Routes */}
+                    <Stack.Screen
+                        name="budget/editbudget/tailored"
+                        options={{
+                            title: "Tailored Budget Method",
+                            headerShown: false,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="budget/editbudget/structured"
+                        options={{
+                            title: "Structured Budget Method",
+                            headerShown: false,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="budget/editbudget/editbudgetfolder"
+                        options={{
+                            title: "Edit Budget",
+                            headerShown: false,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="budget/transactions"
+                        options={{
+                            title: "All Budget Transactions",
+                            headerShown: false,
+                        }}
+                    />
+                </Stack>
+            </GestureHandlerRootView>
+        </UserProvider>
     );
 }
