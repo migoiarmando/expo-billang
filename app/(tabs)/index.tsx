@@ -51,20 +51,94 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
+import Modal from "react-native-modal";
+import FolderGray from "@/assets/budget-folders/default.svg";
+import FolderBlue from "@/assets/budget-folders/blue.svg";
+import FolderOrange from "@/assets/budget-folders/orange.svg";
+import FolderRed from "@/assets/budget-folders/red.svg";
+import FolderGreen from "@/assets/budget-folders/green.svg";
+import FolderPink from "@/assets/budget-folders/pink.svg";
 
 // Images
 import AddTransactions from "@/assets/home/add-transactions.svg";
 import ViewTransactions from "@/assets/home/view-transactions.svg";
+
+const THEME_COLORS = {
+    "#E6E6E6": { content: "#F6F6F6" }, // Gray
+    "#87CDFF": { content: "#BAE4FC" }, // Blue
+    "#FEC794": { content: "#FFEDDD" }, // Orange
+    "#FF8787": { content: "#FFD1D1" }, // Red
+    "#9FE0A9": { content: "#DEFDD3" }, // Green
+    "#FADDFF": { content: "#E4A8C5" }, // Pink
+};
+
+const FOLDER_ICONS = {
+    "#E6E6E6": FolderGray,
+    "#87CDFF": FolderBlue,
+    "#FEC794": FolderOrange,
+    "#FF8787": FolderRed,
+    "#9FE0A9": FolderGreen,
+    "#FADDFF": FolderPink,
+};
 
 function formatWithCommas(value: number | string): string {
     const str = String(value).replace(/,/g, "");
     return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+type ColorPickerModalProps = {
+    visible: boolean;
+    onClose: () => void;
+    onSelect: (color: string) => void;
+};
+
+function ColorPickerModal({ visible, onClose, onSelect }: ColorPickerModalProps) {
+    return (
+        <Modal isVisible={visible} onBackdropPress={onClose}>
+            <View style={{ backgroundColor: "#fff", borderRadius: 12, padding: 20 }}>
+                <Text
+                    style={{
+                        fontSize: 18,
+                        marginBottom: 16,
+                        textAlign: "center",
+                        fontFamily: "Lexend_400Regular",
+                    }}
+                >
+                    Choose a Folder Color
+                </Text>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                    }}
+                >
+                    {Object.keys(THEME_COLORS).map((color) => {
+                        const FolderIcon =
+                            FOLDER_ICONS[color as keyof typeof FOLDER_ICONS];
+                        return (
+                            <TouchableOpacity
+                                key={color}
+                                onPress={() => onSelect(color)}
+                                style={{ margin: 10 }}
+                            >
+                                <FolderIcon width={48} height={48} />
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
+            </View>
+        </Modal>
+    );
+}
+
 export default function HomeScreen() {
     const [items, setItems] = useState<(typeof user_tb.$inferSelect)[] | null>(null);
     const [streakCount, setStreakCount] = useState(0);
     const [showStreakModal, setShowStreakModal] = useState(false);
+    const [colorModalVisible, setColorModalVisible] = useState(false);
+    const [budgetColor, setBudgetColor] = useState("#E6E6E6");
+    const [budgetId, setBudgetId] = useState<number | null>(null);
 
     useEffect(() => {
         async function GetUser() {
@@ -248,6 +322,34 @@ export default function HomeScreen() {
         await AsyncStorage.setItem("lastStreakModalDate", today);
     };
 
+    // Handler for long press
+    const handleBudgetCardLongPress = () => {
+        setColorModalVisible(true);
+    };
+
+    // Handler for color selection
+    const handleColorSelect = async (color: string) => {
+        setColorModalVisible(false);
+        setBudgetColor(color);
+        if (budgetId === null) return;
+        await db
+            .update(budget_tb)
+            .set({ themeColor: color })
+            .where(eq(budget_tb.id, budgetId));
+        // Optionally, refresh budget data here
+    };
+
+    useEffect(() => {
+        async function fetchBudget() {
+            const budgets = await db.select().from(budget_tb);
+            if (budgets.length > 0) {
+                setBudgetId(budgets[0].id);
+                setBudgetColor(budgets[0].themeColor || "#E6E6E6");
+            }
+        }
+        fetchBudget();
+    }, []);
+
     if (items === null || items.length === 0) {
         return <View></View>;
     }
@@ -308,12 +410,14 @@ export default function HomeScreen() {
                         onPress={() => {
                             router.push("/budget");
                         }}
+                        onLongPress={handleBudgetCardLongPress}
                     >
                         <BudgetCard
                             name="Total Budget"
                             amount={budgetAmount}
                             spent={String(budgetSpent)}
                             percentage={1}
+                            themeColor={budgetColor}
                         />
                     </TouchableOpacity>
                 </View>
@@ -460,6 +564,11 @@ export default function HomeScreen() {
                     )}
                 </View>
             </View>
+            <ColorPickerModal
+                visible={colorModalVisible}
+                onClose={() => setColorModalVisible(false)}
+                onSelect={handleColorSelect}
+            />
             <StreakModal
                 isVisible={showStreakModal}
                 onClose={handleCloseStreakModal}
