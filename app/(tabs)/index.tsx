@@ -52,7 +52,6 @@ import StreakModal from "@/components/StreakModal";
 import NotificationIcon from "@/assets/images/notification.svg";
 import { getNotificationsEnabled } from "@/utils/notifications";
 import Modal from "react-native-modal";
- 
 
 // Images
 import AddTransactions from "@/assets/home/add-transactions.svg";

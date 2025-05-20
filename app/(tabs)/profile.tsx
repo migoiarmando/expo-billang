@@ -295,8 +295,9 @@ export default function ProfileScreen() {
         }
         async function loadHomeCardColor() {
             const color = await AsyncStorage.getItem("homeBudgetCardColor");
-            if (color) setBudgetColor(color);
-            else setBudgetColor("#E6E6E6"); // fallback to default
+            if (color !== null && color !== undefined && color !== "")
+                setBudgetColor(color);
+            else setBudgetColor("#E6E6E6");
         }
         loadProfileImage();
         loadUserName();
@@ -305,16 +306,13 @@ export default function ProfileScreen() {
         loadHomeCardColor();
     }, []);
 
-    useEffect(() => {
-        AsyncStorage.removeItem("homeBudgetCardColor");
-    }, []);
-
     useFocusEffect(
         useCallback(() => {
             async function loadHomeCardColor() {
                 const color = await AsyncStorage.getItem("homeBudgetCardColor");
-                if (color) setBudgetColor(color);
-                else setBudgetColor("#E6E6E6"); // fallback to default
+                if (color !== null && color !== undefined && color !== "")
+                    setBudgetColor(color);
+                else setBudgetColor("#E6E6E6");
             }
             loadHomeCardColor();
         }, []),

@@ -16,7 +16,6 @@
 
 import React from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
-import { History } from "lucide-react-native";
 import SpentPercentageIcon from "@/assets/images/spentpercentageicon.svg";
 import DefaultFolderSVG from "@/assets/budget-folders/default.svg";
 import BlueFolderSVG from "@/assets/budget-folders/blue.svg";
@@ -24,6 +23,8 @@ import OrangeFolderSVG from "@/assets/budget-folders/orange.svg";
 import RedFolderSVG from "@/assets/budget-folders/red.svg";
 import GreenFolderSVG from "@/assets/budget-folders/green.svg";
 import PinkFolderSVG from "@/assets/budget-folders/pink.svg";
+import MonthlyDurationSVG from "@/assets/budget-folders/monthly_duration.svg";
+import WeeklyDurationSVG from "@/assets/budget-folders/weekly_duration.svg";
 
 export interface BudgetCardProps {
     name: string;
@@ -32,6 +33,7 @@ export interface BudgetCardProps {
     percentage: number;
     themeColor?: string;
     contentColor?: string;
+    duration?: "monthly" | "weekly";
 }
 
 // Map theme colors to their corresponding SVG components
@@ -50,6 +52,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     spent,
     themeColor = "#E6E6E6",
     contentColor = "#F6F6F6",
+    duration,
 }) => {
     const spentNumber = parseFloat(spent.replace(/,/g, ""));
     const percentage = Math.min((spentNumber / amount) * 100, 100);
@@ -109,15 +112,27 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                         >
                             {name}
                         </Text>
-                        <History
-                            color="#8D8F9A"
-                            width={15}
-                            style={{
-                                position: "absolute",
-                                top: 25,
-                                right: 5,
-                            }}
-                        />
+                        {duration === "monthly" ? (
+                            <MonthlyDurationSVG
+                                width={20}
+                                height={20}
+                                style={{
+                                    position: "absolute",
+                                    top: 29,
+                                    right: 2,
+                                }}
+                            />
+                        ) : duration === "weekly" ? (
+                            <WeeklyDurationSVG
+                                width={16}
+                                height={16}
+                                style={{
+                                    position: "absolute",
+                                    top: 30,
+                                    right: 3,
+                                }}
+                            />
+                        ) : null}
                     </View>
                     <View style={styles.amountContainer}>
                         <Text style={styles.amount} numberOfLines={1}>
