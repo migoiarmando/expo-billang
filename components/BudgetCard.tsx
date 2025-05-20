@@ -55,7 +55,13 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     duration,
 }) => {
     const spentNumber = parseFloat(spent.replace(/,/g, ""));
-    const percentage = Math.min((spentNumber / amount) * 100, 100);
+    let percentage = 0;
+    if (amount > 0) {
+        percentage = Math.min((spentNumber / amount) * 100, 100);
+        percentage = Math.max(percentage, 0); // Prevent negative bar
+    } else if (spentNumber > 0) {
+        percentage = 100;
+    }
 
     // Select the correct SVG based on the themeColor
     const FolderSVG = folderSVGMap[themeColor] || DefaultFolderSVG;
