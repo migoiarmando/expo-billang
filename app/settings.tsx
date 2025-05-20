@@ -140,7 +140,7 @@ export default function SettingsScreen() {
                     placeholderTextColor="#B0B0B0"
                 />
                 <TouchableOpacity style={styles.saveButton} onPress={handleSaveName}>
-                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                    <Text style={styles.saveButtonText}>Save Name</Text>
                 </TouchableOpacity>
             </View>
         </View>
