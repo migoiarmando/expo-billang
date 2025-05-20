@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 export default function TabLayout() {
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
+    const headerShown = useClientOnlyValue(false, true);
+
     useEffect(() => {
         const keyboardWillShowListener = Keyboard.addListener(
             Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
@@ -39,9 +41,7 @@ export default function TabLayout() {
             screenOptions={({ route }) => ({
                 tabBarActiveTintColor: "#00A3E9",
                 tabBarInactiveTintColor: "#676666",
-                // Disable the static render of the header on web
-                // to prevent a hydration error in React Navigation v6.
-                headerShown: useClientOnlyValue(false, true),
+                headerShown,
                 tabBarStyle: {
                     display:
                         isKeyboardVisible &&

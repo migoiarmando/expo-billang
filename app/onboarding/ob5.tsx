@@ -17,7 +17,7 @@
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

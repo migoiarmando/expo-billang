@@ -29,7 +29,6 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
-    Pressable,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
     Keyboard,
@@ -50,24 +49,9 @@ import BillsIcon from "@/assets/transaction-icons/bills.svg";
 import EntertainmentIcon from "@/assets/transaction-icons/entertainment.svg";
 import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
-import GrayIcon from "@/assets/smallbudgeticons/gray_smallbudgeticon.svg";
-import BlueIcon from "@/assets/smallbudgeticons/blue_budgeticon.svg";
-import OrangeIcon from "@/assets/smallbudgeticons/orange_budgeticon.svg";
-import RedIcon from "@/assets/smallbudgeticons/red_budgeticon.svg";
-import GreenIcon from "@/assets/smallbudgeticons/green_budgeticon.svg";
-import PinkIcon from "@/assets/smallbudgeticons/pink_budgeticon.svg";
 import { useActivityLogStore } from "@/utils/activityLogStore";
 const addLog = useActivityLogStore.getState().addLog;
 
-// Map themeColor to icon
-const iconMap: Record<string, React.FC<any>> = {
-    "#E6E6E6": GrayIcon,
-    "#87CDFF": BlueIcon,
-    "#FEC794": OrangeIcon,
-    "#FF8787": RedIcon,
-    "#9FE0A9": GreenIcon,
-    "#FADDFF": PinkIcon,
-};
 
 export default function AddTransaction() {
     const [amount, setAmount] = useState("");
@@ -590,10 +574,10 @@ function IncomeContent({
                 budgets={budgets}
             />
             <View
-                className="mb-5 py-10 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl"
+                className="mb-5 py-3 px-5 flex-row items-center gap-2 bg-bgBorder-2 rounded-xl"
                 style={{ marginTop: 15 }}
             >
-                {/* <Text className="text-[#9D9D9D]">T</Text> */}
+                <Text className="text-[#9D9D9D]">T</Text>
                 <TextInput
                     placeholder="Title"
                     className="font-lexend text-[#767676]"
