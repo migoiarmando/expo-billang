@@ -20,7 +20,7 @@ import { db } from "@/database";
 import { budget_tb, transactions_tb } from "@/database/schema";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Paperclip} from "lucide-react-native";
+import { Paperclip } from "lucide-react-native";
 import { useState, useEffect } from "react";
 
 import {
@@ -299,16 +299,21 @@ function ExpenseContent({
     async function saveTransaction() {
         try {
             const numericAmount = parseFloat(amount);
-            if (isNaN(numericAmount) || numericAmount <= 0) {
-                console.error("[error] Invalid amount:", amount);
-                return;
-            }
+
             if (!budgetId) {
-                console.error("[error] No specific budget linked");
+                alert("Please select a budget.");
                 return;
             }
             if (!selectedCategory.name) {
-                console.error("[error] Category is required");
+                alert("Please select a category.");
+                return;
+            }
+            if (!amount || isNaN(numericAmount) || numericAmount <= 0) {
+                alert("Please enter a valid amount greater than 0.");
+                return;
+            }
+            if (!title.trim()) {
+                alert("Please enter a title for your transaction.");
                 return;
             }
 
@@ -380,6 +385,7 @@ function ExpenseContent({
                 });
             }
         } catch (err) {
+            alert("An error occurred while saving the transaction.");
             console.log("Error fetching or inserting data:", err);
         }
     }
@@ -557,16 +563,18 @@ function IncomeContent({
     const [notes, setNotes] = useState<string>("");
 
     async function SaveTransactionIncome() {
+        const numericAmount = parseFloat(amount);
+
         if (!budgetId) {
-            console.log("[debug] No specific budget linked");
+            alert("Please select a budget.");
             return;
         }
-        if (isNaN(Number(budgetId))) {
-            console.log("[debug] Invalid budget ID");
+        if (!amount || isNaN(numericAmount) || numericAmount <= 0) {
+            alert("Please enter a valid amount greater than 0.");
             return;
         }
-        if (!amount) {
-            console.log("[debug] You need to edit the amount");
+        if (!title.trim()) {
+            alert("Please enter a title for your transaction.");
             return;
         }
 
@@ -609,6 +617,7 @@ function IncomeContent({
 
             resetForm();
         } catch (err) {
+            alert("An error occurred while saving the transaction.");
             console.log("Error fetching or inserting data:", err);
         }
     }

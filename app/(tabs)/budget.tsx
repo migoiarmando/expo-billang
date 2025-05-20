@@ -59,6 +59,7 @@ interface Budget {
     amount: number;
     themeColor: string;
     contentColor: string;
+    duration: string;
 }
 
 export default function BudgetScreen() {
@@ -75,7 +76,12 @@ export default function BudgetScreen() {
             async function fetchBudget() {
                 try {
                     const budgets = await db.select().from(budget_tb);
-                    setBudgets(budgets);
+                    setBudgets(
+                        budgets.map((b) => ({
+                            ...b,
+                            duration: b.duration ?? "",
+                        })),
+                    );
                 } catch (err) {
                     console.error("[error] Failed to fetch budget.*:", err);
                 }
@@ -163,6 +169,7 @@ export default function BudgetScreen() {
                                         amount={budget.amount}
                                         contentColor={budget.contentColor}
                                         themeColor={budget.themeColor}
+                                        duration={budget.duration as "monthly" | "weekly"}
                                     />
                                 </TouchableOpacity>
 
@@ -283,6 +290,7 @@ function BudgetCardSpent(budget: Budget) {
             percentage={0}
             themeColor={budget.themeColor}
             contentColor={budget.contentColor}
+            duration={budget.duration as "monthly" | "weekly"}
         />
     );
 }
