@@ -129,21 +129,9 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
                         </Text>
                         <Text style={styles.description}>
                             <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
-                                Lead Developer:{" "}
+                                Developer:{" "}
                             </Text>
-                            Miguel Armand Sta. Ana{"\n"}
-                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
-                                Back End Developer:{" "}
-                            </Text>
-                            John Kristoffer Bicierro{"\n"}
-                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
-                                UI/UX / Front End Developer:{" "}
-                            </Text>
-                            Romar Josh Castro{"\n"}
-                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
-                                Front End Developer:{" "}
-                            </Text>
-                            Peter Joshua Jornales
+                            Miguel Armand Sta. Ana
                         </Text>
                         <Text style={styles.copyright}>codekada™</Text>
                     </View>
