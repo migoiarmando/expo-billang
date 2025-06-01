@@ -66,6 +66,7 @@ export default function TransactionScreen() {
 
     useFocusEffect(
         useCallback(() => {
+            setSearch("");
             async function GetTransactions() {
                 try {
                     const res = await db

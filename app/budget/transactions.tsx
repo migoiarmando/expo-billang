@@ -19,9 +19,9 @@
 
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Pressable } from "react-native";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, Plus } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, router } from "expo-router";
 
 import GrayArrow from "@/assets/images/grayarrow.svg";
 import ExpenseArrow from "@/assets/images/expensearrow.svg";
@@ -62,8 +62,8 @@ export default function BudgetTransactionScreen() {
     }, [numericBudgetID]);
 
     return (
-        <SafeAreaView>
-            <View className="mx-[20px] mt-[30px]">
+        <SafeAreaView className="flex-1" style={{ backgroundColor: "#fff" }}>
+            <View className="flex-1 mx-[20px] mt-[30px]">
                 {/* Header */}
                 <View className="flex-row items-center">
                     <Link href=".." asChild>
@@ -89,6 +89,20 @@ export default function BudgetTransactionScreen() {
                         budgetID={numericBudgetID}
                     />
                 </ScrollView>
+
+                {/* Floating Action Button */}
+                <TouchableOpacity
+                    className="absolute bottom-6 right-0 bg-primary p-4 rounded-full shadow-lg"
+                    onPress={() => {
+                        router.push({
+                            pathname: "/addtransaction",
+                            params: { prefillBudgetId: numericBudgetID },
+                        });
+                    }}
+                >
+                    <Plus size={28} color="white" />
+                </TouchableOpacity>
+
                 <StatusBar style="dark" backgroundColor="white" />
             </View>
         </SafeAreaView>
