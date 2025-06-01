@@ -122,16 +122,28 @@ const AboutModal: React.FC<AboutModalProps> = ({ isVisible, onClose }) => {
                         <Text
                             style={[
                                 styles.title,
-                                { marginTop: -5, fontFamily: "Lexend_600SemiBold" },
+                                { marginTop: -6, fontFamily: "Lexend_600SemiBold" },
                             ]}
                         >
                             Developers
                         </Text>
                         <Text style={styles.description}>
                             <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
-                                Developer:{" "}
+                                Lead Developer:{" "}
                             </Text>
-                            Miguel Armand Sta. Ana
+                            Miguel Sta. Ana{"\n"}
+                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
+                                Back End Developer:{" "}
+                            </Text>
+                            John Bicierro{"\n"}
+                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
+                                UI/UX / Front End Developer:{" "}
+                            </Text>
+                            Romar Castro{"\n"}
+                            <Text style={{ fontFamily: "Lexend_600SemiBold" }}>
+                                Front End Developer:{" "}
+                            </Text>
+                            Peter Jornales
                         </Text>
                         <Text style={styles.copyright}>codekada™</Text>
                     </View>
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "600",
         color: "#676666",
-        marginBottom: 2,
+        marginBottom: 3,
         fontFamily: "Lexend_400Regular",
     },
     version: {
@@ -195,13 +207,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#676666",
         textAlign: "center",
-        marginBottom: 15,
+        marginBottom: 14,
         fontFamily: "Lexend_300Light",
     },
     copyright: {
         fontSize: 14,
         color: "#676666",
-        marginTop: 2,
+        marginBottom: 25,
         fontFamily: "Lexend_300Light",
     },
 });
