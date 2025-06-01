@@ -337,7 +337,7 @@ const TransactionList = ({
                             color: "#676666",
                         }}
                     >
-                        There are no Transactions yet.
+                        There are no Transactions for this Budget yet.
                     </Text>
                 ) : (
                     filteredTransactions.map((transaction) => (
