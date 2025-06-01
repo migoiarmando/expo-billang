@@ -83,6 +83,8 @@ export default function BudgetScreen() {
             // Call the reset function when the screen is focused
             resetBudgetsIfNeeded();
 
+            setSearch("");
+
             async function fetchBudget() {
                 try {
                     const budgets = await db.select().from(budget_tb);

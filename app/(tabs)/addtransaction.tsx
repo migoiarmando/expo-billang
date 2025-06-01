@@ -41,6 +41,7 @@ import { eq } from "drizzle-orm";
 import BudgetDropdown, { Budget } from "@/components/BudgetSelectorModal";
 
 import { useFocusEffect } from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
 
 import FoodIcon from "@/assets/transaction-icons/food.svg";
 import TransitIcon from "@/assets/transaction-icons/transit.svg";
@@ -51,7 +52,6 @@ import WorkIcon from "@/assets/transaction-icons/work.svg";
 import SubscriptionIcon from "@/assets/transaction-icons/subscription.svg";
 import { useActivityLogStore } from "@/utils/activityLogStore";
 const addLog = useActivityLogStore.getState().addLog;
-
 
 export default function AddTransaction() {
     const [amount, setAmount] = useState("");
@@ -64,18 +64,54 @@ export default function AddTransaction() {
     const [budgetId, setBudgetId] = useState<string>(""); // Selected budget id
     const [formKey, setFormKey] = useState(0);
 
-    // Reset formKey every time the screen is focused
+    const { prefillBudgetId } = useLocalSearchParams();
+    const numericPrefillBudgetId = prefillBudgetId ? Number(prefillBudgetId) : null;
+
+    // Reset state and potentially prefill budget every time the screen is focused
     useFocusEffect(
         React.useCallback(() => {
+            // Always reset amount, transaction type, and form key on focus
             setAmount("");
-            setSelectedBudget(null);
-            setBudgetId("");
             setSelected("expense"); // Optional: reset to expense tab
-            setFormKey((k) => k + 1);
-        }, []),
+            setFormKey((k) => k + 1); // Reset form key to ensure child components remount
+
+            // Explicitly clear selected budget state if no prefill ID exists
+            if (numericPrefillBudgetId === null) {
+                setSelectedBudget(null);
+                setBudgetId("");
+            } else {
+                // If prefill ID exists, fetch and set that budget
+                async function fetchAndSetPrefillBudget(idToFetch: number) {
+                    try {
+                        const res = await db
+                            .select()
+                            .from(budget_tb)
+                            .where(eq(budget_tb.id, idToFetch));
+                        if (res.length > 0) {
+                            setSelectedBudget(res[0]);
+                            setBudgetId(String(res[0].id));
+                        } else {
+                            // If prefill ID doesn't match a budget, clear the state
+                            setSelectedBudget(null);
+                            setBudgetId("");
+                        }
+                    } catch (err) {
+                        console.error("Failed to fetch prefill budget:", err);
+                        // On error, ensure state is cleared
+                        setSelectedBudget(null);
+                        setBudgetId("");
+                    }
+                }
+                fetchAndSetPrefillBudget(numericPrefillBudgetId);
+            }
+
+            // No specific cleanup needed for state reset on blur/unmount
+            // as focus effect handles setting state on focus.
+            return () => {};
+        }, [numericPrefillBudgetId]), // Dependency array includes numericPrefillBudgetId
     );
 
-    // Fetch budgets once on mount
+    // Fetch budgets once on mount - this remains the same to populate the dropdown
     useEffect(() => {
         async function fetchBudgets() {
             try {
@@ -86,17 +122,18 @@ export default function AddTransaction() {
             }
         }
         fetchBudgets();
-    }, []);
+    }, []); // Empty dependency array means this runs once on mount
 
+    // This useEffect for cleanup is now redundant for state clearing
     useEffect(() => {
         return () => {
-            setSelectedBudget(null);
-            setBudgetId("");
+            // Keep minimal cleanup here if needed on unmount (e.g., timers, subscriptions)
         };
     }, []);
 
     const resetForm = () => {
         setAmount("");
+        // Always clear selected budget and ID when resetting the form manually
         setSelectedBudget(null);
         setBudgetId("");
         setFormKey((k) => k + 1); // This will also reset child state
@@ -135,7 +172,13 @@ export default function AddTransaction() {
                                         }}
                                         value={amount}
                                         onChangeText={(text) => {
-                                            setAmount(text);
+                                            const numericValue = text.replace(
+                                                /[^0-9.]/g,
+                                                "",
+                                            );
+                                            if (numericValue.split(".").length <= 2) {
+                                                setAmount(numericValue);
+                                            }
                                         }}
                                     />
                                 </View>
@@ -290,11 +333,17 @@ function ExpenseContent({
                 return;
             }
 
+            const currentBudgetId = Number(budgetId);
+            if (isNaN(currentBudgetId)) {
+                alert("Invalid budget selected.");
+                return;
+            }
+
             // Insert the expense transaction
             await db.insert(transactions_tb).values({
-                budgetId: Number(budgetId),
+                budgetId: currentBudgetId,
                 type: "Expense",
-                amount: Number(amount),
+                amount: numericAmount,
                 category: selectedCategory.name,
                 title: title || selectedCategory.name,
                 notes: notes,
@@ -305,22 +354,21 @@ function ExpenseContent({
             const budgetsRes = await db
                 .select()
                 .from(budget_tb)
-                .where(eq(budget_tb.id, Number(budgetId)));
+                .where(eq(budget_tb.id, currentBudgetId));
             const currentBudget = budgetsRes[0];
             if (currentBudget) {
-                const newTotal = Number(currentBudget.amount) - Number(amount);
+                const newTotal = Number(currentBudget.amount) - numericAmount;
                 await db
                     .update(budget_tb)
                     .set({ amount: newTotal })
-                    .where(eq(budget_tb.id, Number(budgetId)));
+                    .where(eq(budget_tb.id, currentBudgetId));
             }
             // --- END NEW ---
 
             console.log("[debug] Transaction created successfully");
+            resetForm();
             router.replace("/transaction");
 
-            // Reset parent state
-            resetForm();
             // Reset child state
             setTitle("");
             setNotes("");
@@ -354,7 +402,7 @@ function ExpenseContent({
             if (selectedBudget) {
                 addLog({
                     type: "expense",
-                    message: `You have added an expense to ${selectedBudget.title} with an amount of ₱${Number(amount).toLocaleString()}.`,
+                    message: `You have added an expense to ${selectedBudget.title} with an amount of ₱${numericAmount.toLocaleString()}.`,
                 });
             }
         } catch (err) {
@@ -492,7 +540,6 @@ function IncomeContent({
 }: {
     amount: string;
     budgets: Budget[];
-
     selectedBudget: Budget | null;
     setSelectedBudget: React.Dispatch<React.SetStateAction<Budget | null>>;
     budgetId: string;
@@ -518,12 +565,18 @@ function IncomeContent({
             return;
         }
 
+        const currentBudgetId = Number(budgetId);
+        if (isNaN(currentBudgetId)) {
+            alert("Invalid budget selected.");
+            return;
+        }
+
         try {
             // Insert the income transaction
             await db.insert(transactions_tb).values({
-                budgetId: Number(budgetId),
+                budgetId: currentBudgetId,
                 type: "Income",
-                amount: Number(amount),
+                amount: numericAmount,
                 category: "Cash",
                 title: title,
                 notes: notes,
@@ -534,28 +587,27 @@ function IncomeContent({
             const budgetsRes = await db
                 .select()
                 .from(budget_tb)
-                .where(eq(budget_tb.id, Number(budgetId)));
+                .where(eq(budget_tb.id, currentBudgetId));
             const currentBudget = budgetsRes[0];
             if (currentBudget) {
                 // Update the budget's amount
-                const newTotal = Number(currentBudget.amount) + Number(amount);
+                const newTotal = Number(currentBudget.amount) + numericAmount;
                 await db
                     .update(budget_tb)
                     .set({ amount: newTotal })
-                    .where(eq(budget_tb.id, Number(budgetId)));
+                    .where(eq(budget_tb.id, currentBudgetId));
             }
 
             console.log("[debug] Transaction created successfully");
+            resetForm();
             router.replace("/transaction");
 
             if (selectedBudget) {
                 addLog({
                     type: "income",
-                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${Number(amount).toLocaleString()}.`,
+                    message: `You have added an income to ${selectedBudget.title} with a value of ₱${numericAmount.toLocaleString()}.`,
                 });
             }
-
-            resetForm();
         } catch (err) {
             alert("An error occurred while saving the transaction.");
             console.log("Error fetching or inserting data:", err);
